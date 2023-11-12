@@ -18,11 +18,17 @@
   },
   "homepage": "https://bitbucket.org/dion_santana/forms-portal-backend#readme",
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.7",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "fs": "0.0.1-security",
     "fs-promise": "^2.0.3",
     "lodash": "^4.17.21",
+    "mysql2": "^3.6.3",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "react-redux": "^8.1.3",
+    "sequelize": "^6.34.0",
     "uuid": "^9.0.1"
   }
 }
