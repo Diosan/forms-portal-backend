@@ -76,19 +76,10 @@ app.get('/schema/:schemaId', async (req, res) => {
   const form_schema = JSON.parse(form_schema_file);
 
   res.json(form_schema);
- 
-  // res.json({
-  //   title: 'Todo',
-  //   type: 'object',
-  //   required: ['title'],
-  //   properties: {
-  //     title: { type: 'string', title: 'Title', default: 'A new task' },
-  //     done: { type: 'boolean', title: 'Done?', default: false },
-  //   },
-  // });
+
 
 });
 
 app.listen(3000, function () {
-  console.log('JudiciaryTT Forms Portal Backend listening on port 3000!');
+  console.log('Judiciary of Trinidad and Tobago Web Forms Portal-3000!');
 });
