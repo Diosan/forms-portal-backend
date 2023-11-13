@@ -2,7 +2,7 @@ module.exports = {
     apps : [
         {
           name: "JSSWF",
-          script: "current/app.js",
+          script: "app.js",
           watch: true,
           env: {
             "PORT": 3000,
