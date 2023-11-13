@@ -1,28 +1,59 @@
 const fs = require("fs/promises");
 const express = require('express');
 const cors = require('cors');
+const db_conf = require('./config/db.config')
+
 const _= require("lodash");
 const { v4: uuid } = require("uuid");
 const { Sequelize, DataTypes } = require('sequelize');
 
-// Option 1: Passing a connection URI
-const sequelize = new Sequelize('mysql://root:piccolo@localhost:3306/judiciary_forms') // Example for postgres
+const AdminBro = require('admin-bro')
+const AdminBroExpress = require('@admin-bro/express')
+const AdminBroSequelize = require('@admin-bro/sequelize')
+AdminBro.registerAdapter(AdminBroSequelize)
 
-const User = sequelize.define('User', {
-  // Model attributes are defined here
-  firstName: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  lastName: {
-    type: DataTypes.STRING
-    // allowNull defaults to true
-  }
-}, {
-  // Other model options go here
+
+const db = require("./models");
+const mysql = require("mysql2");
+const connection =  mysql.createConnection({
+  host: db_conf.HOST,
+  user: db_conf.USER,
+  password: db_conf.PASSWORD,
 });
 
+//________________________________________________
+// DATABASES
+//------------------------------------------------
+// import databases and firebase database
+// create the mysql database if it doesn't already exist
+// const firebase_db = getFirestore(fireapp);     
+// Open the connection to MySQL server
+connection.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+  connection.query(`CREATE DATABASE IF NOT EXISTS ${db_conf.DB}`, function (err, result) {
+      if (err) throw err;
+      console.log("Database created");
+  });
+  });
+// Close the connection
+//connection.end();
+db.sequelize.sync();
+//----------------------------------------------------------------
+
+
 const app = express();
+
+const adminBro = new AdminBro({
+  databases: [db],
+  rootPath: '/admin',
+})
+
+const router = AdminBroExpress.buildRouter(adminBro)
+
+app.use(adminBro.options.rootPath, router)
+app.listen(8080, () => console.log('AdminBro is under localhost:8080/admin'))
+
 
 app.use(cors({
   origin: 'http://localhost:5173'
