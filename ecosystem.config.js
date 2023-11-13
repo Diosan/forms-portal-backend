@@ -2,7 +2,7 @@ module.exports = {
     apps : [
         {
           name: "JSSWF",
-          script: "./current/app.js",
+          script: "current/app.js",
           watch: true,
           env: {
             "PORT": 3000,
@@ -34,7 +34,7 @@ module.exports = {
         // "post-deploy" : "npm install && sudo nginx -s reload && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
         "post-deploy": "cd /var/www/html/jsswf-server/current && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
       },
-      staging: {
+      staging: { 
         user : "root",
         host : "66.55.65.163",
         repo : "git@bitbucket.org:dion_santana/forms-portal-backend.git",
