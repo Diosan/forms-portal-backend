@@ -52,8 +52,6 @@ const adminBro = new AdminBro({
 const router = AdminBroExpress.buildRouter(adminBro)
 
 app.use(adminBro.options.rootPath, router)
-app.listen(8080, () => console.log('AdminBro is under localhost:8080/admin'))
-
 
 app.use(cors({
   origin: 'http://localhost:5173'
@@ -80,6 +78,7 @@ app.get('/schema/:schemaId', async (req, res) => {
 
 });
 
-app.listen(3000, function () {
-  console.log('Judiciary of Trinidad and Tobago Web Forms Portal-3000!');
-});
+// Admin Bro listening
+app.listen(8080, () => console.log('AdminBro is under localhost:8080/admin'))
+// Server listening
+app.listen(3000, () => console.log('Judiciary of Trinidad and Tobago Web Forms Portal-3000!'))
