@@ -1,7 +1,7 @@
 const fs = require("fs/promises");
 const express = require('express');
 const cors = require('cors');
-const db_conf = require('config/db.config')
+const db_conf = require('./config/db.config')
 
 const _= require("lodash");
 const { v4: uuid } = require("uuid");
