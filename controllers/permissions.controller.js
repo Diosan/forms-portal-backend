@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../models/index");
 const Permission = db.permissions;
 const Op = db.Sequelize.Op;
 const jwt = require('jsonwebtoken');

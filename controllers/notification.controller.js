@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../models/index");
 const Notification = db.notifications;
 const User = db.users;
 const fs = require('fs');

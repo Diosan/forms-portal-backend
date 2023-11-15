@@ -1,21 +1,109 @@
-const CONFIG = require('../../config/config')
-const db = require("../models");
+const db = require("../models/index");
+require('dotenv').config();
 const AccessLog = db.accesslogs;
-var spsave = require("spsave").spsave;
 const formidable = require('formidable')
-
 const User = db.users;
 const Permission = db.permissions;
 const Op = db.Sequelize.Op;
-
+const winston = require('winston');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
 const JWT_SECRET = process.env.JWT_SECRET;
-//const { authenticate } = require('ldap-authentication')
-//const { ldap } =  require ("ldapjs")
-var LdapAuth = require('ldapauth-fork');
-const { servicesVersion } = require('typescript');
+const nodemailer = require('nodemailer');
+const moment = require('moment');
+const {format} = require('date-fns')
+const { v4: uuidv4 } = require('uuid');
+const { promisify } = require('util');
+const { redisClient } = require('../app');
+const TOTPGenerator = require('../utilities/TOTPGenerator.class');
+
+
+
+const saltRounds = parseInt(process.env.SALT_ROUNDS) || 10;
+
+
+
+// Configure Winston for logging
+const logger = winston.createLogger({
+  level: 'info', // or whatever level you want to use
+  format: winston.format.json(), // logs in JSON format
+  defaultMeta: { service: 'user-service' },
+  transports: [
+    //
+    // - Write all logs to `combined.log`
+    // - Write all logs of level `error` and below to `error.log`
+    //
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' })
+  ]
+});
+
+// If we're in development, also log to the `console` with the colorized simple format.
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.simple()
+    )
+  }));
+}
+
+// Initialize Redis client
+const getRedisAsync = promisify(redisClient.get).bind(redisClient);
+const setRedisAsync = promisify(redisClient.set).bind(redisClient);
+
+
+
+// Function to save the user's hashed password to the database
+// Function to save a new user
+const saveUser = async (userData) => {
+  const { hashedPassword, username, agencyMemberUniqueId, fullname, first_name, last_name, email, address, phone, role } = userData;
+  try {
+    // Hash the password before saving the user
+
+    // Create a new user record in the database
+    const user = await User.create({
+      password:hashedPassword,
+      username,
+      agencyMemberUniqueId,
+      fullname,
+      first_name,
+      last_name,
+      email,
+      address,
+      phone,
+      role,
+      // Include any other user fields here
+    });
+
+    // Return the created user object
+    return { status: 'success', code: 200, message: "User created successfully", user };
+  } catch (error) {
+    // Log the error
+    logger.error('Error saving user:', error);
+    // Return the error object
+    return { status: 'error', code: 500, message: error.message };
+  }
+};
+
+const getUserByEmail = async (email) => {
+  try {
+    // Use Sequelize's findOne method to retrieve the user by email
+    const user = await User.findOne({
+      where: {
+        email: email
+      }
+    });
+
+    return user; // This will be 'null' if no user is found
+
+  } catch (error) {
+    // If there's a database error, log it and optionally throw an error
+    logger.error('Error fetching user by email:', error);
+    throw error; // Rethrowing the error will allow the caller to handle it
+  }
+};
+
 
 
 
@@ -26,108 +114,80 @@ exports.doNothing = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-    try{
-      const ua =  req.get('user-agent') ? req.get('user-agent') : "";
-      console.log(req.headers)
-      const newLogEntry = {
-        user_agent: ua ? ua : "",
-        referer: (req.headers.referer) ? req.headers.referer : "",
-        socket_ip: (req.socket.remoteAddress) ? req.socket.remoteAddress : "",
-        host: (req.headers.host) ? req.headers.host : "", 
-      };
-      const username = req.body.username;
-      const password = req.body.password;
-      newLogEntry.username = req.body.username ? req.body.username : ""
-      const user = await User.findOne({ 
-        where: {
-            email: username ,
-        }
-      });
-      if (!user) {
-        //log failed login attempt
-        AccessLog.create(newLogEntry)
-        .then(data => {
-          return res.json({ msg: "Please enter a valid username and password" });
-        })
-        .catch(err => {
-          return res.json({ msg: "Please enter a valid username and password" });
-        });
-      }
-      let passHash = await bcrypt.hash(password, saltRounds)
-      const user_role =  user.role;
-      const user_id =  user.id;
-      console.log("User role: "+user_role)
-      const verbose_permissions = await Permission.findOne({
-        where:{
-          id: user_role
-        }
-      });
-      const permissions = JSON.parse(JSON.stringify(verbose_permissions))
-      const per_obj = (JSON.parse(permissions.permissions))
-      const user_obj = per_obj.userList
-      //console.log("Verbose Permissions: " + permissions.permissions.userlist)
-      var user_permissions = "";
-      user_permissions = verbose_permissions ? JSON.parse(JSON.stringify(verbose_permissions)) : "";
-      //console.log("Permissions: "+user_permissions)
-
-      const user_db_pass = user.password ? user.password : ""
-      const match = await bcrypt.compare(password, user_db_pass);
-
-      if(!match) {
-          console.log(match)
-          AccessLog.create(newLogEntry)
-          .then(data => {
-            return res.send({ msg: "Please enter a valid username and password" });
-          })
-          .catch(err => {
-            throw err
-          });
-      }
-      else{
-        newLogEntry.user_id = user.id ? user.id : ""
-        const accessToken = jwt.sign(
-            { username, id: user.id, user_role: user.role, permissions: per_obj },
-            JWT_SECRET,
-            {
-              expiresIn: process.env.NODE_ENV === "production" ? "6h" : "2 days",
-            }
-          );
-          //LOG SUER ACCESS
-          console.log(newLogEntry)
-          AccessLog.create(newLogEntry)
-          .then(data => {
-            return;
-          })
-          .catch(err => {
-            return;
-          });
-          //------------------------------------
-          res.json({ status:200, token: accessToken });
-        }
+  const { email, password } = req.body;
+  try {
+    const user = await getUserByEmail(email);
+    if (!user) {
+      return res.status(401).send('Authentication failed');
     }
-    catch (err) {
-      console.log(err);
-      res.status(503).json({ msg: "Server error!" });
-    }
-  };
 
-exports.authenticate = async(req, res, next) =>
-{
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  console.log("______________________TOKEN___________________________")
-  //console.log(token)
-  console.log("______________________TOKEN___________________________")
-  if (token === null) return res.status(401).json({ msg: "Not Authorized" });
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.status(401).json({ msg: err });
-    console.log("______________________USER___________________________")
-    //console.log(user)
-    console.log("______________________USER___________________________")
-    req.user = user;
-    next();
-  });
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (passwordMatch) {
+      console.log("Match");
+
+      const totp = new TOTPGenerator();
+      // console.log(totp);
+      totp.generateOTP(email)
+      .then(() => console.log('OTP sent to user email.'))
+      .catch(error => console.error('Error generating or sending OTP:', error));
+
+      
+
+      return res.status(200).send('OTP sent to email');
+    } else {
+      return res.status(401).send('Authentication failed');
+    }
+  } catch (error) {
+    logger.error('Login error:', error);
+    return res.status(500).send('Internal server error');
+  }
 };
+
+
+exports.verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
+  try {
+    const storedOtp = await getAsync(`otp:${email}`);
+    if (otp === storedOtp) {
+      // OTP is correct, generate JWT
+      const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+      // Clear OTP from Redis
+      await setRedisAsync(`otp:${email}`, '', 'EX', 1);
+
+      return res.status(200).json({ token });
+    } else {
+      return res.status(401).send('OTP verification failed');
+    }
+  } catch (error) {
+    logger.error('OTP verification error:', error);
+    return res.status(500).send('Internal server error');
+  }
+}
+
+
+exports.register = async (req, res) => {
+  const { email, password, agencyMemberUniqueId } = req.body;
+  console.log(req.body)
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = { email, hashedPassword, agencyMemberUniqueId, username: email };
+    console.log("--------------------------------")
+    const reg = await saveUser(newUser);
+    console.log(reg);
+    console.log("--------------------------------")
+    return res.status(reg.code).send(reg.message);
+  } catch (error) {
+    logger.error('Registration error:', error);
+    return res.status(500).send('Internal server error');
+  }
+}
+
+
+
+
+
+
 
 exports.loginLdap = async (req, res) => {
   /*
@@ -268,4 +328,6 @@ exports.refreshToken = async(req, res, next) =>
       username: user.username,
   };
 };
+
+
 

@@ -2,9 +2,9 @@
 
 module.exports = {
     HOST: "localhost",
-    USER: "jsswf_master",
-    PASSWORD: "Ithasbeenawesome2024!@",
-    DB: "jsswf",
+    USER: "root",
+    PASSWORD: "Tt,7$kz,m<`9<9qs",
+    DB: "jsswf_admin",
     dialect: "mysql",
     pool: {
       max: 5,

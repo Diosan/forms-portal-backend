@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../models/index");
 const formidable = require('formidable')
 const AdminUser = db.admin_users;
 const { Op } = require("sequelize");

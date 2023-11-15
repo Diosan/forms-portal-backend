@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../models/index");
 const User = db.users;
 const PasswordResetToken = db.password_reset_token;
 const Op = db.Sequelize.Op;

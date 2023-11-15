@@ -7,6 +7,10 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         unique: true
       },
+      agencyMemberUniqueId: {           //your unique id from your agency. eg. Regimental number
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       password: {
         type: Sequelize.STRING,
         allowNull: false

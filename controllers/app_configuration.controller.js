@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../models/index");
 const fs = require("fs");
 const formidable = require('formidable')
 const PastDraws = db.past_draws;

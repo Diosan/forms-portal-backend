@@ -9,9 +9,15 @@ const { Sequelize, DataTypes } = require('sequelize');
 const AdminBro = require('admin-bro')
 const AdminBroExpress = require('@admin-bro/express')
 const AdminBroSequelize = require('@admin-bro/sequelize')
-const db = require("./models");
+const db = require("./models/index");
 const mysql = require("mysql2");
 const winston = require('winston');
+
+//USED TO GENERATE A NEW SECRET
+// const crypto = require('crypto');
+// const secret = crypto.randomBytes(1024).toString('hex');
+// console.log(secret); 
+//-----------------------------------------------------
 
 
 
@@ -160,6 +166,7 @@ const indexPath  = path.resolve(__dirname, '..', 'public', 'index.html');
 //ROUTES
     // ++++++++++++++++++++++++++++++++++++++++++
     require("./routes/accesslogs.routes")(app);
+    require("./routes/authenticate.routes")(app);
     require("./routes/config.routes")(app);
     require("./routes/account.routes")(app);
     require("./routes/admin_users.routes")(app);
