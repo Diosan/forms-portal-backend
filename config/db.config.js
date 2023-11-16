@@ -3,7 +3,7 @@
 module.exports = {
     HOST: "localhost",
     USER: "root",
-    PASSWORD: "Tt,7$kz,m<`9<9qs",
+    PASSWORD: "piccolo",
     DB: "jsswf_admin",
     dialect: "mysql",
     pool: {
@@ -12,4 +12,4 @@ module.exports = {
       acquire: 30000,
       idle: 10000
     }
-  };
+};
