@@ -43,7 +43,7 @@ const mailConfig = require('./config/mail.config');
     }
   });
   client.on('error', err => {
-    console.log('Error conneting to Redis ' + err);
+    console.log('Error connecting to Redis ' + err);
   });
 
   const userChannelPrefix = 'user:';
