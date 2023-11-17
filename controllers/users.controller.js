@@ -11,6 +11,7 @@ const nodemailer = require('nodemailer');
 const moment = require('moment');
 const {format} = require('date-fns')
 const { v4: uuidv4 } = require('uuid');
+const TOTPGenerator = require('../utilities/TOTPGenerator.class');
 
 
 
@@ -181,7 +182,8 @@ exports.authenticateUser = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-    let new_user = {
+
+  let new_user = {
       agencyMemberUniqueId: req.body.reg_number,
       agencyName: req.body.agency,
       password: req.body.password,
@@ -189,10 +191,27 @@ exports.create = async (req, res) => {
       firstName: req.body.first_name,
       lastName: req.body.last_name,
       email: req.body.email
-   }
-  user = User.create(new_user)
-  console.log('Registration Data: ', req.body)
-  res.status(201).json({ message: "User created successfully" })
+  }
+
+  try {
+    const user = await User.create(new_user)
+    const totp = new TOTPGenerator()
+    totp.generateOTP(req.body.email)
+    console.log('New User Created In Sequelize')
+    res.status(201).json({
+      outcome: 'success', 
+      message: "User created successfully" 
+    })
+  } catch (error) {
+    console.log('Error Creating User In Sequelize')
+    res.status(201).json({
+      outcome: 'error', 
+      error: error.errors[0].message 
+    });
+  }
+
+
+  
 }
 
 // exports.create = async (req, res) => {

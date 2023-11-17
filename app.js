@@ -14,6 +14,9 @@ const mysql = require("mysql2");
 const winston = require('winston');
 const fs = require('fs');
 const expressListRoutes = require('express-list-routes');
+const TOTPGenerator = require('./utilities/TOTPGenerator.class');
+const nodemailer = require('nodemailer');
+const mailConfig = require('./config/mail.config');
 
 
 //USED TO GENERATE A NEW SECRET
@@ -187,8 +190,15 @@ const indexPath  = path.resolve(__dirname, '..', 'public', 'index.html');
 
 
 app.get('/', async (req, res) => {
-  expressListRoutes(app, {  });
-  res.json({message: 'JSSWF-API'});
+  // expressListRoutes(app, {  });
+  const transporter = nodemailer.createTransport(mailConfig);
+  transporter.sendMail({
+    from: 'omm@link868.com',
+    to: 'dion.santana@gmail.com',
+    subject: 'hello world!',
+    text: 'hello world!'
+  });
+  res.json({message: 'JSSWF-API-TS'});
 })
 
 
