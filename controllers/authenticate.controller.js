@@ -14,7 +14,7 @@ const moment = require('moment');
 const {format} = require('date-fns')
 const { v4: uuidv4 } = require('uuid');
 const { promisify } = require('util');
-const { redisClient } = require('../app');
+const { redisClient, redisURL, userChannel, redisAdapter, emitter } = require('../redis/redisConfig');
 const TOTPGenerator = require('../utilities/TOTPGenerator.class');
 
 

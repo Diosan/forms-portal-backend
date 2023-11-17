@@ -19,7 +19,7 @@ const nodemailer = require('nodemailer');
 const mailConfig = require('./config/mail.config');
 
 
-//USED TO GENERATE A NEW SECRET
+//USED TO GENERATE A NEW SECRET (uncomment when needed)
 // const crypto = require('crypto');
 // const secret = crypto.randomBytes(1024).toString('hex');
 // console.log(secret); 
@@ -27,36 +27,8 @@ const mailConfig = require('./config/mail.config');
 
 
 
-
-
-//________________________________________________
-// REDIS
-//------------------------------------------------
-  const redis = require('redis');
-  const redisAdapter = require('socket.io-redis');
-  const emitter = require('socket.io-emitter')({ host: 'localhost', port: 6379 });
-  const redisURL = 'redis://localhost:6379';
-  const client = redis.createClient({
-    socket: {
-      host: 'localhost',
-      port: '6379'
-    }
-  });
-  client.on('error', err => {
-    console.log('Error connecting to Redis ' + err);
-  });
-
-  const userChannelPrefix = 'user:';
-  const userChannel = (userId) => userChannelPrefix + userId;
-
-  (async () => {
-    await client.connect();
-  })();
-  exports.redisClient = client;
-  exports.userChannel = userChannel;
-
-
-
+//BEGIN----------------------------------------------------------------
+// ********************************************************************
 
 
 //________________________________________________
@@ -113,7 +85,6 @@ const mailConfig = require('./config/mail.config');
     }
   });
   // Use redis adapter
-  io.adapter(redisAdapter(redisURL));
 
   app.use(bodyParser.json({ limit: '5mb' }))
   app.use(bodyParser.urlencoded({ limit: '5mb', extended: true }));

@@ -1,8 +1,8 @@
 const redis = require('redis');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const { redisClient } = require('../app');
 const mailConfig = require('../config/mail.config');
+const { redisClient, redisURL, userChannel, redisAdapter, emitter } = require('../redis/redisConfig');
 
 
 class TOTPGenerator {
