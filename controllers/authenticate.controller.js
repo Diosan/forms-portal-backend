@@ -120,7 +120,8 @@ exports.login = async (req, res) => {
     if (!user) {
       // return res.status(401).send('Authentication failed');
       return res.status(201).json({
-        outcome: 'error', 
+        outcome: 'error',
+        // error: 'User does not exist. Try again' 
         error: 'Sign in failed. Try again' 
       });
     }
@@ -135,17 +136,18 @@ exports.login = async (req, res) => {
       .then(() => console.log('OTP sent to user email.'))
       .catch(error => console.error('Error generating or sending OTP:', error));
 
-      
-
       return res.status(200).json({
         outcome: 'success', 
         message: "Successfully logged in: OTP send to " + req.body.email,
         email: req.body.email
       })
       // .send('OTP sent to email');
+
     } else {
+      // console.log('Password does not match');
       return res.status(201).json({
-        outcome: 'error', 
+        outcome: 'error',
+        // error: 'Email "' + email + '" & Password "' + password + '" does not match. Try again'
         error: 'Sign in failed. Try again' 
       });
     }

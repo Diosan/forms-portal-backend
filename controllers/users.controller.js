@@ -186,7 +186,7 @@ exports.create = async (req, res) => {
   let new_user = {
       agencyMemberUniqueId: req.body.reg_number,
       agencyName: req.body.agency,
-      password: req.body.password,
+      password: bcrypt.hashSync(req.body.password, 8),
       username: req.body.email,
       firstName: req.body.first_name,
       lastName: req.body.last_name,
