@@ -200,7 +200,8 @@ exports.create = async (req, res) => {
     console.log('New User Created In Sequelize')
     res.status(201).json({
       outcome: 'success', 
-      message: "User created successfully" 
+      message: "Successfully registered: OTP send to " + req.body.email,
+      email: req.body.email
     })
   } catch (error) {
     console.log('Error Creating User In Sequelize')

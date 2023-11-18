@@ -44,6 +44,12 @@ class TOTPGenerator {
       text: `Your OTP is: ${otp}`,
     });
   }
+
+  async verifyOTP(email, otp) {
+    stored_OTP = await thisRedisClient.set('otp:' + email);
+    return stored_OTP == otp;
+  }
+
 }
 
 module.exports = TOTPGenerator;
