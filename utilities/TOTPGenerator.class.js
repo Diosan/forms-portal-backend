@@ -33,7 +33,8 @@ class TOTPGenerator {
 
   async storeOTPInRedis(email, otp) {
     const key = `otp:${email}`;
-    await this.redisClient.set(key, 180, otp); // Expires in 180 seconds (3 minutes)
+    // await this.redisClient.set(key, 600, otp); // Expires in 180 seconds (3 minutes)
+    await this.redisClient.set(key, otp);
   }
 
   async sendOTPViaEmail(email, otp) {
@@ -46,7 +47,10 @@ class TOTPGenerator {
   }
 
   async verifyOTP(email, otp) {
-    stored_OTP = await thisRedisClient.set('otp:' + email);
+    const key = `otp:${email}`;
+    let stored_OTP = await this.redisClient.get(key);
+    console.log('Redis OTP Key: ' + key);
+    console.log('OTP Values: ', { stored_OTP: stored_OTP, otp: otp })
     return stored_OTP == otp;
   }
 

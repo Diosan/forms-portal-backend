@@ -163,24 +163,59 @@ exports.login = async (req, res) => {
 
 exports.verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
-  try {
-    const storedOtp = await getAsync(`otp:${email}`);
-    if (otp === storedOtp) {
-      // OTP is correct, generate JWT
-      const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-      // Clear OTP from Redis
-      await setRedisAsync(`otp:${email}`, '', 'EX', 1);
-
-      return res.status(200).json({ token });
-    } else {
-      return res.status(401).send('OTP verification failed');
-    }
-  } catch (error) {
-    logger.error('OTP verification error:', error);
-    return res.status(500).send('Internal server error');
+  const totp = new TOTPGenerator();
+  let verified = await totp.verifyOTP(email, otp) 
+  if (verified) {
+    return res.status(200).json({
+      outcome: 'success'
+    })
+  } else {
+    return res.status(200).json({
+      outcome: 'error'
+    })
   }
-}
+} 
+
+// exports.verifyOtp = async (req, res) => {
+//   const { email, otp } = req.body;
+//   try {
+//     const storedOtp = await getAsync(`otp:${email}`);
+//     if (otp === storedOtp) {
+//       // OTP is correct, generate JWT
+//       const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+//       // Clear OTP from Redis
+//       await setRedisAsync(`otp:${email}`, '', 'EX', 1);
+
+//       // return res.status(200).json({ token });
+
+//       return res.status(200).json({
+//         outcome: 'success', 
+//         token: token
+//       })
+
+//     } else {
+
+//       // return res.status(401).send('OTP verification failed');
+
+//       return res.status(201).json({
+//         outcome: 'error',
+//         error: 'OTP verification failed. Try again' 
+//       });
+
+//     }
+//   } catch (error) {
+
+//     logger.error('OTP verification error:', error);
+
+//     // return res.status(500).send('Internal server error');
+//     return res.status(201).json({
+//       outcome: 'error',
+//       error: 'OTP verification failed. Try again' 
+//     });
+
+//   }
+// }
 
 
 exports.register = async (req, res) => {
