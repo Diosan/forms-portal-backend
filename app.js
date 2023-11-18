@@ -161,14 +161,14 @@ const indexPath  = path.resolve(__dirname, '..', 'public', 'index.html');
 
 
 app.get('/', async (req, res) => {
-  // expressListRoutes(app, {  });
-  const transporter = nodemailer.createTransport(mailConfig);
-  transporter.sendMail({
-    from: 'omm@link868.com',
-    to: 'dion.santana@gmail.com',
-    subject: 'hello world!',
-    text: 'hello world!'
-  });
+  expressListRoutes(app, {  });
+  // const transporter = nodemailer.createTransport(mailConfig);
+  // transporter.sendMail({
+  //   from: 'omm@link868.com',
+  //   to: 'dion.santana@gmail.com',
+  //   subject: 'hello world!',
+  //   text: 'hello world!'
+  // });
   res.json({message: 'JSSWF-API-TS'});
 })
 

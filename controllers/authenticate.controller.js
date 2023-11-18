@@ -118,7 +118,11 @@ exports.login = async (req, res) => {
   try {
     const user = await getUserByEmail(email);
     if (!user) {
-      return res.status(401).send('Authentication failed');
+      // return res.status(401).send('Authentication failed');
+      return res.status(201).json({
+        outcome: 'error', 
+        error: 'Sign in failed. Try again' 
+      });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -133,13 +137,24 @@ exports.login = async (req, res) => {
 
       
 
-      return res.status(200).send('OTP sent to email');
+      return res.status(200).json({
+        outcome: 'success', 
+        message: "Successfully logged in: OTP send to " + req.body.email,
+        email: req.body.email
+      })
+      // .send('OTP sent to email');
     } else {
-      return res.status(401).send('Authentication failed');
+      return res.status(201).json({
+        outcome: 'error', 
+        error: 'Sign in failed. Try again' 
+      });
     }
   } catch (error) {
     logger.error('Login error:', error);
-    return res.status(500).send('Internal server error');
+    return res.status(201).json({
+      outcome: 'error', 
+      error: 'Sign in failed. Try again' 
+    });
   }
 };
 
