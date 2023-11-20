@@ -144,6 +144,17 @@ const indexPath  = path.resolve(__dirname, '..', 'public', 'index.html');
   }));
 //----------------------------------------------------------------
 //----------------------------------------------------------------
+//MIDDLEWARE FOR PRINTING INCOMING REQUESTS
+
+    // Custom middleware to log incoming requests
+    function logRequests(req, res, next) {
+      console.log(`${new Date().toISOString()} - ${req.method} Request to ${req.url}`);
+      next(); // Move to the next middleware/route handler
+    }
+
+    // Apply the middleware to all incoming requests
+    app.use(logRequests);
+//----------------------------------------------------------------
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //ROUTES
