@@ -204,10 +204,10 @@ exports.create = async (req, res) => {
       email: req.body.email
     })
   } catch (error) {
-    console.log('Error Creating User In Sequelize')
+    console.log('Error Creating User In Sequelize', error)
     res.status(201).json({
       outcome: 'error', 
-      error: error.errors[0].message 
+      error: '' //error.errors[0].message 
     });
   }
 

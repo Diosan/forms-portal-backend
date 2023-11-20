@@ -167,7 +167,8 @@ exports.verifyOtp = async (req, res) => {
   let verified = await totp.verifyOTP(email, otp) 
   if (verified) {
     return res.status(200).json({
-      outcome: 'success'
+      outcome: 'success',
+      token: jwt.sign({ email: email }, 'keyboard cat 4 ever', { expiresIn: 129600 })
     })
   } else {
     return res.status(200).json({

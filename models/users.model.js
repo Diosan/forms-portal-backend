@@ -1,12 +1,12 @@
 const {DataTypes} = require("sequelize");
 module.exports = (sequelize, Sequelize) => {
     const User = sequelize.define("users", {
-      id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-        unique: true
-      },
+      // id: {
+      //   type: DataTypes.UUID,
+      //   defaultValue: DataTypes.UUIDV4,
+      //   primaryKey: true,
+      //   unique: true
+      // },
       agencyMemberUniqueId: {           //your unique id from your agency. eg. Regimental number
         type: Sequelize.STRING,
         allowNull: false

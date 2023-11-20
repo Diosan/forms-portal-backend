@@ -157,6 +157,7 @@ const indexPath  = path.resolve(__dirname, '..', 'public', 'index.html');
     require("./routes/permissions.routes")(app);
     require("./routes/roles.routes")(app);
     require("./routes/users.routes")(app);
+    require("./routes/submissions.routes")(app);
     // ++++++++++++++++++++++++++++++++++++++++++
 
 
