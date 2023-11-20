@@ -18,7 +18,7 @@ const TOTPGenerator = require('./utilities/TOTPGenerator.class');
 const nodemailer = require('nodemailer');
 const mailConfig = require('./config/mail.config');
 
-
+//JSSWF
 //USED TO GENERATE A NEW SECRET (uncomment when needed)
 // const crypto = require('crypto');
 // const secret = crypto.randomBytes(1024).toString('hex');
