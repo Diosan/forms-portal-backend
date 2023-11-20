@@ -11,6 +11,7 @@ const nodemailer = require('nodemailer');
 const moment = require('moment');
 const {format} = require('date-fns')
 const { v4: uuidv4 } = require('uuid');
+const TOTPGenerator = require('../utilities/TOTPGenerator.class');
 
 
 
@@ -181,38 +182,75 @@ exports.authenticateUser = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const form = new formidable.IncomingForm();
-    form.parse(req, async (err, fields, files) => {
-        if (err) {
-            res.status(500).json({ message: err });
-            return;
-        }
-        console.log(fields)
-        const { firebase_id, password, username, fullname, first_name, last_name, email, address, phone, role } = fields;
-        if (!firebase_id || !password || !username || !fullname) {
-            res.status(400).json({ message: "Please provide firebase_id, password, username, fullname" });
-            return;
-        }
 
-        try {
-            const user = await User.create({
-                firebase_id,
-                password: bcrypt.hashSync(password, 8),
-                username,
-                fullname,
-                first_name,
-                last_name,
-                email,
-                address,
-                phone,
-                role,
-            });
-            res.status(201).json({ message: "User created successfully", user });
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
+  console.log(req.body)
+
+  let new_user = {
+      agencyMemberUniqueId: req.body.reg_number,
+      agencyName: req.body.agency,
+      password: req.body.password,
+      username: req.body.email,
+      firstName: req.body.first_name,
+      lastName: req.body.last_name,
+      email: req.body.email
+  }
+
+  console.log(new_user)
+
+  try {
+    const user = await User.create(new_user)
+    const totp = new TOTPGenerator()
+    totp.generateOTP(req.body.email)
+    console.log('New User Created In Sequelize')
+    res.status(201).json({
+      outcome: 'success', 
+      message: "User created successfully" 
+    })
+  } catch (error) {
+    console.log('Error Creating User In Sequelize')
+    res.status(201).json({
+      outcome: 'error', 
+      error: error.errors[0].message 
     });
-};
+  }
+
+
+  
+}
+
+// exports.create = async (req, res) => {
+//   const form = new formidable.IncomingForm();
+//     form.parse(req, async (err, fields, files) => {
+//         if (err) {
+//             res.status(500).json({ message: err });
+//             return;
+//         }
+//         console.log(fields)
+//         const { firebase_id, password, username, fullname, first_name, last_name, email, address, phone, role } = fields;
+//         if (!firebase_id || !password || !username || !fullname) {
+//             res.status(400).json({ message: "Please provide firebase_id, password, username, fullname" });
+//             return;
+//         }
+
+//         try {
+//             const user = await User.create({
+//                 firebase_id,
+//                 password: bcrypt.hashSync(password, 8),
+//                 username,
+//                 fullname,
+//                 first_name,
+//                 last_name,
+//                 email,
+//                 address,
+//                 phone,
+//                 role,
+//             });
+//             res.status(201).json({ message: "User created successfully", user });
+//         } catch (error) {
+//             res.status(500).json({ message: error.message });
+//         }
+//     });
+// };
 
 async function getPass(newPass, id){
   //check to see if the password has been changed
