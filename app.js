@@ -12,8 +12,14 @@ const AdminBroSequelize = require('@admin-bro/sequelize')
 const db = require("./models/index");
 const mysql = require("mysql2");
 const winston = require('winston');
+const fs = require('fs');
+const expressListRoutes = require('express-list-routes');
+const TOTPGenerator = require('./utilities/TOTPGenerator.class');
+const nodemailer = require('nodemailer');
+const mailConfig = require('./config/mail.config');
 
-//USED TO GENERATE A NEW SECRET
+//JSSWF
+//USED TO GENERATE A NEW SECRET (uncomment when needed)
 // const crypto = require('crypto');
 // const secret = crypto.randomBytes(1024).toString('hex');
 // console.log(secret); 
@@ -21,36 +27,8 @@ const winston = require('winston');
 
 
 
-
-
-//________________________________________________
-// REDIS
-//------------------------------------------------
-  const redis = require('redis');
-  const redisAdapter = require('socket.io-redis');
-  const emitter = require('socket.io-emitter')({ host: 'localhost', port: 6379 });
-  const redisURL = 'redis://localhost:6379';
-  const client = redis.createClient({
-    socket: {
-      host: 'localhost',
-      port: '6379'
-    }
-  });
-  client.on('error', err => {
-    console.log('Error conneting to Redis ' + err);
-  });
-
-  const userChannelPrefix = 'user:';
-  const userChannel = (userId) => userChannelPrefix + userId;
-
-  (async () => {
-    await client.connect();
-  })();
-  exports.redisClient = client;
-  exports.userChannel = userChannel;
-
-
-
+//BEGIN----------------------------------------------------------------
+// ********************************************************************
 
 
 //________________________________________________
@@ -78,6 +56,9 @@ const winston = require('winston');
 // APP - HTTP
 //------------------------------------------------
   const app = express();
+  app.use(bodyParser.json())
+  app.use(bodyParser.urlencoded({ extended: false }))
+
   // Use Morgan for logging HTTP requests
   // with the 'combined' predefined format, 
   // or customize it as needed
@@ -104,7 +85,6 @@ const winston = require('winston');
     }
   });
   // Use redis adapter
-  io.adapter(redisAdapter(redisURL));
 
   app.use(bodyParser.json({ limit: '5mb' }))
   app.use(bodyParser.urlencoded({ limit: '5mb', extended: true }));
@@ -116,7 +96,9 @@ const winston = require('winston');
     'http://jsswf.sytes.net', 'https://jsswf.sytes.net', 
     'http://localhost:3000', 'https://localhost:3000',
     'http://localhost:5173', 'https://localhost:5173',
-    'http://localhost:8080', 'https://localhost:8080' ];
+    'http://localhost:8080', 'https://localhost:8080',
+    'http://192.168.100.149:5173'
+   ];
   app.use(cors({
     origin: function (origin, callback) {
       // bypass the requests with no origin (like curl requests, mobile apps, etc )
@@ -158,6 +140,7 @@ const indexPath  = path.resolve(__dirname, '..', 'public', 'index.html');
 //CORS
   app.use(cors({
     origin: 'http://localhost:5173'
+    // origin: 'http://jsswf.sytes.net:5173'
   }));
 //----------------------------------------------------------------
 //----------------------------------------------------------------
@@ -176,23 +159,56 @@ const indexPath  = path.resolve(__dirname, '..', 'public', 'index.html');
     require("./routes/permissions.routes")(app);
     require("./routes/roles.routes")(app);
     require("./routes/users.routes")(app);
+    require("./routes/submissions.routes")(app);
     // ++++++++++++++++++++++++++++++++++++++++++
+
+
+app.get('/', async (req, res) => {
+  expressListRoutes(app, {  });
+  // const transporter = nodemailer.createTransport(mailConfig);
+  // transporter.sendMail({
+  //   from: 'omm@link868.com',
+  //   to: 'dion.santana@gmail.com',
+  //   subject: 'hello world!',
+  //   text: 'hello world!'
+  // });
+  res.json({message: 'JSSWF-API-TS'});
+})
+
+
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //ROUTE TO FORM SCHEMAS
   app.get('/schema/:schemaId', async (req, res) => {
-    try {
-      await sequelize.authenticate();
-      console.log('Connection has been established successfully.');
-    } catch (error) {
-      console.error('Unable to connect to the database:', error);
-    }
+    // try {
+    //   await Sequelize.authenticate();
+    //   console.log('Connection has been established successfully.');
+    // } catch (error) {
+    //   console.error('Unable to connect to the database:', error);
+    // }
     let schemaId = req.params.schemaId
     console.log('schemaId: ' + schemaId)
-    const form_schema_file = await fs.readFile('./forms/' + schemaId + '.json');
+    const form_schema_file = await fs.readFileSync('./forms/' + schemaId + '.json');
     const form_schema = JSON.parse(form_schema_file);
     res.json(form_schema);
   });
+
+
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//ROUTE TO FORM SCHEMAS
+  app.post('/register', async (req, res) => {
+    let data = req.body;    
+    let new_user = await User.create({
+      username: 'janedoe',
+      birthday: new Date(1980, 6, 20),
+    });
+    
+    const users = await User.findAll();    
+    res.send(data);
+
+  });
+
 //----------------------------------------------------------------
 //----------------------------------------------------------------
     // Current servier time route, used to sync app with server
@@ -202,7 +218,7 @@ const indexPath  = path.resolve(__dirname, '..', 'public', 'index.html');
     });
     //------------------------------------------------
 
-    // here all other orutes go to react
+    // here all other routes go to react
     app.use(function(req, res, next) {
       console.log("Route not found, sending 404");
       res.status(404).send('Sorry, can\'t find that');

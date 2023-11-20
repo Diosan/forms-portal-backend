@@ -14,7 +14,7 @@ const moment = require('moment');
 const {format} = require('date-fns')
 const { v4: uuidv4 } = require('uuid');
 const { promisify } = require('util');
-const { redisClient } = require('../app');
+const { redisClient, redisURL, userChannel, redisAdapter, emitter } = require('../redis/redisConfig');
 const TOTPGenerator = require('../utilities/TOTPGenerator.class');
 
 
@@ -118,7 +118,12 @@ exports.login = async (req, res) => {
   try {
     const user = await getUserByEmail(email);
     if (!user) {
-      return res.status(401).send('Authentication failed');
+      // return res.status(401).send('Authentication failed');
+      return res.status(201).json({
+        outcome: 'error',
+        // error: 'User does not exist. Try again' 
+        error: 'Sign in failed. Try again' 
+      });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -131,39 +136,87 @@ exports.login = async (req, res) => {
       .then(() => console.log('OTP sent to user email.'))
       .catch(error => console.error('Error generating or sending OTP:', error));
 
-      
+      return res.status(200).json({
+        outcome: 'success', 
+        message: "Successfully logged in: OTP send to " + req.body.email,
+        email: req.body.email
+      })
+      // .send('OTP sent to email');
 
-      return res.status(200).send('OTP sent to email');
     } else {
-      return res.status(401).send('Authentication failed');
+      // console.log('Password does not match');
+      return res.status(201).json({
+        outcome: 'error',
+        // error: 'Email "' + email + '" & Password "' + password + '" does not match. Try again'
+        error: 'Sign in failed. Try again' 
+      });
     }
   } catch (error) {
     logger.error('Login error:', error);
-    return res.status(500).send('Internal server error');
+    return res.status(201).json({
+      outcome: 'error', 
+      error: 'Sign in failed. Try again' 
+    });
   }
 };
 
 
 exports.verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
-  try {
-    const storedOtp = await getAsync(`otp:${email}`);
-    if (otp === storedOtp) {
-      // OTP is correct, generate JWT
-      const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-      // Clear OTP from Redis
-      await setRedisAsync(`otp:${email}`, '', 'EX', 1);
-
-      return res.status(200).json({ token });
-    } else {
-      return res.status(401).send('OTP verification failed');
-    }
-  } catch (error) {
-    logger.error('OTP verification error:', error);
-    return res.status(500).send('Internal server error');
+  const totp = new TOTPGenerator();
+  let verified = await totp.verifyOTP(email, otp) 
+  if (verified) {
+    return res.status(200).json({
+      outcome: 'success',
+      token: jwt.sign({ email: email }, 'keyboard cat 4 ever', { expiresIn: 129600 })
+    })
+  } else {
+    return res.status(200).json({
+      outcome: 'error'
+    })
   }
-}
+} 
+
+// exports.verifyOtp = async (req, res) => {
+//   const { email, otp } = req.body;
+//   try {
+//     const storedOtp = await getAsync(`otp:${email}`);
+//     if (otp === storedOtp) {
+//       // OTP is correct, generate JWT
+//       const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+//       // Clear OTP from Redis
+//       await setRedisAsync(`otp:${email}`, '', 'EX', 1);
+
+//       // return res.status(200).json({ token });
+
+//       return res.status(200).json({
+//         outcome: 'success', 
+//         token: token
+//       })
+
+//     } else {
+
+//       // return res.status(401).send('OTP verification failed');
+
+//       return res.status(201).json({
+//         outcome: 'error',
+//         error: 'OTP verification failed. Try again' 
+//       });
+
+//     }
+//   } catch (error) {
+
+//     logger.error('OTP verification error:', error);
+
+//     // return res.status(500).send('Internal server error');
+//     return res.status(201).json({
+//       outcome: 'error',
+//       error: 'OTP verification failed. Try again' 
+//     });
+
+//   }
+// }
 
 
 exports.register = async (req, res) => {

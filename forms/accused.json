@@ -1,0 +1,31 @@
+{
+    "schema": {
+        "title": "Accused & Charges",
+        "description": "Persons being charged and charges being laid",
+        "type": "object",
+        "required": [
+          "firstName",
+          "lastName",
+          "address"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "lastName": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "address": {
+            "type": "string",
+            "title": "Address"
+          }
+        }
+    },
+    "UI": {
+        "address": {
+            "ui:widget": "textarea"
+        }
+    }
+}

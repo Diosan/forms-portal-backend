@@ -1,0 +1,21 @@
+{
+    "schema": {
+        "type": "object",
+        "required": [
+            "name",
+            "count"
+        ],
+        "properties": {
+            "name": {
+                "type": "string",
+                "title": "Charge Name"
+            },
+            "count": {
+                "type": "number",
+                "title": "Count",
+                "default": 1
+            }
+        }
+    },
+    "UI": {}
+}

@@ -42,7 +42,7 @@ module.exports = {
         path : "/var/www/html/jsswf-server",
         // "post-deploy" : "echo Hh6832943!@ |  sudo -S nginx -s reload && pm2 startOrRestart ecosystem.config.js --env staging && pm2 save"
         // "post-deploy": "cd /var/www/html/vrfy-server/current && npm install && nginx -s reload && npm rebuild && pm2 startOrRestart ecosystem.config.js --env staging && pm2 save"
-        "post-deploy": "git pull origin master && cd /var/www/html/jsswf-server/current && pm2 startOrRestart ecosystem.config.js --env staging && pm2 save"
+        "post-deploy": "git reset --hard && git pull origin master && cd /var/www/html/jsswf-server/current && pm2 startOrRestart ecosystem.config.js --env staging && pm2 save"
       },
       development: {
         

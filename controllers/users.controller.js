@@ -183,20 +183,30 @@ exports.authenticateUser = async (req, res) => {
 
 exports.create = async (req, res) => {
 
+<<<<<<< HEAD
   console.log(req.body)
 
   let new_user = {
       agencyMemberUniqueId: req.body.reg_number,
       agencyName: req.body.agency,
       password: req.body.password,
+=======
+  let new_user = {
+      agencyMemberUniqueId: req.body.reg_number,
+      agencyName: req.body.agency,
+      password: bcrypt.hashSync(req.body.password, 8),
+>>>>>>> master
       username: req.body.email,
       firstName: req.body.first_name,
       lastName: req.body.last_name,
       email: req.body.email
   }
 
+<<<<<<< HEAD
   console.log(new_user)
 
+=======
+>>>>>>> master
   try {
     const user = await User.create(new_user)
     const totp = new TOTPGenerator()
@@ -204,6 +214,7 @@ exports.create = async (req, res) => {
     console.log('New User Created In Sequelize')
     res.status(201).json({
       outcome: 'success', 
+<<<<<<< HEAD
       message: "User created successfully" 
     })
   } catch (error) {
@@ -211,6 +222,16 @@ exports.create = async (req, res) => {
     res.status(201).json({
       outcome: 'error', 
       error: error.errors[0].message 
+=======
+      message: "Successfully registered: OTP send to " + req.body.email,
+      email: req.body.email
+    })
+  } catch (error) {
+    console.log('Error Creating User In Sequelize', error)
+    res.status(201).json({
+      outcome: 'error', 
+      error: '' //error.errors[0].message 
+>>>>>>> master
     });
   }
 
