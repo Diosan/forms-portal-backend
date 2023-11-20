@@ -96,7 +96,9 @@ const mailConfig = require('./config/mail.config');
     'http://jsswf.sytes.net', 'https://jsswf.sytes.net', 
     'http://localhost:3000', 'https://localhost:3000',
     'http://localhost:5173', 'https://localhost:5173',
-    'http://localhost:8080', 'https://localhost:8080' ];
+    'http://localhost:8080', 'https://localhost:8080',
+    'http://192.168.100.149:5173'
+   ];
   app.use(cors({
     origin: function (origin, callback) {
       // bypass the requests with no origin (like curl requests, mobile apps, etc )

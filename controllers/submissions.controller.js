@@ -1,5 +1,6 @@
 const db = require("../models/index");
-const User = db.users;
+const Submission = db.submission;
+const User = db.users; 
 const PasswordResetToken = db.password_reset_token;
 const Op = db.Sequelize.Op;
 const jwt = require('jsonwebtoken');
@@ -14,83 +15,25 @@ const { v4: uuidv4 } = require('uuid');
 const TOTPGenerator = require('../utilities/TOTPGenerator.class');
 
 
-
-//**************** */
 exports.findAll = (req, res) => {
-    var sortObject = {};
-    var filterObject = {};
-    var stype = req.query.sort_field
-    var sdir = req.query.sort_order
-    sortObject[stype] = sdir;
-    filterObject = req.query.filter;
-    var page = req.query.page
-    var filter = req.query.filter ? req.query.filter : ""
-    var limit = req.query.perPage
-    var user_role = req.query.user_role ? req.query.user_role : ""
-    console.log("+++++++++++++++++++++++++++");
-    console.log(req.query)
-    console.log("+++++++++++++++++++++++++++");
-    var myFilter = ""
-    if(req.query.q != "")
-    {
-      myFilter = req.query.q;
-    }
 
-    // let where = {
-    //   role:{
-    //     [Op.ne]:5
-    //     }
-    //   }
-
-    // if(user_role == 5){
-    //   where = {
-    //     role:{
-    //       [Op.gt]:0
-    //       }
-    //     }
-    // }
-
-
-User.findAndCountAll(
-  // {
-  //   where: where,
-  // }
-)
+    Submission.findAndCountAll()
     .then(data => {
-      let x = data.rows.length;
-      //console.log(x); 
-      User.findAndCountAll(
-      //   {
-      //     offset: (page - 1) * limit,
-      //     limit: limit * 1,
-      //     order: [
-      //       [stype, sdir],
-      //     ],
-      //     where: where
-      // }
-      )
-      .then(json => {
-          let res_header = {"content-range": "posts 0-"+limit+"/"+x}
-          console.log(">>>>>>")
-          res.header(res_header);
-          res.send(json.rows);
-        })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while retrieving Dcouments."
+        res.status(201).json({
+            outcome: 'success',
+            submissions: data
         });
-      });
     })
+    .catch(error => {
+        res.status(201).json({
+            outcome: 'error', 
+            error: error.errors[0].message 
+          });
+    });
 
+}
 
-
-
-
-
-
-
-};
+//  
 
 exports.findOne = (req, res) => {
   const id = req.params.id;
@@ -183,28 +126,31 @@ exports.authenticateUser = async (req, res) => {
 
 exports.create = async (req, res) => {
 
-  let new_user = {
-      agencyMemberUniqueId: req.body.reg_number,
-      agencyName: req.body.agency,
-      password: bcrypt.hashSync(req.body.password, 8),
-      username: req.body.email,
-      firstName: req.body.first_name,
-      lastName: req.body.last_name,
-      email: req.body.email
+//   let new_user = {
+//       agencyMemberUniqueId: req.body.reg_number,
+//       agencyName: req.body.agency,
+//       password: bcrypt.hashSync(req.body.password, 8),
+//       username: req.body.email,
+//       firstName: req.body.first_name,
+//       lastName: req.body.last_name,
+//       email: req.body.email
+//   }
+
+  let new_submission = {
+    description: req.body.title,
+    userId: 4
   }
 
   try {
-    const user = await User.create(new_user)
-    const totp = new TOTPGenerator()
-    totp.generateOTP(req.body.email)
-    console.log('New User Created In Sequelize')
+    const submission = await Submission.create(new_submission)
+    console.log('New Submission Created In Sequelize', submission)
     res.status(201).json({
       outcome: 'success', 
-      message: "Successfully registered: OTP send to " + req.body.email,
-      email: req.body.email
+      //   message: "Successfully registered: OTP send to " + req.body.email,
+      submission_id: submission.dataValues.id
     })
   } catch (error) {
-    console.log('Error Creating User In Sequelize')
+    console.log('Error Creating Submission In Sequelize', error)
     res.status(201).json({
       outcome: 'error', 
       error: error.errors[0].message 
