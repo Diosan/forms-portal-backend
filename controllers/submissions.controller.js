@@ -152,7 +152,7 @@ exports.saveComplainant = async (req, res) => {
             from: 'JSSWF <omm@link868.com>',
             to: req.body.email,
             subject: 'Complaint with Oath',
-            text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/` //${s_id}`
+            text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/${s_id}`
         });
 
         res.status(201).json({
