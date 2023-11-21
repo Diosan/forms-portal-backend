@@ -1,5 +1,6 @@
 const db = require("../models/index");
 const Submission = db.submission;
+const Complainant = db.complainant;
 const User = db.users; 
 const PasswordResetToken = db.password_reset_token;
 const Op = db.Sequelize.Op;
@@ -19,6 +20,7 @@ exports.findAll = (req, res) => {
 
     Submission.findAndCountAll()
     .then(data => {
+        console.log('Submissions Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
         res.status(201).json({
             outcome: 'success',
             submissions: data
@@ -124,6 +126,42 @@ exports.authenticateUser = async (req, res) => {
 
 };
 
+exports.saveComplainant = async (req, res) => {
+
+    let new_complainant = {
+        agency: "TTPS",
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        regNum: req.body.regNum,
+        submissionId: req.body.submissionId
+    }
+
+    console.log('New Complainant: ', new_complainant);
+
+    try {
+        const complainant = await Complainant.create(new_complainant)
+        console.log('New Complainant Created In Sequelize', complainant)
+        res.status(201).json({
+          outcome: 'success', 
+          //   message: "Successfully registered: OTP send to " + req.body.email,
+          
+        })
+    } catch (error) {
+    console.log('Error Creating Complainant In Sequelize', error)
+    res.status(201).json({
+        outcome: 'error', 
+        error: error.errors[0].message 
+    });
+    }
+    
+
+}
+
+exports.getComplainant = async (req, res) => {
+
+}
+
 exports.create = async (req, res) => {
 
 //   let new_user = {
@@ -143,11 +181,21 @@ exports.create = async (req, res) => {
 
   try {
     const submission = await Submission.create(new_submission)
-    console.log('New Submission Created In Sequelize', submission)
+
+    let last_id = 0;
+
+    await Submission.findAndCountAll()
+    .then(data => {
+        last_id = data.rows[data.rows.length - 1].dataValues.id
+        // console.log('Sucessfully fetched all submissions. Last ID is: ', data.rows[data.rows.length - 1].dataValues.id);
+        console.log('Sucessfully fetched all submissions. Last ID is: ', last_id);
+    });
+
+    console.log('New Submission Created In Sequelize with ID: ', last_id)
     res.status(201).json({
       outcome: 'success', 
       //   message: "Successfully registered: OTP send to " + req.body.email,
-      submission_id: submission.dataValues.id
+      submission_id: last_id
     })
   } catch (error) {
     console.log('Error Creating Submission In Sequelize', error)

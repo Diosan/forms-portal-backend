@@ -10,6 +10,16 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     min: dbConfig.pool.min,
     acquire: dbConfig.pool.acquire,
     idle: dbConfig.pool.idle
+  },
+  hooks: {
+    beforeCreate: ((attributes) => {
+      if (attributes
+        && attributes.dataValues
+        && attributes.dataValues.hasOwnProperty('id')
+      ) {
+        delete attributes.dataValues.id
+      }
+    })
   }
 });
 
@@ -19,6 +29,6 @@ db.sequelize = sequelize;
 
 db.users = require("./users.model.js")(sequelize, Sequelize);
 db.submission = require("./submissions.model.js")(sequelize, Sequelize);
-
+db.complainant = require("./complainants.model.js")(sequelize, Sequelize);
 
 module.exports = db; 

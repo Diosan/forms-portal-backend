@@ -4,7 +4,19 @@ const sequelize = new Sequelize(
     'jsswf_admin',
     'root',
     'piccolo',
-    {dialect: 'mysql'}
+    {dialect: 'mysql',
+      hooks: {
+        beforeCreate: ((attributes) => {
+          if (attributes
+            && attributes.dataValues
+            && attributes.dataValues.hasOwnProperty('id')
+          ) {
+            delete attributes.dataValues.id
+          }
+        })
+      }
+    }
+
 );
 
 const Submission = sequelize.define('submissions',

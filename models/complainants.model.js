@@ -1,6 +1,6 @@
 const {DataTypes} = require("sequelize");
 module.exports = (sequelize, Sequelize) => {
-    const Complainant = sequelize.define("submissions", {
+    const Complainant = sequelize.define("complainants", {
     //   id: {
     //     type: DataTypes.UUID,
     //     defaultValue: DataTypes.UUIDV4,
@@ -12,7 +12,11 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true,
             unique: true
         },
-            lastName: {
+        firstName: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        lastName: {
             type: Sequelize.DataTypes.STRING,
             allowNull: false
         },

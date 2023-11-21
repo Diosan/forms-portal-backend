@@ -24,6 +24,8 @@ module.exports = app => {
     router.post("/password/resetPasswordFromEmail", submissions.resetPasswordFromEmail);
     // Delete a user
     router.delete("/:id", submissions.delete);
+
+    router.post('/saveComplainant', submissions.saveComplainant);
   
   
    
