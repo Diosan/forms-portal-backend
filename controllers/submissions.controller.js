@@ -14,7 +14,7 @@ const moment = require('moment');
 const {format} = require('date-fns')
 const { v4: uuidv4 } = require('uuid');
 const TOTPGenerator = require('../utilities/TOTPGenerator.class');
-
+// const nodemailer = require('nodemailer');
 
 exports.findAll = (req, res) => {
 
@@ -128,6 +128,8 @@ exports.authenticateUser = async (req, res) => {
 
 exports.saveComplainant = async (req, res) => {
 
+    let transporter = nodemailer.createTransport(mailConfig);
+
     let new_complainant = {
         agency: "TTPS",
         firstName: req.body.firstName,
@@ -142,6 +144,16 @@ exports.saveComplainant = async (req, res) => {
     try {
         const complainant = await Complainant.create(new_complainant)
         console.log('New Complainant Created In Sequelize', complainant)
+
+        let s_id = req.body.submissionId
+
+        await transporter.sendMail({
+            from: 'JSSWF <omm@link868.com>',
+            to: req.body.email,
+            subject: 'Complaint with Oath',
+            text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/` //${s_id}`
+        });
+
         res.status(201).json({
           outcome: 'success', 
           //   message: "Successfully registered: OTP send to " + req.body.email,
