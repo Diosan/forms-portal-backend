@@ -12,9 +12,42 @@ const Submission = sequelize.define('submissions',
         description: {
             type: Sequelize.DataTypes.STRING,
             allowNull: false
+        },
+        status: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false,
+            defaultValue: 'started'
         }
     }
 );
+
+
+const Complainant = sequelize.define('complainants',
+    {
+        firstName: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        lastName: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        email: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        agency: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        regNum: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        }
+
+    }
+)
+
 
 const User = sequelize.define("users", {
     agencyMemberUniqueId: {           //your unique id from your agency. eg. Regimental number
@@ -86,6 +119,8 @@ const User = sequelize.define("users", {
 });
 
 Submission.belongsTo(User)
+
+Submission.hasOne(Complainant)
 
 sequelize.sync({alter: true})
 .then((data) => {
