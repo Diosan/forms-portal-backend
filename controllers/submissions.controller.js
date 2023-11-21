@@ -14,6 +14,7 @@ const moment = require('moment');
 const {format} = require('date-fns')
 const { v4: uuidv4 } = require('uuid');
 const TOTPGenerator = require('../utilities/TOTPGenerator.class');
+const mailConfig = require('../config/mail.config');
 // const nodemailer = require('nodemailer');
 
 exports.findAll = (req, res) => {
