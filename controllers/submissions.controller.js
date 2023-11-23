@@ -203,7 +203,32 @@ exports.saveComplainant = async (req, res) => {
 
 }
 
-exports.getComplainant = async (req, res) => {
+exports.updateTitle = async (req, res) => {
+
+  const id = req.params.id
+  const title = req.params.title
+  let submission = await Submission.findByPk(id)
+  submission = await submission.update({ description: title })
+  res.status(201).json({
+    status: 'success',
+    submission: submission
+  })
+
+}
+
+exports.updateComplainant = async (req, res) => {
+
+  const complainant = req.params
+  let complainants = await Complainant.findAll({
+    where: {
+      submissionId: complainant.submissionId
+    }
+  })
+  let updated_complainant = await complainants[0].update({ description: title })
+  res.status(200).json({
+    status: 'success',
+    complainant: updated_complainant
+  })
 
 }
 
