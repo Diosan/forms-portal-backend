@@ -10,16 +10,6 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     min: dbConfig.pool.min,
     acquire: dbConfig.pool.acquire,
     idle: dbConfig.pool.idle
-  },
-  hooks: {
-    beforeCreate: ((attributes) => {
-      if (attributes
-        && attributes.dataValues
-        && attributes.dataValues.hasOwnProperty('id')
-      ) {
-        delete attributes.dataValues.id
-      }
-    })
   }
 });
 
@@ -28,7 +18,16 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.users = require("./users.model.js")(sequelize, Sequelize);
-db.submission = require("./submissions.model.js")(sequelize, Sequelize);
-db.complainant = require("./complainants.model.js")(sequelize, Sequelize);
+db.submissions = require("./submissions.model.js")(sequelize, Sequelize);
+db.complainants = require("./complainants.model.js")(sequelize, Sequelize);
+
+// ---------------------
+// ASSOCIATIONS
+// Users ++++++++++
+db.submissions.belongsTo(db.users, { foreignKey: 'userId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+db.users.hasMany(db.submissions);
+// Submissions ++++++++++
+db.complainants.belongsTo(db.submissions, { foreignKey: 'submissionId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+db.submissions.hasOne(db.complainants)
 
 module.exports = db; 

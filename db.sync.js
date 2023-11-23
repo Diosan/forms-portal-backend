@@ -4,19 +4,7 @@ const sequelize = new Sequelize(
     'jsswf_admin',
     'root',
     'piccolo',
-    {dialect: 'mysql',
-      hooks: {
-        beforeCreate: ((attributes) => {
-          if (attributes
-            && attributes.dataValues
-            && attributes.dataValues.hasOwnProperty('id')
-          ) {
-            delete attributes.dataValues.id
-          }
-        })
-      }
-    }
-
+    {dialect: 'mysql' }
 );
 
 const Submission = sequelize.define('submissions',
@@ -130,9 +118,13 @@ const User = sequelize.define("users", {
     }
 });
 
-Submission.belongsTo(User)
+Submission.belongsTo(User);
 
-Submission.hasOne(Complainant)
+User.hasMany(Submission);
+
+Submission.hasOne(Complainant);
+
+Complainant.belongsTo(Submission);
 
 sequelize.sync({alter: true})
 .then((data) => {

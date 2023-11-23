@@ -34,5 +34,9 @@ module.exports = (sequelize, Sequelize) => {
         }
     });
 
+    Complainant.associate = function (models) {
+        Item.belongsTo(models.submission);
+    };
+
     return Complainant;
 };

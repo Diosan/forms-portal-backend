@@ -26,5 +26,11 @@ module.exports = (sequelize, Sequelize) => {
       }
     });
 
+    Submission.associate = function (models) {
+        Submission.hasOne(models.complainant, {
+          onDelete: "CASCADE",
+        });
+    };
+
     return Submission;
 };

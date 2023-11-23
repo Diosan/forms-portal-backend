@@ -1,6 +1,6 @@
 const db = require("../models/index");
-const Submission = db.submission;
-const Complainant = db.complainant;
+const Submission = db.submissions;
+const Complainant = db.complainants;
 const User = db.users; 
 const PasswordResetToken = db.password_reset_token;
 const Op = db.Sequelize.Op;
@@ -38,17 +38,43 @@ exports.findAll = (req, res) => {
 
 //  
 
-exports.findOne = (req, res) => {
+exports.findOne = async (req, res) => {
+
+
+  // .then(data => {
+  //   // console.log('Fetched Submission Record: ', data)      
+  // })
+  // .catch(err => {
+  //   // console.log('Error fetching Submission with Id : ' + id, err)
+  // });
+
+  // let complainants = await Complainant.findAll({
+  //   where: {
+  //     submissionId: id
+  //   }
+  // })
+  // .then(data => {        
+  //   console.log('Fetched Submission Record: ', data)
+  // });
+  // .catch(complaint_err => {
+  //     console.log('Error fetching Complainant records with submissionId : ' + id, err)
+  // });
+
   const id = req.params.id;
-  User.findByPk(id)
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error retrieving User with id=" + id
-      });
-    });
+
+  let submission = await Submission.findByPk(id)
+
+  let complainants = await Complainant.findAll({
+    where: {
+      submissionId: id
+    }
+  })
+
+  res.status(200).json({
+    submission: submission,
+    complainant: complainants[0]
+  })
+
 };
 
 exports.authenticateUser = async (req, res) => {
@@ -131,6 +157,8 @@ exports.saveComplainant = async (req, res) => {
 
     let transporter = nodemailer.createTransport(mailConfig);
 
+    submission = Submission.findByPk(req.body.submissionId);
+
     let new_complainant = {
         agency: "TTPS",
         firstName: req.body.firstName,
@@ -140,19 +168,23 @@ exports.saveComplainant = async (req, res) => {
         submissionId: req.body.submissionId
     }
 
+     
+
+    // let complainant_submission = Complainant.belongsTo(submission);
+
     console.log('New Complainant: ', new_complainant);
 
     try {
-        const complainant = await Complainant.create(new_complainant)
-        console.log('New Complainant Created In Sequelize', complainant)
+        const complainant = await Complainant.create(new_complainant, {});
+        console.log('New Complainant Created In Sequelize', complainant);
 
-        let s_id = req.body.submissionId
+        // await submission.addComplainant(complainant);
 
         await transporter.sendMail({
             from: 'JSSWF <omm@link868.com>',
             to: req.body.email,
             subject: 'Complaint with Oath',
-            text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/${s_id}`
+            text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/${req.body.submissionId}`
         });
 
         res.status(201).json({
