@@ -178,6 +178,8 @@ exports.saveComplainant = async (req, res) => {
         const complainant = await Complainant.create(new_complainant, {});
         console.log('New Complainant Created In Sequelize', complainant);
 
+        await  submission.update({status: 'complainant_saved'});
+
         // await submission.addComplainant(complainant);
 
         await transporter.sendMail({
