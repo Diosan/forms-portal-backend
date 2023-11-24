@@ -225,7 +225,7 @@ exports.updateComplainant = async (req, res) => {
       submissionId: complainant.submissionId
     }
   })
-  let updated_complainant = await complainants[0].update({ description: title })
+  let updated_complainant = await complainants[0].update(complainant)
   res.status(200).json({
     status: 'success',
     complainant: updated_complainant
