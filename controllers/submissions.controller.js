@@ -235,19 +235,23 @@ exports.updateComplainant = async (req, res) => {
 
 exports.create = async (req, res) => {
 
-//   let new_user = {
-//       agencyMemberUniqueId: req.body.reg_number,
-//       agencyName: req.body.agency,
-//       password: bcrypt.hashSync(req.body.password, 8),
-//       username: req.body.email,
-//       firstName: req.body.first_name,
-//       lastName: req.body.last_name,
-//       email: req.body.email
-//   }
+  //   let new_user = {
+  //       agencyMemberUniqueId: req.body.reg_number,
+  //       agencyName: req.body.agency,
+  //       password: bcrypt.hashSync(req.body.password, 8),
+  //       username: req.body.email,
+  //       firstName: req.body.first_name,
+  //       lastName: req.body.last_name,
+  //       email: req.body.email
+  //   }
+
+  let user = await User.findOne({
+    where: {email: req.body.email}
+  })
 
   let new_submission = {
     description: req.body.title,
-    userId: 4
+    userId: user.id
   }
 
   try {
