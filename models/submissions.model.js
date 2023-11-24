@@ -20,6 +20,10 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: false
       },
+      status: {           //your unique id from your agency. eg. Regimental number
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,

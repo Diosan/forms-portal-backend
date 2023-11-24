@@ -221,17 +221,21 @@ exports.updateTitle = async (req, res) => {
 
 exports.updateComplainant = async (req, res) => {
 
-  const complainant = req.body
-  let complainants = await Complainant.findAll({
+  const complainant = req.body;
+
+  console.log('\n\n Complainant passed to update is: ', complainant);
+
+  let returned_complainant = await Complainant.findOne({
     where: {
       submissionId: complainant.submissionId
     }
-  })
-  let updated_complainant = await complainants[0].update(complainant)
+  });
+  let updated_complainant = await returned_complainant.update(complainant);
+  
   res.status(200).json({
-    status: 'success',
+    outcome: 'success',
     complainant: updated_complainant
-  })
+  });
 
 }
 
