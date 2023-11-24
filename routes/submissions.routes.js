@@ -27,7 +27,7 @@ module.exports = app => {
 
     router.post('/saveComplainant', submissions.saveComplainant);
   
-  
+    router.post('/update_title', submissions.updateTitle);
    
     app.use('/api/submissions', router);
   };
