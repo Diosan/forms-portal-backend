@@ -28,6 +28,8 @@ module.exports = app => {
     router.post('/saveComplainant', submissions.saveComplainant);
   
     router.post('/update_title', submissions.updateTitle);
+
+    router.post('/update_complainant', submissions.updateComplainant);
    
     app.use('/api/submissions', router);
   };
