@@ -1,3 +1,5 @@
+
+
 const express = require('express');
 
 const dotenv = require('dotenv');
@@ -10,9 +12,7 @@ const db_conf = require('./config/db.config')
 const _= require("lodash");
 const { v4: uuid } = require("uuid");
 const { Sequelize, DataTypes } = require('sequelize');
-const AdminBro = require('admin-bro')
-const AdminBroExpress = require('@admin-bro/express')
-const AdminBroSequelize = require('@admin-bro/sequelize')
+
 const db = require("./models/index");
 const mysql = require("mysql2");
 const winston = require('winston');
@@ -131,82 +131,13 @@ const indexPath  = path.resolve(__dirname, '..', 'public', 'index.html');
 //----------------------------------------------------------------
 
 //ADMINBRO
-
   const ADMIN = {
     email: 'off_admin@link868.com',
     password: '12345678',
   };
 
-  
 
 
-  AdminBro.registerAdapter(AdminBroSequelize)
-
-
-
-  const locale = {
-    translations: {
-      labels: {
-        // change Heading for Login
-        loginWelcome: 'TTPS Admin Console',
-      },
-      messages: {
-        loginWelcome: 'Welcome',
-      },
-    },
-  };
-  //________________________________________________
-  const adminBro = new AdminBro({
-    // databases: [ db ],
-    dashboard: {
-      component: AdminBro.bundle('./my-dashboard-component.jsx')
-    },
-    resources: [ {
-        resource: db.users,
-        options: {
-          properties: {
-            createdAt: {
-              isVisible: { list: true, filter: true, show: true, edit: false }, 
-            },
-            username: {
-              isVisible: { list: true, filter: true, show: true, edit: false }, 
-            },
-            email: {
-              isVisible: { list: true, filter: true, show: true, edit: false }, 
-            },
-          },
-          actions: {
-            // edit: { isVisible: false },
-            delete: { isVisible: false },
-            // other action customizations
-          }
-        }
-    }],
-    rootPath: '/admin',
-    assets: {
-      styles: ['/admin-custom.css'], 
-    },
-    locale,
-    branding: {
-      companyName: AGENCY_NAME,
-      logo: '/logo.png', 
-      softwareBrothers: false, 
-    },
-    // 
-  })
-  // const router = AdminBroExpress.buildRouter(adminBro)
-
-  const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
-    authenticate: async (email, password) => {
-      if (ADMIN.email === email && ADMIN.password === password) {
-        return ADMIN;
-      }
-      return null;
-    },
-    cookiePassword: 'session-secret',
-  });
-
-  app.use(adminBro.options.rootPath, router)
 
   // app.use(bodyParser.json())
   // app.use(bodyParser.urlencoded({ extended: false }))
@@ -386,7 +317,11 @@ app.get('/', async (req, res) => {
     });
 //----------------------------------------------------------------
 // START ALL APPLICATIONS
+
+
   app.listen(ADMIN_PORT, () => console.log('AdminBro is under localhost:8080/admin'))
+
+
   app.listen(PORT, () => console.log('Judiciary of Trinidad and Tobago Web Forms Portal:3000!'))
 //----------------------------------------------------------------
 //----------------------------------------------------------------

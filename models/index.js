@@ -21,4 +21,4 @@ db.users = require("./users.model.js")(sequelize, Sequelize);
 db.submission = require("./submissions.model.js")(sequelize, Sequelize);
 
 
-module.exports = db; 
+module.exports = db ; 

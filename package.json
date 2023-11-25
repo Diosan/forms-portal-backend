@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "admin": "node admin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,8 +21,11 @@
   "dependencies": {
     "@admin-bro/express": "^3.1.0",
     "@admin-bro/sequelize": "^1.2.1",
+    "@adminjs/express": "^6.0.1",
+    "@adminjs/sequelize": "^4.0.0",
     "@reduxjs/toolkit": "^1.9.7",
     "admin-bro": "^4.0.1",
+    "adminjs": "^7.3.1",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
