@@ -215,6 +215,13 @@ exports.saveAccused = async (req, res) => {
   })
 }
 
+exports.accuseds = async (req, res) => {
+  let submission_id = req.body.submission_id
+  let returned_accuseds = Accused.findAll({
+    where: {submissionId: submission_id}
+  })
+}
+
 exports.updateTitle = async (req, res) => {
   const id = req.body.id
   const title = req.body.title

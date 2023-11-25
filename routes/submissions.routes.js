@@ -33,5 +33,7 @@ module.exports = app => {
 
     router.post('/update_complainant', submissions.updateComplainant);
    
+    router.post('/accuseds/:id', submissions.accuseds);
+
     app.use('/api/submissions', router);
   };
