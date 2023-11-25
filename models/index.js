@@ -20,6 +20,7 @@ db.sequelize = sequelize;
 db.users = require("./users.model.js")(sequelize, Sequelize);
 db.submissions = require("./submissions.model.js")(sequelize, Sequelize);
 db.complainants = require("./complainants.model.js")(sequelize, Sequelize);
+db.accuseds = require("./accuseds.model.js")(sequelize, Sequelize);
 
 // ---------------------
 // ASSOCIATIONS
