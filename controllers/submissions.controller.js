@@ -1,5 +1,6 @@
 const db = require("../models/index");
-const Submission = db.submission;
+const Submission = db.submissions;
+const Complainant = db.complainants;
 const User = db.users; 
 const PasswordResetToken = db.password_reset_token;
 const Op = db.Sequelize.Op;
@@ -13,12 +14,14 @@ const moment = require('moment');
 const {format} = require('date-fns')
 const { v4: uuidv4 } = require('uuid');
 const TOTPGenerator = require('../utilities/TOTPGenerator.class');
-
+const mailConfig = require('../config/mail.config');
+// const nodemailer = require('nodemailer');
 
 exports.findAll = (req, res) => {
 
     Submission.findAndCountAll()
     .then(data => {
+        console.log('Submissions Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
         res.status(201).json({
             outcome: 'success',
             submissions: data
@@ -35,17 +38,43 @@ exports.findAll = (req, res) => {
 
 //  
 
-exports.findOne = (req, res) => {
+exports.findOne = async (req, res) => {
+
+
+  // .then(data => {
+  //   // console.log('Fetched Submission Record: ', data)      
+  // })
+  // .catch(err => {
+  //   // console.log('Error fetching Submission with Id : ' + id, err)
+  // });
+
+  // let complainants = await Complainant.findAll({
+  //   where: {
+  //     submissionId: id
+  //   }
+  // })
+  // .then(data => {        
+  //   console.log('Fetched Submission Record: ', data)
+  // });
+  // .catch(complaint_err => {
+  //     console.log('Error fetching Complainant records with submissionId : ' + id, err)
+  // });
+
   const id = req.params.id;
-  User.findByPk(id)
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error retrieving User with id=" + id
-      });
-    });
+
+  let submission = await Submission.findByPk(id)
+
+  let complainants = await Complainant.findAll({
+    where: {
+      submissionId: id
+    }
+  })
+
+  res.status(200).json({
+    submission: submission,
+    complainant: complainants[0]
+  })
+
 };
 
 exports.authenticateUser = async (req, res) => {
@@ -124,30 +153,130 @@ exports.authenticateUser = async (req, res) => {
 
 };
 
+exports.saveComplainant = async (req, res) => {
+
+    let transporter = nodemailer.createTransport(mailConfig);
+
+    submission = Submission.findByPk(req.body.submissionId);
+
+    let new_complainant = {
+        agency: "TTPS",
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        regNum: req.body.regNum,
+        submissionId: req.body.submissionId
+    }
+
+     
+
+    // let complainant_submission = Complainant.belongsTo(submission);
+
+    console.log('New Complainant: ', new_complainant);
+
+    try {
+        const complainant = await Complainant.create(new_complainant, {});
+        console.log('New Complainant Created In Sequelize', complainant);
+
+        await  submission.update({status: 'complainant_saved'});
+
+        // await submission.addComplainant(complainant);
+
+        await transporter.sendMail({
+            from: 'JSSWF <omm@link868.com>',
+            to: req.body.email,
+            subject: 'Complaint with Oath',
+            text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/${req.body.submissionId}`
+        });
+
+        res.status(201).json({
+          outcome: 'success', 
+          //   message: "Successfully registered: OTP send to " + req.body.email,
+          
+        })
+    } catch (error) {
+    console.log('Error Creating Complainant In Sequelize', error)
+    res.status(201).json({
+        outcome: 'error', 
+        error: error.errors[0].message 
+    });
+    }
+    
+
+}
+
+exports.updateTitle = async (req, res) => {
+  const id = req.body.id
+  const title = req.body.title
+  console.log('updateTitle posted to for ID ' + id, req.body);
+  let submission = await Submission.findByPk(id)
+  updated_submission = await submission.update({ description: title })
+  // console.log('')
+  res.status(201).json({
+    outcome: 'success',
+    submission: updated_submission
+  })
+
+}
+
+exports.updateComplainant = async (req, res) => {
+
+  const complainant = req.body;
+
+  console.log('\n\n Complainant passed to update is: ', complainant);
+
+  let returned_complainant = await Complainant.findOne({
+    where: {
+      submissionId: complainant.submissionId
+    }
+  });
+  let updated_complainant = await returned_complainant.update(complainant);
+  
+  res.status(200).json({
+    outcome: 'success',
+    complainant: updated_complainant
+  });
+
+}
+
 exports.create = async (req, res) => {
 
-//   let new_user = {
-//       agencyMemberUniqueId: req.body.reg_number,
-//       agencyName: req.body.agency,
-//       password: bcrypt.hashSync(req.body.password, 8),
-//       username: req.body.email,
-//       firstName: req.body.first_name,
-//       lastName: req.body.last_name,
-//       email: req.body.email
-//   }
+  //   let new_user = {
+  //       agencyMemberUniqueId: req.body.reg_number,
+  //       agencyName: req.body.agency,
+  //       password: bcrypt.hashSync(req.body.password, 8),
+  //       username: req.body.email,
+  //       firstName: req.body.first_name,
+  //       lastName: req.body.last_name,
+  //       email: req.body.email
+  //   }
+
+  let user = await User.findOne({
+    where: {email: req.body.email}
+  })
 
   let new_submission = {
     description: req.body.title,
-    userId: 4
+    userId: user.id
   }
 
   try {
     const submission = await Submission.create(new_submission)
-    console.log('New Submission Created In Sequelize', submission)
+
+    let last_id = 0;
+
+    await Submission.findAndCountAll()
+    .then(data => {
+        last_id = data.rows[data.rows.length - 1].dataValues.id
+        // console.log('Sucessfully fetched all submissions. Last ID is: ', data.rows[data.rows.length - 1].dataValues.id);
+        console.log('Sucessfully fetched all submissions. Last ID is: ', last_id);
+    });
+
+    console.log('New Submission Created In Sequelize with ID: ', last_id)
     res.status(201).json({
       outcome: 'success', 
       //   message: "Successfully registered: OTP send to " + req.body.email,
-      submission_id: submission.dataValues.id
+      submission_id: last_id
     })
   } catch (error) {
     console.log('Error Creating Submission In Sequelize', error)

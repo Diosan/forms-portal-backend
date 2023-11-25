@@ -3,16 +3,24 @@ module.exports = (sequelize, Sequelize) => {
     const Submission = sequelize.define("submissions", {
     //   id: {
     //     type: DataTypes.UUID,
-    //     defaultValue: DataTypes.UUIDV4,
-    //     primaryKey: true,
-    //     unique: true
+    //     defaultValue: DataTypes.UUIDV4 ,
+    //     primaryKey: true
     //   },
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         unique: true
       },
+    //   id: {
+    //     type: DataTypes.UUID,
+    //     primaryKey: true,
+    //     unique: true
+    //   },
       description: {           //your unique id from your agency. eg. Regimental number
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      status: {           //your unique id from your agency. eg. Regimental number
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -21,6 +29,12 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
       }
     });
+
+    Submission.associate = function (models) {
+        Submission.hasOne(models.complainant, {
+          onDelete: "CASCADE",
+        });
+    };
 
     return Submission;
 };
