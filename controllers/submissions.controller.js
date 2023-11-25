@@ -1,7 +1,8 @@
 const db = require("../models/index");
 const Submission = db.submissions;
 const Complainant = db.complainants;
-const User = db.users; 
+const User = db.users;
+const Accused = db.accuseds; 
 const PasswordResetToken = db.password_reset_token;
 const Op = db.Sequelize.Op;
 const jwt = require('jsonwebtoken');
@@ -203,6 +204,15 @@ exports.saveComplainant = async (req, res) => {
     }
     
 
+}
+
+exports.saveAccused = async (req, res) => {
+  let accused = req.body;
+  let new_accused = Accused.create(accused);
+  res.status(201).json({
+    outcome: 'success', 
+    accused: new_accused
+  })
 }
 
 exports.updateTitle = async (req, res) => {

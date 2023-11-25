@@ -46,7 +46,25 @@ const Complainant = sequelize.define('complainants',
         }
 
     }
-)
+);
+
+const Accused = sequelize.define('accuseds',
+    {
+        firstName: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        lastName: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        address: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        }
+    }
+);
+
 
 
 const User = sequelize.define("users", {
@@ -125,6 +143,10 @@ User.hasMany(Submission);
 Submission.hasOne(Complainant);
 
 Complainant.belongsTo(Submission);
+
+Submission.hasMany(Accused);
+
+Accused.belongsTo(Submission);
 
 sequelize.sync({alter: true})
 .then((data) => {

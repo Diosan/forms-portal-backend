@@ -83,5 +83,11 @@ module.exports = (sequelize, Sequelize) => {
       tableName: 'users'
     });
 
+    User.associate = function (models) {
+      User.hasMany(models.submission, {
+        onDelete: "CASCADE",
+      });
+    };
+
     return User;
   };

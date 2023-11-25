@@ -26,6 +26,8 @@ module.exports = app => {
     router.delete("/:id", submissions.delete);
 
     router.post('/saveComplainant', submissions.saveComplainant);
+
+    router.post('/save_accused', submissions.saveAccused);
   
     router.post('/update_title', submissions.updateTitle);
 

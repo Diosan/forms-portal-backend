@@ -16,11 +16,11 @@ module.exports = (sequelize, Sequelize) => {
     //     primaryKey: true,
     //     unique: true
     //   },
-      description: {           //your unique id from your agency. eg. Regimental number
+      description: {           
         type: Sequelize.STRING,
         allowNull: false
       },
-      status: {           //your unique id from your agency. eg. Regimental number
+      status: { 
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -31,7 +31,11 @@ module.exports = (sequelize, Sequelize) => {
     });
 
     Submission.associate = function (models) {
+        Submission.belongsTo(models.user);
         Submission.hasOne(models.complainant, {
+          onDelete: "CASCADE",
+        });
+        Submission.hasMany(models.accused, {
           onDelete: "CASCADE",
         });
     };
