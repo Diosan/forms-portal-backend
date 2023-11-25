@@ -220,6 +220,10 @@ exports.accuseds = async (req, res) => {
   let returned_accuseds = Accused.findAll({
     where: {submissionId: submission_id}
   })
+  res.status(200).json({
+    outcome: 'success', 
+    accused: returned_accuseds
+  })
 }
 
 exports.updateTitle = async (req, res) => {
