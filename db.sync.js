@@ -156,7 +156,13 @@ const Charge = sequelize.define('charges',
             type: Sequelize.DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 1
+        },
+        particulars: {
+          type: Sequelize.DataTypes.STRING,
+          allowNull: true,
+          defaultValue: ''
         }
+
     }
 );
 

@@ -3,7 +3,8 @@
         "type": "object",
         "required": [
             "name",
-            "count"
+            "count",
+            "particulars"
         ],
         "properties": {
             "name": {
@@ -14,8 +15,16 @@
                 "type": "number",
                 "title": "Count",
                 "default": 1
+            },
+            "particulars": {
+                "type": "string",
+                "title": "Particulars"
             }
         }
     },
-    "UI": {}
+    "UI": {
+        "particulars": {
+            "ui:widget": "textarea"
+        }
+    }
 }

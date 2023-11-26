@@ -27,6 +27,10 @@ module.exports = (sequelize, Sequelize) => {
         counts: {
             type: Sequelize.DataTypes.INTEGER,
             allowNull: false
+        },
+        particulars: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
         }
     });
 
