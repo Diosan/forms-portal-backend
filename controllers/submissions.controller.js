@@ -216,13 +216,17 @@ exports.saveAccused = async (req, res) => {
 }
 
 exports.accuseds = async (req, res) => {
-  let submission_id = req.body.submission_id
-  let returned_accuseds = Accused.findAll({
-    where: {submissionId: submission_id}
-  })
+  const id = req.params.id;
+  // console.log('\n\n\n Passed id for submission in path: ', id);
+  let returned_accuseds = await Accused.findAll({
+    where: {submissionId: id}
+  });
+  // let returned_accuseds = await Accused.findAll();
+  // console.log('All accuseds returned: ', returned_accuseds);
   res.status(200).json({
-    outcome: 'success', 
-    accused: returned_accuseds
+    outcome: 'success',
+    // accused: returned_accuseds 
+    accuseds: returned_accuseds
   })
 }
 

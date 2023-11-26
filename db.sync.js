@@ -136,6 +136,30 @@ const User = sequelize.define("users", {
     }
 });
 
+const Charge = sequelize.define('charges',
+    {
+        name: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        ICCS: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false,
+            defaultValue: ''
+        },
+        UNODC: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false,
+            defaultValue: ''
+        },
+        counts: {
+            type: Sequelize.DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 1
+        }
+    }
+);
+
 Submission.belongsTo(User);
 
 User.hasMany(Submission);
@@ -147,6 +171,10 @@ Complainant.belongsTo(Submission);
 Submission.hasMany(Accused);
 
 Accused.belongsTo(Submission);
+
+Accused.hasMany(Charge);
+
+Charge.belongsTo(Accused);
 
 sequelize.sync({alter: true})
 .then((data) => {
