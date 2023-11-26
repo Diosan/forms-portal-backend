@@ -183,12 +183,12 @@ exports.saveComplainant = async (req, res) => {
 
         // await submission.addComplainant(complainant);
 
-        await transporter.sendMail({
-            from: 'JSSWF <omm@link868.com>',
-            to: req.body.email,
-            subject: 'Complaint with Oath',
-            text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/${req.body.submissionId}`
-        });
+        // await transporter.sendMail({
+        //     from: 'JSSWF <omm@link868.com>',
+        //     to: req.body.email,
+        //     subject: 'Complaint with Oath',
+        //     text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/${req.body.submissionId}`
+        // });
 
         res.status(201).json({
           outcome: 'success', 
