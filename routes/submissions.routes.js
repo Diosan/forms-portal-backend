@@ -35,5 +35,7 @@ module.exports = app => {
    
     router.get('/accuseds/:id', submissions.accuseds);
 
+    router.post('/request_signature', submissions.requestSignature);
+
     app.use('/api/submissions', router);
   };

@@ -665,4 +665,19 @@ exports.resetPasswordFromEmail = async (req, res) => {
   res.send('Your password has been reset successfully.');
 };
 
+exports.requestSignature = async (req, res) => {
+  let signatureRequest = req.body;
+  console.log('\n\n\n Request Body: ', req.body);
+  let transporter = nodemailer.createTransport(mailConfig);
+  await transporter.sendMail({
+    from: 'JSSWF <omm@link868.com>',
+    to: req.body.complainant_email,
+    subject: 'Complaint with Oath',
+    text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/${req.body.submission_id}`
+  });
+  res.status(201).json({
+    outcome: 'success'
+  })
+}
+
 
