@@ -1,0 +1,90 @@
+<!-- views/login.ejs -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login</title>
+    <link rel="icon" href="/fav.png" type="image/x-icon">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <!-- Add any additional head content here -->
+  </head>
+  <body>
+
+    
+    <section class="admin-main-section d-flex align-items-center justify-content-center vh-100">
+
+        <section class="form-container container text-left">
+            <div class="row" style="border:1px solid #eee">
+                <div class="col-md-6 text-center" style="padding: 30px 30px 30px 30px; background-color: #0050B2; color: white;">
+                    <div style="display:block; margin:0 auto 10px auto; 
+                        background-color:#fff; width:60px; height:60px; 
+                        padding:10px; border-radius:50%;  ">
+                        <img
+                        src="/cap.jpg"
+                        alt="TTPS"
+                        style="max-width:40px;"text-left
+                        />
+                    </div>
+                    <h3 style="font-weight:400">
+                        <span><strong>TTPS</strong></span>
+                    </h3>
+                    <h4 style="font-weight:400">
+                        Admin Console
+                    </h4>
+                    <div class="">
+                        Welcome
+                    </div>
+                    
+                </div>  
+                <div class="col-md-6" style="padding: 40px;">
+                    <form
+                    action="/ttps/admin/mfa"
+                    method="POST"
+                    class="swf-form"
+                    >
+                        
+                        <div class="">
+
+                            
+                                <% if (message) { %>
+                                    <p class="text-center" style="font-size:.8rem; line-height:1.2rem">
+                                        <%= message %>
+                                    </p>
+                                <% } else { %>
+                                    <p class="text-center" style="color:#ff0000; font-size:.8rem; line-height:1.2rem">
+                                        <%= error %>
+                                    </p>
+                                <% } %>
+                            <input
+                                name="otpCode"
+                                placeholder="OTP CODE"
+                                class="px-2 py-1 fs-3 stretched-text-input"
+                                maxlength="6"
+                                minlength="6"
+                                pattern="\d{6}
+                                />
+                        </div>
+                       
+                        <div class="">
+                            <button  class="mt-1 btn btn-primary">Confirm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </section>
+    </section>
+
+
+
+
+
+
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
+
+
+
+
+

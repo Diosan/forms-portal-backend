@@ -1,15 +1,14 @@
-const db = require("../models/index");
-const fs = require("fs");
-const formidable = require('formidable')
-const dbConn = require("../config/db.config")
-var mysql = require('mysql2');
-const AccessLog = db.accesslogs;
+import { db, AccessLogModel } from "../models/index.js";
+import fs from "fs";
+import formidable from 'formidable'
+import {dbConfig} from "../config/db.config.js"
+import mysql from 'mysql2'
 
 
 
 
 //**************** */
-// exports.findAll = (req, res) => {
+// export const findAll = (req, res) => {
 // AccessLog.findAndCountAll()
 //     .then(data => { 
 //       let x = data.rows.length;
@@ -36,7 +35,7 @@ const AccessLog = db.accesslogs;
 //     })
 // };
 
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
   var sortObject = {};
   var filterObject = {};
   var stype = req.query.sort_field
@@ -85,7 +84,7 @@ exports.findAll = (req, res) => {
 };
 
 
-exports.create = (req, res) => {
+export const create = (req, res) => {
     // Validate request
     //console.log("req: " + req);
     //return

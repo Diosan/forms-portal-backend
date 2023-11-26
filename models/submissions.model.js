@@ -1,5 +1,5 @@
-const {DataTypes} = require("sequelize");
-module.exports = (sequelize, Sequelize) => {
+import  {DataTypes} from "sequelize";
+export default sequelize => {
     const Submission = sequelize.define("submissions", {
     //   id: {
     //     type: DataTypes.UUID,
@@ -17,11 +17,11 @@ module.exports = (sequelize, Sequelize) => {
     //     unique: true
     //   },
       description: {           //your unique id from your agency. eg. Regimental number
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
       },
       status: {           //your unique id from your agency. eg. Regimental number
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
       },
       userId: {

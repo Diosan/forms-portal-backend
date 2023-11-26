@@ -1,12 +1,12 @@
-const db = require("../models/index");
-const Notification = db.notifications;
-const User = db.users;
-const fs = require('fs');
-const emitter = require('socket.io-emitter')({ host: 'localhost', port: 6379 });
-const { redisClient, userChannel } = require('../app');
-const io = require('socket.io-client');
+import db from "../models/index";
+import Notification = db.notifications;
+import User = db.users;
+import fs from 'fs';
+import emitter from 'socket.io-emitter')({ host: 'localhost', port: 6379 });
+import { redisClient, userChannel } from '../app');
+import io from 'socket.io-client');
 
-const socket = io.connect('http://localhost:4001');
+import socket = io.connect('http://localhost:4001');
 
 async function sendPrivateMessage(userId, privateMessage) {
   const channel = userChannel(userId);
@@ -17,7 +17,7 @@ async function sendPrivateMessage(userId, privateMessage) {
 }
 
 // Create a new notification
-exports.personal = async (req, res) => {
+export const personal = async (req, res) => {
   console.log("-------------- ",req.body)
   try {
     // Validate request
@@ -74,7 +74,7 @@ exports.personal = async (req, res) => {
 
 
 // Create a System Alert
-exports.createSystemAlert = (req, res) => {
+export const createSystemAlert = (req, res) => {
   // Validate request
   if (!req.body.content) {
     res.status(400).send({ message: "Message or users cannot be empty!" });
@@ -94,7 +94,7 @@ exports.createSystemAlert = (req, res) => {
 
 
 // Create a System Alert
-exports.createUserBroadcastNotification = (req, res) => {
+export const createUserBroadcastNotification = (req, res) => {
   // Validate request
   if (!req.body.content) {
     res.status(400).send({ message: "Message or users cannot be empty!" });
@@ -124,7 +124,7 @@ exports.createUserBroadcastNotification = (req, res) => {
 
 
 // Create a new notification
-exports.sendMany = (req, res) => {
+export const sendMany = (req, res) => {
   
 
 };
@@ -133,7 +133,7 @@ exports.sendMany = (req, res) => {
 
 
 // Retrieve all notifications for a user
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
   const userId = req.params.userId;
 
   Notification.findAll({ where: { userId: userId } })
@@ -149,7 +149,7 @@ exports.findAll = (req, res) => {
 };
 
 // Update all unread notifications for a user to "read"
-exports.updateAllUnread = (req, res) => {
+export const updateAllUnread = (req, res) => {
   const userId = req.params.userId;
 
   Notification.update({ read: true }, { where: { userId: userId, read: false } })
@@ -169,7 +169,7 @@ exports.updateAllUnread = (req, res) => {
 };
 
 // Delete all notifications for a user
-exports.deleteAll = (req, res) => {
+export const deleteAll = (req, res) => {
   const userId = req.params.userId;
 
   Notification.destroy({ where: { userId: userId } })

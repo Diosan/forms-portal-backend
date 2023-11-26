@@ -1,0 +1,18 @@
+{
+    "ComplaintNumber": "123456",
+    "DateOfComplaint": "2023-03-15",
+    "ComplainantsFullName": "John Doe",
+    "ComplainantsAddress": "123 Main St, Port of Spain",
+    "ComplainantsContactNumber": "+1-868-555-1234",
+    "DefendantsFullName": "Jane Smith",
+    "DefendantsAddress": "456 South Rd, San Fernando",
+    "DefendantsContactNumber": "+1-868-555-5678",
+    "NatureOfComplaint": "Complaint regarding noise and disturbance.",
+    "DateOfIncident": "2023-03-10",
+    "LocationOfIncident": "Independence Square, Port of Spain",
+    "Witnesses": "Witness 1: Adam Johnson\nWitness 2: Rachel Green",
+    "DetailsOfComplaint": "Detailed description of the incident, including times, actions, and any relevant information.",
+    "ComplainantsSignature": "SignatureImage.jpg",
+    "DateOfSignature": "2023-03-16"
+  }
+  

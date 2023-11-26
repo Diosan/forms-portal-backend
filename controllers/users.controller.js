@@ -16,7 +16,7 @@ const TOTPGenerator = require('../utilities/TOTPGenerator.class');
 
 
 //**************** */
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
     var sortObject = {};
     var filterObject = {};
     var stype = req.query.sort_field
@@ -92,7 +92,7 @@ User.findAndCountAll(
 
 };
 
-exports.findOne = (req, res) => {
+export const findOne = (req, res) => {
   const id = req.params.id;
   User.findByPk(id)
     .then(data => {
@@ -105,7 +105,7 @@ exports.findOne = (req, res) => {
     });
 };
 
-exports.authenticateUser = async (req, res) => {
+export const authenticateUser = async (req, res) => {
   console.log(req.body)
   // Validate request
   if(
@@ -181,11 +181,12 @@ exports.authenticateUser = async (req, res) => {
 
 };
 
-exports.create = async (req, res) => {
+export const create = async (req, res) => {
 
   let new_user = {
       agencyMemberUniqueId: req.body.reg_number,
       agencyName: req.body.agency,
+      role: req.body.role,
       password: bcrypt.hashSync(req.body.password, 8),
       username: req.body.email,
       firstName: req.body.first_name,
@@ -215,7 +216,7 @@ exports.create = async (req, res) => {
   
 }
 
-// exports.create = async (req, res) => {
+// export const create = async (req, res) => {
 //   const form = new formidable.IncomingForm();
 //     form.parse(req, async (err, fields, files) => {
 //         if (err) {
@@ -274,7 +275,7 @@ async function getPass(newPass, id){
     });
 };
 
-exports.update = async (req, res) => {
+export const update = async (req, res) => {
   //console.log(req.body)
   // Validate request
   if (!req.body.username
@@ -335,7 +336,7 @@ exports.update = async (req, res) => {
   });
 };
 
-exports.updateMessage = async (req, res) => {
+export const updateMessage = async (req, res) => {
   //console.log(req.body)
   // Validate request
   if (!req.body.firebaseId
@@ -380,7 +381,7 @@ exports.updateMessage = async (req, res) => {
 
 };
 
-exports.delete = (req, res) => {
+export const delete = (req, res) => {
   console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   console.log(req.params.id)
   console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
@@ -407,7 +408,7 @@ exports.delete = (req, res) => {
     });
 };
 
-exports.findAllPublished = (req, res) => {
+export const findAllPublished = (req, res) => {
   User.findAll({ where: { published: true } })
     .then(data => {
       res.send(data);
@@ -420,7 +421,7 @@ exports.findAllPublished = (req, res) => {
     });
 };
 
-exports.resetPassword = async (req, res) => {
+export const resetPassword = async (req, res) => {
   console.log(req.body)
   // Validate request
   if (!req.body.password) {
@@ -483,7 +484,7 @@ exports.resetPassword = async (req, res) => {
 };
 
 //handle Request to reset password from email
-exports.forgotPasswordRequest = async (req, res) => {
+export const forgotPasswordRequest = async (req, res) => {
   const { username } = req.body;
 
   // Generate a unique password reset token
@@ -519,7 +520,7 @@ exports.forgotPasswordRequest = async (req, res) => {
 }
 
 // password forget page
-exports.handlePasswordForgotPage = async (req, res) => {
+export const handlePasswordForgotPage = async (req, res) => {
   const { token } = req.query;
 
   // Find the password reset token in the database
@@ -538,7 +539,7 @@ exports.handlePasswordForgotPage = async (req, res) => {
 }
 
 // handle forgot password
-exports.resetPasswordFromEmail = async (req, res) => {
+export const resetPasswordFromEmail = async (req, res) => {
   const { password, token } = req.body;
   console.log("Query: ",req.body)
 

@@ -1,24 +1,27 @@
-module.exports = (sequelize, Sequelize) => {
-  const ErrorType = sequelize.define("errortypes", {
+import { DataTypes } from "sequelize";
+
+export default (sequelize) => {
+    const ErrorType = sequelize.define("errortypes", {
+
     id:{
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
     err_message: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     error_desc: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     createdAt: {
-      type: Sequelize.DATE,
+      type: DataTypes.DATE,
     },
     updatedAt: {
-      type: Sequelize.DATE
+      type: DataTypes.DATE
     },
   });
 

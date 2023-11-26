@@ -1,46 +1,47 @@
-const {DataTypes} = require("sequelize");
-module.exports = (sequelize, Sequelize) => {
-  const ErrorLog = sequelize.define("errorlogs", {
+import { DataTypes } from "sequelize";
+
+export default (sequelize) => {
+    const ErrorLog = sequelize.define("errorlogs", {
     id:{
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
     user_agent: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     referer: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     socket_ip: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     host: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     error_type_id: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     err_message: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     error_desc: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     userId: {
       type: DataTypes.UUID,
     },
     issue_resolved: {
-      type: Sequelize.BOOLEAN,
+      type: DataTypes.BOOLEAN,
     },
     resolved_by: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     resolved_date: {
-      type: Sequelize.DATE,
+      type: DataTypes.DATE,
     }
   });
 

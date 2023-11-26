@@ -1,16 +1,17 @@
-const db = require("../models/index");
-const fs = require("fs");
-const formidable = require('formidable')
-const dbConn = require("../config/db.config")
-var mysql = require('mysql2');
-const ErrorType = db.errortypes;
-const { Op } = require("sequelize");
+import { db, ErrorTypeModel } from "../models/index.js";
+import fs from "fs";
+import formidable from 'formidable'
+import {dbConfig} from "../config/db.config.js"
+import mysql from 'mysql2'
+
+const ErrorLog = db.ErrorTypeModel;
+import { Op } from "sequelize";
 
 
 
 
 //**************** */
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
   var sortObject = {};
   var filterObject = {};
   var stype = req.query.sort_field
@@ -50,7 +51,7 @@ exports.findAll = (req, res) => {
     })
 };
 
-exports.findOne = (req, res) => {
+export const findOne = (req, res) => {
   const id = req.params.id;
   console.log(id);
   ErrorType.findByPk(id)
@@ -66,7 +67,7 @@ exports.findOne = (req, res) => {
 
 
 
-exports.create = (err_data) => {
+export const create = (err_data) => {
     if (!req)
     {
       return;

@@ -16,7 +16,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 
 //**************** */
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
   console.log("+++++++++++++++++++++++++++");
   console.log(req.query)
   console.log("+++++++++++++++++++++++++++");
@@ -73,7 +73,7 @@ exports.findAll = (req, res) => {
 
 
 
-exports.findOne = (req, res) => {
+export const findOne = (req, res) => {
   const id = req.params.id;
   console.log(id);
   Permission.findByPk(id)
@@ -88,7 +88,7 @@ exports.findOne = (req, res) => {
 };
 
 
-exports.create = async (req, res) => {
+export const create = async (req, res) => {
   // Validate request
   if (!req.body.role)
   {
@@ -121,7 +121,7 @@ exports.create = async (req, res) => {
 };
 
 
-exports.update = async (req, res) => {
+export const update = async (req, res) => {
   console.log(req.body)
   // Validate request
   if (!req.body.role)
@@ -166,7 +166,7 @@ exports.update = async (req, res) => {
 };
 
 
-exports.delete = (req, res) => {
+export const del = (req, res) => {
   console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   console.log(req.params.id)
   console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
@@ -194,7 +194,7 @@ exports.delete = (req, res) => {
 };
 
 
-exports.findAllPublished = (req, res) => {
+export const findAllPublished = (req, res) => {
   Permission.findAll({ where: { published: true } })
     .then(data => {
       res.send(data);

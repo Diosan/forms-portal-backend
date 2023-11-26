@@ -1,27 +1,31 @@
-const {DataTypes} = require("sequelize");
-module.exports = (sequelize, Sequelize) => {
-  const AccessLog = sequelize.define("accesslogs", {
+
+
+import { DataTypes } from "sequelize";
+
+export default (sequelize) => {
+    const AccessLog = sequelize.define("accesslogs", {
+
     id:{
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
     user_agent: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     referer: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     userId: {
       type: DataTypes.UUID,
       allowNull: false,
     },
     socket_ip: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     host: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     }
   });
 

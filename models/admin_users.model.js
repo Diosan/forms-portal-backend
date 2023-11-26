@@ -1,6 +1,8 @@
-const {DataTypes} = require("sequelize");
-const bcrypt = require('bcrypt');
-module.exports = (sequelize, Sequelize) => {
+
+
+import { DataTypes } from "sequelize";
+
+export default (sequelize) => {
     const AdminUser = sequelize.define("admin_users", {
       id: {
         type: DataTypes.UUID,
@@ -8,42 +10,35 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         unique: true
       },
-      firebaseId: {
-        type: Sequelize.STRING,
-      },
       password: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: bcrypt.hashSync('0nMym@rk!@', 8),
-        set(value) {
-          this.setDataValue('password', bcrypt.hashSync(value, 8));
-        }
       },
       username: {               //use email address
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(60),
         unique: true,
         allowNull: false
       },
       fullname: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
       },
       firstName: {
-        type: Sequelize.STRING(30),
+        type: DataTypes.STRING(30),
       },
       middleName: {
-        type: Sequelize.STRING(30),
+        type: DataTypes.STRING(30),
       },
       lastName: {
-        type: Sequelize.STRING(30),
+        type: DataTypes.STRING(30),
       },
       email: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         unique: true,
         allowNull: false
       },
       address: {
-        type: Sequelize.STRING(300),
+        type: DataTypes.STRING(300),
         allowNull: false
       },
       phone: {
@@ -51,29 +46,18 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
         unique: true,
         validate: {
-          is: /^\+(?:[0-9] ?){6,14}[0-9]$/
-        },
+          is: /^(?:\d{10}|\d{7})$/
+      },
       },
       role:{
-        type: Sequelize.INTEGER,
+        type: DataTypes.STRING(30),
         allowNull: false
       },
       createdAt: {
-        type: Sequelize.DATE
+        type: DataTypes.DATE
       },
       updatedAt: {
-        type: Sequelize.DATE
-      }
-    },
-    {
-      hooks: {
-        beforeCreate: (user, options) => {
-            if (!user.password) {
-                user.password = bcrypt.hashSync("password", 8);   //sets a default password for the user
-            } else {
-                user.password = bcrypt.hashSync(user.password, 8);
-            }
-        }
+        type: DataTypes.DATE
       }
     });
   

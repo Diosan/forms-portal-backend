@@ -1,0 +1,111 @@
+[
+    {
+      "field_name": "ComplaintNumber",
+      "title": "Complaint Number",
+      "column": 1,
+      "order": 15,
+      "type": "text"
+    },
+    {
+      "field_name": "DateOfComplaint",
+      "title": "Date of Complaint",
+      "column": 1,
+      "order": 2,
+      "type": "date"
+    },
+    {
+      "field_name": "ComplainantsFullName",
+      "title": "Complainant's Full Name",
+      "column": 1,
+      "order": 3,
+      "type": "text"
+    },
+    {
+      "field_name": "ComplainantsAddress",
+      "title": "Complainant's Address",
+      "column": 1,
+      "order": 4,
+      "type": "textarea"
+    },
+    {
+      "field_name": "ComplainantsContactNumber",
+      "title": "Complainant's Contact Number",
+      "column": 1,
+      "order": 5,
+      "type": "text"
+    },
+    {
+      "field_name": "DefendantsFullName",
+      "title": "Defendant's Full Name",
+      "column": 2,
+      "order": 6,
+      "type": "text"
+    },
+    {
+      "field_name": "DefendantsAddress",
+      "title": "Defendant's Address",
+      "column": 2,
+      "order": 7,
+      "type": "textarea"
+    },
+    {
+      "field_name": "DefendantsContactNumber",
+      "title": "Defendant's Contact Number",
+      "column": 2,
+      "order": 8,
+      "type": "text"
+    },
+    {
+      "field_name": "NatureOfComplaint",
+      "title": "Nature of Complaint",
+      "column": 1,
+      "order": 9,
+      "type": "textarea",
+      "span_columns": true
+    },
+    {
+      "field_name": "DateOfIncident",
+      "title": "Date of Incident",
+      "column": 2,
+      "order": 10,
+      "type": "date"
+    },
+    {
+      "field_name": "LocationOfIncident",
+      "title": "Location of Incident",
+      "column": 2,
+      "order": 11,
+      "type": "text"
+    },
+    {
+      "field_name": "Witnesses",
+      "title": "Witnesses",
+      "column": 1,
+      "order": 12,
+      "type": "textarea",
+      "span_columns": true
+    },
+    {
+      "field_name": "DetailsOfComplaint",
+      "title": "Details of Complaint",
+      "column": 1,
+      "order": 13,
+      "type": "textarea",
+      "span_columns": true
+    },
+    {
+      "field_name": "ComplainantsSignature",
+      "title": "Complainant's Signature",
+      "column": 1,
+      "order": 14,
+      "type": "signature"
+    },
+    {
+      "field_name": "DateOfSignature",
+      "title": "Date of Signature",
+      "column": 2,
+      "order": 1,
+      "type": "date"
+    }
+  ]
+  

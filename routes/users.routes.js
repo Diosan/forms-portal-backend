@@ -1,29 +1,35 @@
-module.exports = app => {
-    const users = require("../controllers/users.controller.js");
-    var router = require("express").Router();
+    import {findAll, findOne, authenticateUser, create, update, del, resetPassword,
+      updateMessage, forgotPasswordRequest, handlePasswordForgotPage, resetPasswordFromEmail
+
+    } from "../controllers/users.controller.js";
+    import express from "express";
+    
+    export default function(app) {
+      const router = express.Router();
+
     
     // Retrieve all users
-    router.get("/", users.findAll);
+    router.get("/", findAll);
     // Retrieve one user
-    router.get("/:id", users.findOne);
+    router.get("/:id", findOne);
     // Authenticate User
-    router.post("/auth/verify", users.authenticateUser);
+    router.post("/auth/verify", authenticateUser);
     // Create a new user
-    router.post("/", users.create);
+    router.post("/", create);
     // Update a new user
-    router.put("/:id", users.update);
+    router.put("/:id", update);
     // Reset Password
-    router.put("/password/reset", users.resetPassword);
+    router.put("/password/reset", resetPassword);
     // Update Message
-    router.put("/message/add", users.updateMessage);
+    router.put("/message/add", updateMessage);
     // User forgot Password
-    router.post("/password/forgotPasswordRequest", users.forgotPasswordRequest);
+    router.post("/password/forgotPasswordRequest", forgotPasswordRequest);
     // User forgot Password
-    router.get("/password/new", users.handlePasswordForgotPage);
+    router.get("/password/new", handlePasswordForgotPage);
     // User Password reset from email
-    router.post("/password/resetPasswordFromEmail", users.resetPasswordFromEmail);
+    router.post("/password/resetPasswordFromEmail", resetPasswordFromEmail);
     // Delete a user
-    router.delete("/:id", users.delete);
+    router.delete("/:id", del);
   
   
    

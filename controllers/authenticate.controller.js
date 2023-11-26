@@ -1,21 +1,22 @@
-const db = require("../models/index");
-require('dotenv').config();
+import {db} from "../models/index.js";
+import dotenv from 'dotenv'
+dotenv.config();
 const AccessLog = db.accesslogs;
-const formidable = require('formidable')
+import formidable  from 'formidable'
 const User = db.users;
 const Permission = db.permissions;
 const Op = db.Sequelize.Op;
-const winston = require('winston');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+import winston from 'winston' 
+import jwt from 'jsonwebtoken' 
+import bcrypt from 'bcrypt' 
 const JWT_SECRET = process.env.JWT_SECRET;
-const nodemailer = require('nodemailer');
-const moment = require('moment');
-const {format} = require('date-fns')
-const { v4: uuidv4 } = require('uuid');
-const { promisify } = require('util');
-const { redisClient, redisURL, userChannel, redisAdapter, emitter } = require('../redis/redisConfig');
-const TOTPGenerator = require('../utilities/TOTPGenerator.class');
+import nodemailer from 'nodemailer' 
+import moment from 'moment' 
+import {format} from 'date-fns' 
+import { v4 as uuidv4 } from 'uuid' 
+import { promisify } from 'util' 
+import { redisClient } from '../redis/redisConfig.js' 
+import { TOTPGenerator } from '../utilities/TOTPGenerator.class.js' 
 
 
 
@@ -109,11 +110,11 @@ const getUserByEmail = async (email) => {
 
 
 
-exports.doNothing = async (req, res) => {
+export const doNothing = async (req, res) => {
   console.log("+++++++++++++++ AUTHENTICATE +++++++++++++++++++")
 }
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await getUserByEmail(email);
@@ -161,7 +162,7 @@ exports.login = async (req, res) => {
 };
 
 
-exports.verifyOtp = async (req, res) => {
+export const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
   const totp = new TOTPGenerator();
   let verified = await totp.verifyOTP(email, otp) 
@@ -219,7 +220,7 @@ exports.verifyOtp = async (req, res) => {
 // }
 
 
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   const { email, password, agencyMemberUniqueId } = req.body;
   console.log(req.body)
   try {
@@ -242,7 +243,7 @@ exports.register = async (req, res) => {
 
 
 
-exports.loginLdap = async (req, res) => {
+export const loginLdap = async (req, res) => {
   /*
   $domain = 'judiciarytt.org';
   $ldapconfig['host'] = 'judiciarydc2.judiciarytt.org';
@@ -339,7 +340,7 @@ exports.loginLdap = async (req, res) => {
 
 
 
-exports.refreshToken = async(req, res, next) =>
+export const refreshToken = async(req, res, next) =>
 {
   const refreshTokenId = ctx.cookies.get(config.security.refreshToken.name, {
     signed: true,
@@ -381,6 +382,7 @@ exports.refreshToken = async(req, res, next) =>
       username: user.username,
   };
 };
+
 
 
 

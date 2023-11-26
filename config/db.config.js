@@ -1,6 +1,6 @@
 //SQL SERVER
 
-module.exports = {
+export const dbConfig = {
     HOST: "localhost",
     USER: "root",
     PASSWORD: "Tt,7$kz,m<`9<9qs",

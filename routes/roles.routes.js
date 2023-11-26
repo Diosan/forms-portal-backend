@@ -1,17 +1,21 @@
-module.exports = app => {
-  const roles = require("../controllers/roles.controller.js");
-  var router = require("express").Router();
+import {findAll, findOne, create, update, del
+
+  } from "../controllers/roles.controller.js";
+  import express from "express";
+  
+  export default function(app) {
+    const router = express.Router();
   
   // Retrieve all roles
-  router.get("/",roles.findAll);
+  router.get("/",findAll);
   // Retrieve one roles
-  router.get("/:id",roles.findOne);
+  router.get("/:id",findOne);
   // Create a new roles
-  router.post("/",roles.create);
+  router.post("/",create);
   // Update a new roles
-  router.put("/:id",roles.update);
+  router.put("/:id",update);
   // Delete a roles
-  router.delete("/:id",roles.delete);
+  router.delete("/:id",del);
 
 
  

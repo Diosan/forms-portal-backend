@@ -1,64 +1,60 @@
-const {DataTypes} = require("sequelize");
-module.exports = (sequelize, Sequelize) => {
+import { DataTypes } from "sequelize";
+
+export default (sequelize) => {
     const User = sequelize.define("users", {
-      // id: {
-      //   type: DataTypes.UUID,
-      //   defaultValue: DataTypes.UUIDV4,
-      //   primaryKey: true,
-      //   unique: true
-      // },
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
         unique: true
       },
-      agencyMemberUniqueId: {           //your unique id from your agency. eg. Regimental number
-        type: Sequelize.STRING,
+      agencyMemberUniqueId: { // Your unique id from your agency. eg. Regimental number
+        type: DataTypes.STRING,
         allowNull: false
       },
-      agencyName: {                     // name of the agency. eg. TTPS
-        type: Sequelize.STRING,
+      agencyName: { // Name of the agency. eg. TTPS
+        type: DataTypes.STRING,
         allowNull: false
       },
       password: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
       },
       username: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         unique: true,
         allowNull: false
       },
-      status:{
-        type: Sequelize.BOOLEAN,
+      status: {
+        type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: 0,
+        defaultValue: false,
       },
       notifications: {
         type: DataTypes.JSON,
         allowNull: true
       },
-      active:{
-        type: Sequelize.BOOLEAN,
-        defaultValue: 0,
+      active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
         allowNull: false
       },
       firstName: {
-        type: Sequelize.STRING(30),
+        type: DataTypes.STRING(30),
       },
       middleName: {
-        type: Sequelize.STRING(30),
+        type: DataTypes.STRING(30),
       },
       lastName: {
-        type: Sequelize.STRING(30),
+        type: DataTypes.STRING(30),
       },
       email: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         unique: true,
         allowNull: false
       },
       address: {
-        type: Sequelize.STRING(300),
+        type: DataTypes.STRING(300),
       },
       phone: {
         type: DataTypes.STRING(20),
@@ -67,21 +63,20 @@ module.exports = (sequelize, Sequelize) => {
           is: /^\+(?:[0-9] ?){6,14}[0-9]$/
         },
       },
-      role:{
-        type: Sequelize.INTEGER,
+      role: {
+        type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: 0
+        defaultValue: 'user'
       },
       createdAt: {
-        type: Sequelize.DATE
+        type: DataTypes.DATE
       },
       updatedAt: {
-        type: Sequelize.DATE
+        type: DataTypes.DATE
       }
-    },
-    {
+    }, {
       tableName: 'users'
     });
 
     return User;
-  };
+};

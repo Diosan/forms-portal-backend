@@ -1,5 +1,9 @@
-module.exports = (sequelize, Sequelize) => {
+import { DataTypes } from "sequelize";
+
+export default (sequelize) => {
     const Permission = sequelize.define("permissions", {
+
+
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
