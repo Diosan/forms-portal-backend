@@ -25,7 +25,7 @@ const ErrorLog = ErrorLogModel;
 
 export const findAll = (req, res) => {
 
-    Submission.findAndCountAll()
+    SubmissionModel.findAndCountAll()
     .then(data => {
         console.log('SubmissionModel. Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
         res.status(201).json({
@@ -54,7 +54,7 @@ export const findOne = async (req, res) => {
   //   // console.log('Error fetching Submission with Id : ' + id, err)
   // });
 
-  // let complainants = await Complainant.findAll({
+  // let complainants = await ComplainantModel.findAll({
   //   where: {
   //     submissionId: id
   //   }
@@ -68,9 +68,9 @@ export const findOne = async (req, res) => {
 
   const id = req.params.id;
 
-  let submission = await Submission.findByPk(id)
+  let submission = await SubmissionModel.findByPk(id)
 
-  let complainants = await Complainant.findAll({
+  let complainants = await ComplainantModel.findAll({
     where: {
       submissionId: id
     }
@@ -107,7 +107,7 @@ export const authenticateUser = async (req, res) => {
   }
   //check if user exist
   //if user doesn't exists create new user
-    User.findOrCreate({
+    UserModel.findOrCreate({
       where: {
         firebaseId: data.firebaseId
       },
@@ -163,7 +163,7 @@ export const saveComplainant = async (req, res) => {
 
     let transporter = nodemailer.createTransport(mailConfig);
 
-    submission = Submission.findByPk(req.body.submissionId);
+    submission = SubmissionModel.findByPk(req.body.submissionId);
 
     let new_complainant = {
         agency: "TTPS",
@@ -176,12 +176,12 @@ export const saveComplainant = async (req, res) => {
 
      
 
-    // let complainant_submission = Complainant.belongsTo(submission);
+    // let complainant_submission = ComplainantModel.belongsTo(submission);
 
     console.log('New Complainant: ', new_complainant);
 
     try {
-        const complainant = await Complainant.create(new_complainant, {});
+        const complainant = await ComplainantModel.create(new_complainant, {});
         console.log('New Complainant Created In Sequelize', complainant);
 
         await  submission.update({status: 'complainant_saved'});
@@ -213,7 +213,7 @@ export const saveComplainant = async (req, res) => {
 
 export const saveAccused = async (req, res) => {
   let accused = req.body;
-  let new_accused = Accused.create(accused);
+  let new_accused = AccusedModel.create(accused);
   res.status(201).json({
     outcome: 'success', 
     accused: new_accused
@@ -223,10 +223,10 @@ export const saveAccused = async (req, res) => {
 export const accuseds = async (req, res) => {
   const id = req.params.id;
   // console.log('\n\n\n Passed id for submission in path: ', id);
-  let returned_accuseds = await Accused.findAll({
+  let returned_accuseds = await AccusedModel.findAll({
     where: {submissionId: id}
   });
-  // let returned_accuseds = await Accused.findAll();
+  // let returned_accuseds = await AccusedModel.findAll();
   // console.log('All accuseds returned: ', returned_accuseds);
   res.status(200).json({
     outcome: 'success',
@@ -241,7 +241,7 @@ export const updateTitle = async (req, res) => {
   const id = req.body.id
   const title = req.body.title
   console.log('updateTitle posted to for ID ' + id, req.body);
-  let submission = await Submission.findByPk(id)
+  let submission = await SubmissionModel.findByPk(id)
   updated_submission = await submission.update({ description: title })
   // console.log('')
   res.status(201).json({
@@ -257,7 +257,7 @@ export const updateComplainant = async (req, res) => {
 
   console.log('\n\n Complainant passed to update is: ', complainant);
 
-  let returned_complainant = await Complainant.findOne({
+  let returned_complainant = await ComplainantModel.findOne({
     where: {
       submissionId: complainant.submissionId
     }
@@ -283,7 +283,7 @@ export const create = async (req, res) => {
   //       email: req.body.email
   //   }
 
-  let user = await User.findOne({
+  let user = await UserModel.findOne({
     where: {email: req.body.email}
   })
 
@@ -293,11 +293,11 @@ export const create = async (req, res) => {
   }
 
   try {
-    const submission = await Submission.create(new_submission)
+    const submission = await SubmissionModel.create(new_submission)
 
     let last_id = 0;
 
-    await Submission.findAndCountAll()
+    await SubmissionModel.findAndCountAll()
     .then(data => {
         last_id = data.rows[data.rows.length - 1].dataValues.id
         // console.log('Sucessfully fetched all SubmissionModel.. Last ID is: ', data.rows[data.rows.length - 1].dataValues.id);
@@ -337,7 +337,7 @@ export const create = async (req, res) => {
 //         }
 
 //         try {
-//             const user = await User.create({
+//             const user = await UserModel.create({
 //                 firebase_id,
 //                 password: bcrypt.hashSync(password, 8),
 //                 username,
@@ -358,7 +358,7 @@ export const create = async (req, res) => {
 
 async function getPass(newPass, id){
   //check to see if the password has been changed
-  User.findByPk(id)
+  UserModel.findByPk(id)
     .then(async data => {
       var oldpass = data.password
       console.log("+++++++++++++++++++++++++++++++++++++++++++" + oldpass + "+++++++++++++++++++++++++++++++++++++++++++")
@@ -418,7 +418,7 @@ export const update = async (req, res) => {
         const address = req.body.address?req.body.address:"";
 
         //return
-        User.update(user,
+        UserModel.update(user,
           {
           where: { id: id }
         })
@@ -463,7 +463,7 @@ export const updateMessage = async (req, res) => {
   console.log(user)
   
   //return
-  User.update(user,
+  UserModel.update(user,
     {
     where: { firebaseId: req.body.firebaseId }
   })
@@ -493,7 +493,7 @@ export const del = (req, res) => {
   console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   const id = req.params.id;
 
-  User.destroy({
+  UserModel.destroy({
     where: { id: id }
   })
     .then(num => {
@@ -515,7 +515,7 @@ export const del = (req, res) => {
 };
 
 export const findAllPublished = (req, res) => {
-  User.findAll({ where: { published: true } })
+  UserModel.findAll({ where: { published: true } })
     .then(data => {
       res.send(data);
     })
@@ -551,7 +551,7 @@ export const resetPassword = async (req, res) => {
       password: hash
     };
     
-    User.update(user, {
+    UserModel.update(user, {
       where: { firebaseId: req.body.firebaseId,  username: req.body.email}
     })
     .then(num => {
@@ -663,7 +663,7 @@ export const resetPasswordFromEmail = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Update the user's password in the database
-  await User.update({ password: hashedPassword }, { where: { username: resetToken.username } });
+  await UserModel.update({ password: hashedPassword }, { where: { username: resetToken.username } });
 
   // Delete the password reset token from the database
   await resetToken.destroy();

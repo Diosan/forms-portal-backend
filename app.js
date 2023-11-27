@@ -130,7 +130,8 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
     'http://localhost:3000', 'https://localhost:3000',
     'http://localhost:5173', 'https://localhost:5173',
     'http://localhost:8080', 'https://localhost:8080',
-    'http://192.168.100.149:5173'
+    'http://127.0.0.1:5173', 'https://127.0.0.1:5173',
+    'http://192.168.1.20:5173', 'https://192.168.1.20:5173'
    ];
   app.use(cors({
     origin: function (origin, callback) {
@@ -169,11 +170,12 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
       store: redisStore,
       secret: JWT_SECRET, // Replace with a strong secret
       resave: false,
-      saveUninitialized: true,
+      saveUninitialized: false,
       cookie: {
         secure: false, // Set to true if using HTTPS
         httpOnly: true, // Mitigate XSS attacks
-        maxAge: 1000 * 60 * 60 * 24 // 24 hours (for example)
+        maxAge: 1000 * 60 * 60 * 24, // 24 hours (for example)
+        sameSite: 'lax' // or 'strict' or 'none'
       }
     }));
   //------------------------------------------------

@@ -16,10 +16,10 @@ export const saveCharge = async (req, res) => {
     //     accusedId: 6
     // };
     let charge = req.body;
-    let new_charge = await Charge.create(charge);
-    let accused = await Accused.findByPk(req.body.accusedId);
-    let submission = await Submission.findByPk(accused.submissionId);
-    await submission.update({ status: 'charge_saved' });
+    let new_charge = await ChargesModel.create(charge);
+    let accused = await AccusedModel.findByPk(req.body.accusedId);
+    let submission = await SubmissionModel.findByPk(AccusedModel.submissionId);
+    await SubmissionModel.update({ status: 'charge_saved' });
     await submission.save();
     res.status(201).json({
         outcome: 'success',
@@ -30,7 +30,7 @@ export const saveCharge = async (req, res) => {
 
 export const charges = async (req, res) => {
     const id = req.params.id;
-    let returned_charges = await Charge.findAll({
+    let returned_charges = await ChargesModel.findAll({
         where: {
             accusedId: id
         }

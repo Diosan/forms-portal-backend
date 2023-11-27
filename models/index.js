@@ -25,6 +25,7 @@ import createErrorLogModel from "./errorlogs.model.js";
 import createErrorTypeModel from "./errorlogs.model.js";
 import createAccusedModel from "./accuseds.model.js";
 import createChargesModel from "./charges.model.js";
+import createPermissionsModel from "./permissions.model.js";
 
 export const UserModel = createUserModel(sequelize);
 export const AdminUserModel = createAdminUserModel(sequelize);
@@ -35,8 +36,7 @@ export const ErrorLogModel = createErrorLogModel(sequelize);
 export const ErrorTypeModel = createErrorTypeModel(sequelize);
 export const AccusedModel = createAccusedModel(sequelize);
 export const ChargesModel = createChargesModel(sequelize);
-// db.accuseds = require("./accuseds.model.js")(sequelize, Sequelize);
-// db.charges = require("./charges.model.js")(sequelize, Sequelize);
+export const PermissionModel = createChargesModel(sequelize);
 
 // ---------------------
 // ASSOCIATIONS

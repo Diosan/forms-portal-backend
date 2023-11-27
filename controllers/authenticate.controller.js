@@ -1,11 +1,11 @@
-import {db} from "../models/index.js";
+import {db, UserModel, AccessLogModel, PermissionModel} from "../models/index.js";
 import dotenv from 'dotenv'
 dotenv.config();
-const AccessLog = db.accesslogs;
+// const AccessLog = db.accesslogs;
 import formidable  from 'formidable'
-const User = db.users;
-const Permission = db.permissions;
-const Op = db.Sequelize.Op;
+// const User = db.users;
+// const Permission = db.permissions;
+// const Op = db.Sequelize.Op;
 import winston from 'winston' 
 import jwt from 'jsonwebtoken' 
 import bcrypt from 'bcrypt' 
@@ -63,7 +63,7 @@ const saveUser = async (userData) => {
     // Hash the password before saving the user
 
     // Create a new user record in the database
-    const user = await User.create({
+    const user = await UserModel.create({
       password:hashedPassword,
       username,
       agencyMemberUniqueId,
@@ -90,7 +90,7 @@ const saveUser = async (userData) => {
 const getUserByEmail = async (email) => {
   try {
     // Use Sequelize's findOne method to retrieve the user by email
-    const user = await User.findOne({
+    const user = await UserModel.findOne({
       where: {
         email: email
       }
@@ -115,6 +115,7 @@ export const doNothing = async (req, res) => {
 }
 
 export const login = async (req, res) => {
+  console.log(req.body)
   const { email, password } = req.body;
   try {
     const user = await getUserByEmail(email);
@@ -133,7 +134,9 @@ export const login = async (req, res) => {
 
       const totp = new TOTPGenerator();
       // console.log(totp);
-      totp.generateOTP(email)
+      const sessionId = req.session.id;
+      console.log(sessionId);
+      totp.generateOTP(sessionId, email)
       .then(() => console.log('OTP sent to user email.'))
       .catch(error => console.error('Error generating or sending OTP:', error));
 
@@ -163,15 +166,18 @@ export const login = async (req, res) => {
 
 
 export const verifyOtp = async (req, res) => {
+  const sessionId = req?.session?.id ?? '';
   const { email, otp } = req.body;
+  console.log(`req.session.id : ${sessionId} ------- `)
   const totp = new TOTPGenerator();
-  let verified = await totp.verifyOTP(email, otp) 
+  let verified = await totp.verifyOTP(sessionId, otp) 
   if (verified) {
     return res.status(200).json({
       outcome: 'success',
       token: jwt.sign({ email: email }, 'keyboard cat 4 ever', { expiresIn: 129600 })
     })
   } else {
+    console.log("not verified")
     return res.status(200).json({
       outcome: 'error'
     })
@@ -243,99 +249,7 @@ export const register = async (req, res) => {
 
 
 
-export const loginLdap = async (req, res) => {
-  /*
-  $domain = 'judiciarytt.org';
-  $ldapconfig['host'] = 'judiciarydc2.judiciarytt.org';
-  $ldapconfig['port'] = 389;
-  $ldapconfig['basedn'] = 'ou=users,ou=hoj,ou=1judiciarytt,ou=judiciarytt,dc=judiciarytt,dc=org';
-  */
-  //console.log("LDAP LOGIN")
 
-  try{
-
-    const username = req.body.username;
-    const password = req.body.password;
-    let ldapBaseDn = CONFIG.ldap.dn
-
- 
-    
-    let options = {
-      ldapOpts: { 
-        url: 'ldap://judiciarydc2.judiciarytt.org:389' },
-      //userDn: `uid=${username},judiciarydc2,dc=judiciarytt,dc=org`,
-      //userDn: `uid=hhernandez,dc=judiciarytt,dc=org`,
-      userDn: `uid=${username},${ldapBaseDn}`,
-      userPassword: `${password}`,
-      userSearchBase: ldapBaseDn,
-      usernameAttribute: 'uid'
-      //username: `${username}`,
-      //userSearchBase: 'dc=judiciarytt,dc=org',
-      //usernameAttribute: 'uid',
-    }
-
-    let user = await authenticate(options)
-
-
-    auth.authenticate(username, password, function(err, user) {
-      
-    });
-    
-    
-    
-    /*
-    const user = await User.findOne({ 
-      where: {
-          email: username ,
-      }
-    });
-    */
-
-    if (!user) {
-      return res.json({ msg: "Please enter a valid username" });
-    }
-    console.log(user)
-
-    let passHash = await bcrypt.hash(password, saltRounds)
-
-    const user_role =  user.role;
-    console.log("User role: "+user_role)
-    const verbose_permissions = await Permission.findOne({
-      where:{
-        id: user_role
-      }
-    });
-
-    var user_permissions = "";
-    user_permissions = verbose_permissions?JSON.parse(JSON.stringify(verbose_permissions)):"";
-    console.log("Permissions: "+user_permissions)
-    const user_db_pass = user.password;
-    //console.log("passHash: "+passHash)
-    //console.log("user_db_pass: "+user_db_pass)
-    const match = await bcrypt.compare(password, user_db_pass);
-    //console.log(match)
-    
-    if(!match) {
-      console.log(match)
-      return res.json({ msg: "Username and or password is incorrect" });
-
-    }
-
-    
-    const accessToken = jwt.sign(
-      { username, id: user.id, permissions:JSON.stringify(user_permissions) },
-      JWT_SECRET,
-      {
-        expiresIn: process.env.NODE_ENV === "production" ? "6h" : "2 days",
-      }
-    );
-    res.json({ status:200, token: accessToken });
-  }
-  catch (err) {
-    console.log(err);
-    res.status(503).json({ msg: "Server error!" });
-  }
-};
 
 
 
