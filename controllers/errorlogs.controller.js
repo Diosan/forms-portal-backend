@@ -1,14 +1,15 @@
-const db = require("../models/index");
-const fs = require("fs");
-const formidable = require('formidable')
-const dbConn = require("../config/db.config")
-var mysql = require('mysql2');
-const ErrorLog = db.errorlogs;
-const { Op } = require("sequelize");
+import { db, ErrorLogModel } from "../models/index.js";
+import fs from "fs";
+import formidable from 'formidable'
+import {dbConfig} from "../config/db.config.js"
+import mysql from 'mysql2'
+
+const ErrorLog = db.ErrorLogModel;
+import { Op } from "sequelize";
 
 
 //**************** */
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
   //console.log(req)
   res.send()
   var sortObject = {};
@@ -88,7 +89,7 @@ exports.findAll = (req, res) => {
     })
 };
 
-exports.findOne = (req, res) => {
+export const findOne = (req, res) => {
   const id = req.params.id;
   console.log(id);
   ErrorLog.findByPk(id)
@@ -103,7 +104,7 @@ exports.findOne = (req, res) => {
     });
 };
 
-exports.create = (err_data) => {
+export const create = (err_data) => {
     // Validate request
     //console.log("req: " + req);
     //return
@@ -139,7 +140,7 @@ exports.create = (err_data) => {
       });
   };
 
-exports.update = async (req, res) => {
+export const update = async (req, res) => {
   //console.log(req.body)
   // Validate request
   if (!req.body.issue_resolved
@@ -184,7 +185,7 @@ exports.update = async (req, res) => {
 };
 
 
-exports.delete = (req, res) => {
+export const del = (req, res) => {
   // console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   // console.log(req.params.id)
   // console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")

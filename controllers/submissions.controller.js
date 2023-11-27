@@ -1,28 +1,33 @@
-const db = require("../models/index");
-const Submission = db.submissions;
-const Complainant = db.complainants;
-const User = db.users;
-const Accused = db.accuseds; 
-const PasswordResetToken = db.password_reset_token;
-const Op = db.Sequelize.Op;
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+
+import { db, ErrorLogModel, SubmissionModel, ComplainantModel, UserModel, AccusedModel } from "../models/index.js";
+// import { PasswordResetToken} from "../models/index.js";
+
+import fs from "fs";
+import formidable from 'formidable'
+import {dbConfig} from "../config/db.config.js"
+import mysql from 'mysql2'
+import { Op } from "sequelize";
+ 
+
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 const saltRounds = 10;
 const JWT_SECRET = process.env.JWT_SECRET;
-const formidable = require('formidable')
-const nodemailer = require('nodemailer');
-const moment = require('moment');
-const {format} = require('date-fns')
-const { v4: uuidv4 } = require('uuid');
-const TOTPGenerator = require('../utilities/TOTPGenerator.class');
-const mailConfig = require('../config/mail.config');
-// const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
+import moment from 'moment';
+import {format} from 'date-fns'
+import { v4 as uuidv4 } from 'uuid';
+import {TOTPGenerator} from '../utilities/TOTPGenerator.class.js';
+import {mailConfig} from '../config/mail.config.js';
 
-exports.findAll = (req, res) => {
+
+const ErrorLog = ErrorLogModel;
+
+export const findAll = (req, res) => {
 
     Submission.findAndCountAll()
     .then(data => {
-        console.log('Submissions Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
+        console.log('SubmissionModel. Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
         res.status(201).json({
             outcome: 'success',
             submissions: data
@@ -39,7 +44,7 @@ exports.findAll = (req, res) => {
 
 //  
 
-exports.findOne = async (req, res) => {
+export const findOne = async (req, res) => {
 
 
   // .then(data => {
@@ -85,7 +90,7 @@ exports.findOne = async (req, res) => {
 
 };
 
-exports.authenticateUser = async (req, res) => {
+export const authenticateUser = async (req, res) => {
   console.log(req.body)
   // Validate request
   if(
@@ -161,7 +166,7 @@ exports.authenticateUser = async (req, res) => {
 
 };
 
-exports.saveComplainant = async (req, res) => {
+export const saveComplainant = async (req, res) => {
 
     let transporter = nodemailer.createTransport(mailConfig);
 
@@ -213,7 +218,7 @@ exports.saveComplainant = async (req, res) => {
 
 }
 
-exports.saveAccused = async (req, res) => {
+export const saveAccused = async (req, res) => {
   let accused = req.body;
   let new_accused = Accused.create(accused);
   res.status(201).json({
@@ -222,7 +227,7 @@ exports.saveAccused = async (req, res) => {
   })
 }
 
-exports.accuseds = async (req, res) => {
+export const accuseds = async (req, res) => {
   const id = req.params.id;
   // console.log('\n\n\n Passed id for submission in path: ', id);
   let returned_accuseds = await Accused.findAll({
@@ -237,7 +242,9 @@ exports.accuseds = async (req, res) => {
   })
 }
 
-exports.updateTitle = async (req, res) => {
+
+
+export const updateTitle = async (req, res) => {
   const id = req.body.id
   const title = req.body.title
   console.log('updateTitle posted to for ID ' + id, req.body);
@@ -251,7 +258,7 @@ exports.updateTitle = async (req, res) => {
 
 }
 
-exports.updateComplainant = async (req, res) => {
+export const updateComplainant = async (req, res) => {
 
   const complainant = req.body;
 
@@ -271,7 +278,7 @@ exports.updateComplainant = async (req, res) => {
 
 }
 
-exports.create = async (req, res) => {
+export const create = async (req, res) => {
 
   //   let new_user = {
   //       agencyMemberUniqueId: req.body.reg_number,
@@ -300,8 +307,8 @@ exports.create = async (req, res) => {
     await Submission.findAndCountAll()
     .then(data => {
         last_id = data.rows[data.rows.length - 1].dataValues.id
-        // console.log('Sucessfully fetched all submissions. Last ID is: ', data.rows[data.rows.length - 1].dataValues.id);
-        console.log('Sucessfully fetched all submissions. Last ID is: ', last_id);
+        // console.log('Sucessfully fetched all SubmissionModel.. Last ID is: ', data.rows[data.rows.length - 1].dataValues.id);
+        console.log('Sucessfully fetched all SubmissionModel.. Last ID is: ', last_id);
     });
 
     console.log('New Submission Created In Sequelize with ID: ', last_id)
@@ -322,7 +329,7 @@ exports.create = async (req, res) => {
   
 }
 
-// exports.create = async (req, res) => {
+// export const create = async (req, res) => {
 //   const form = new formidable.IncomingForm();
 //     form.parse(req, async (err, fields, files) => {
 //         if (err) {
@@ -381,7 +388,7 @@ async function getPass(newPass, id){
     });
 };
 
-exports.update = async (req, res) => {
+export const update = async (req, res) => {
   //console.log(req.body)
   // Validate request
   if (!req.body.username
@@ -442,7 +449,7 @@ exports.update = async (req, res) => {
   });
 };
 
-exports.updateMessage = async (req, res) => {
+export const updateMessage = async (req, res) => {
   //console.log(req.body)
   // Validate request
   if (!req.body.firebaseId
@@ -487,7 +494,7 @@ exports.updateMessage = async (req, res) => {
 
 };
 
-exports.delete = (req, res) => {
+export const del = (req, res) => {
   console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   console.log(req.params.id)
   console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
@@ -514,7 +521,7 @@ exports.delete = (req, res) => {
     });
 };
 
-exports.findAllPublished = (req, res) => {
+export const findAllPublished = (req, res) => {
   User.findAll({ where: { published: true } })
     .then(data => {
       res.send(data);
@@ -527,7 +534,7 @@ exports.findAllPublished = (req, res) => {
     });
 };
 
-exports.resetPassword = async (req, res) => {
+export const resetPassword = async (req, res) => {
   console.log(req.body)
   // Validate request
   if (!req.body.password) {
@@ -590,7 +597,7 @@ exports.resetPassword = async (req, res) => {
 };
 
 //handle Request to reset password from email
-exports.forgotPasswordRequest = async (req, res) => {
+export const forgotPasswordRequest = async (req, res) => {
   const { username } = req.body;
 
   // Generate a unique password reset token
@@ -626,7 +633,7 @@ exports.forgotPasswordRequest = async (req, res) => {
 }
 
 // password forget page
-exports.handlePasswordForgotPage = async (req, res) => {
+export const handlePasswordForgotPage = async (req, res) => {
   const { token } = req.query;
 
   // Find the password reset token in the database
@@ -645,7 +652,7 @@ exports.handlePasswordForgotPage = async (req, res) => {
 }
 
 // handle forgot password
-exports.resetPasswordFromEmail = async (req, res) => {
+export const resetPasswordFromEmail = async (req, res) => {
   const { password, token } = req.body;
   console.log("Query: ",req.body)
 
@@ -672,7 +679,7 @@ exports.resetPasswordFromEmail = async (req, res) => {
   res.send('Your password has been reset successfully.');
 };
 
-exports.requestSignature = async (req, res) => {
+export const requestSignature = async (req, res) => {
   let signatureRequest = req.body;
   console.log('\n\n\n Request Body: ', req.body);
   let transporter = nodemailer.createTransport(mailConfig);

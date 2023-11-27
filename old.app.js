@@ -1,0 +1,394 @@
+const express = require('express');
+const dotenv = require('dotenv');
+dotenv.config();
+const bodyParser = require('body-parser')
+const path = require('path');
+const cors = require('cors');
+const db_conf = require('./config/db.config')
+const _= require("lodash");
+const { v4: uuid } = require("uuid");
+const { Sequelize, DataTypes } = require('sequelize');
+const AdminBro = require('admin-bro')
+const AdminBroExpress = require('@admin-bro/express')
+const AdminBroSequelize = require('@admin-bro/sequelize')
+const db = require("./models/index");
+const mysql = require("mysql2");
+const winston = require('winston');
+const fs = require('fs');
+const expressListRoutes = require('express-list-routes');
+const TOTPGenerator = require('./utilities/TOTPGenerator.class');
+const nodemailer = require('nodemailer');
+const mailConfig = require('./config/mail.config');
+const AGENCY_NAME = process.env.REACT_APP_AGENCY_NAME
+
+
+
+
+//JSSWF
+//USED TO GENERATE A NEW SECRET (uncomment when needed)
+// const crypto = require('crypto');
+// const secret = crypto.randomBytes(1024).toString('hex');
+// console.log(secret); 
+//-----------------------------------------------------
+
+
+
+//BEGIN----------------------------------------------------------------
+// ********************************************************************
+
+
+//________________________________________________
+// DATABASES
+//------------------------------------------------
+  const connection =  mysql.createConnection({
+    host: db_conf.HOST,
+    user: db_conf.USER,
+    password: db_conf.PASSWORD,
+  });   
+  // Open the connection to MySQL server
+  connection.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+    connection.query(`CREATE DATABASE IF NOT EXISTS ${db_conf.DB}`, function (err, result) {
+        if (err) throw err;
+        console.log("Database created");
+    });
+  });
+  // Close the connection
+  //connection.end();
+  db.sequelize.sync();
+//----------------------------------------------------------------
+//________________________________________________
+// APP - HTTP
+//------------------------------------------------
+  const app = express();
+
+  app.use(express.static('public'));
+
+  // Use Morgan for logging HTTP requests
+  // with the 'combined' predefined format, 
+  // or customize it as needed
+  //.......................................
+  const http = require("http");
+  const server = http.createServer(app);
+
+  const io = require("socket.io")(server, {
+    cors: {
+      origin: function (origin, callback) {
+        // bypass the requests with no origin (like curl requests, mobile apps, etc )
+        if (!origin) return callback(null, true);
+  
+        if (allowedDomains.indexOf(origin) === -1) {
+          var msg = `This site ${origin} does not have an access.`;
+          return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+      },
+      methods: ["GET", "POST"],
+    //   allowedHeaders: ["my-custom-header"],
+      credentials: true,
+      transports: ['websocket', 'polling'],
+    }
+  });
+  // Use redis adapter
+
+
+
+  let connectedUsers = {};
+
+  var allowedDomains = [
+    'http://swf.ttlawcourts.org', 'https://swf.ttlawcourts.org', 
+    'http://jsswf.sytes.net', 'https://jsswf.sytes.net', 
+    'http://localhost:3000', 'https://localhost:3000',
+    'http://localhost:5173', 'https://localhost:5173',
+    'http://localhost:8080', 'https://localhost:8080',
+    'http://192.168.100.149:5173'
+   ];
+  app.use(cors({
+    origin: function (origin, callback) {
+      // bypass the requests with no origin (like curl requests, mobile apps, etc )
+      if (!origin) return callback(null, true);
+
+      if (allowedDomains.indexOf(origin) === -1) {
+          var msg = `This site ${origin} does not have access.`;
+          return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+      },
+      methods: ["GET", "POST"],
+      // allowedHeaders: ["my-custom-header"],
+      credentials: true,
+      transports: ['websocket', 'polling'],
+  }));
+
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+const PORT = process.env.PORT || 3000
+const ADMIN_PORT = process.env.ADMIN_PORT || 8080
+const indexPath  = path.resolve(__dirname, '..', 'public', 'index.html');
+//----------------------------------------------------------------
+
+//ADMINBRO
+  const ADMIN = {
+    email: 'off_admin@link868.com',
+    password: '12345678',
+    role: 'admin',
+  };
+
+  //Role based access control
+  const canModifyUsers = (currentAdmin) => {
+    return currentAdmin && (currentAdmin.role === 'superadmin' || currentAdmin.role === 'admin');
+  };
+  const canCreateAdmins = (currentAdmin) => {
+    return currentAdmin && currentAdmin.role === 'superadmin';
+  };//........................................................
+
+
+  AdminBro.registerAdapter(AdminBroSequelize)
+
+  const locale = {
+    translations: {
+      labels: {
+        // change Heading for Login
+        loginWelcome: 'TTPS Admin Console',
+      },
+      messages: {
+        loginWelcome: 'Welcome',
+      },
+    },
+  };
+  //________________________________________________
+  const adminBro = new AdminBro({
+    // databases: [ db ],
+    dashboard: {
+      component: AdminBro.bundle('./my-dashboard-component.jsx')
+    },
+    resources: [ {
+        resource: db.users,
+        options: {
+          properties: {
+            createdAt: {
+              isVisible: { list: true, filter: true, show: true, edit: false }, 
+            },
+            username: {
+              isVisible: { list: true, filter: true, show: true, edit: false }, 
+            },
+            email: {
+              isVisible: { list: true, filter: true, show: true, edit: false }, 
+            },
+          },
+          actions: {
+            new: { isAccessible: canCreateAdmins },
+            edit: { isAccessible: canModifyUsers },
+            delete: { isAccessible: canModifyUsers },
+          },
+        }
+    }],
+    rootPath: '/admin',
+    assets: {
+      styles: ['/admin-custom.css'], 
+    },
+    locale,
+    branding: {
+      companyName: AGENCY_NAME,
+      logo: '/logo.png', 
+      softwareBrothers: false, 
+    },
+    // 
+  })
+  // const router = AdminBroExpress.buildRouter(adminBro)
+
+  const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
+    authenticate: async (email, password) => {
+      if (ADMIN.email === email && ADMIN.password === password) {
+        return ADMIN;
+      }
+      return null;
+    },
+    cookiePassword: 'session-secret',
+  });
+
+  app.use(adminBro.options.rootPath, router)
+
+  // app.use(bodyParser.json())
+  // app.use(bodyParser.urlencoded({ extended: false }))
+  app.use(bodyParser.json({ limit: '5mb' }))
+  app.use(bodyParser.urlencoded({ limit: '5mb', extended: true }));
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//CORS
+  app.use(cors({
+    origin: 'http://localhost:5173'
+    // origin: 'http://jsswf.sytes.net:5173'
+  }));
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//MIDDLEWARE FOR PRINTING INCOMING REQUESTS
+
+    // Custom middleware to log incoming requests
+    function logRequests(req, res, next) {
+      console.log(`${new Date().toISOString()} - ${req.method} Request to ${req.url}`);
+      next(); // Move to the next middleware/route handler
+    }
+
+    // Apply the middleware to all incoming requests
+    app.use(logRequests);
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//ROUTES
+    // ++++++++++++++++++++++++++++++++++++++++++
+    require("./routes/accesslogs.routes")(app);
+    require("./routes/authenticate.routes")(app);
+    require("./routes/config.routes")(app);
+    require("./routes/account.routes")(app);
+    require("./routes/admin_users.routes")(app);
+    require("./routes/notifications.routes")(app);
+    require("./routes/errorlogs.routes")(app);
+    require("./routes/errortypes.routes")(app);
+    require("./routes/permissions.routes")(app);
+    require("./routes/roles.routes")(app);
+    require("./routes/users.routes")(app);
+    require("./routes/submissions.routes")(app);
+    // ++++++++++++++++++++++++++++++++++++++++++
+
+
+app.get('/', async (req, res) => {
+  expressListRoutes(app, {  });
+  // const transporter = nodemailer.createTransport(mailConfig);
+  // transporter.sendMail({
+  //   from: 'omm@link868.com',
+  //   to: 'dion.santana@gmail.com',
+  //   subject: 'hello world!',
+  //   text: 'hello world!'
+  // });
+  res.json({message: 'JSSWF-API-TS'});
+})
+
+
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//ROUTE TO FORM SCHEMAS
+  app.get('/schema/:schemaId', async (req, res) => {
+    // try {
+    //   await Sequelize.authenticate();
+    //   console.log('Connection has been established successfully.');
+    // } catch (error) {
+    //   console.error('Unable to connect to the database:', error);
+    // }
+    let schemaId = req.params.schemaId
+    console.log('schemaId: ' + schemaId)
+    const form_schema_file = await fs.readFileSync('./forms/' + schemaId + '.json');
+    const form_schema = JSON.parse(form_schema_file);
+    res.json(form_schema);
+  });
+
+
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//ROUTE TO FORM SCHEMAS
+  app.post('/register', async (req, res) => {
+    let data = req.body;    
+    let new_user = await User.create({
+      username: 'janedoe',
+      birthday: new Date(1980, 6, 20),
+    });
+    
+    const users = await User.findAll();    
+    res.send(data);
+
+  });
+
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+    // Current servier time route, used to sync app with server
+    app.get("/api/jsswf-time", (req, res) => {
+      // console.log("Current time ")
+      res.json({ time: new Date().toISOString() });
+    });
+    //------------------------------------------------
+
+    // here all other routes go to react
+    app.use(function(req, res, next) {
+      console.log("Route not found, sending 404");
+      res.status(404).send('Sorry, can\'t find that');
+    });
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+
+// ================================================
+// socket connections + redis connections
+// ================================================
+      io.on("connection", async (socket) => {
+        console.log(">> A user connected:", socket.id);  
+
+        //channels ++++++++++++++
+        // join user to channels when they connect
+        socket.join('drawUpdate');
+        socket.join('notifyAlert');
+        //--------------------------------------------  
+
+        // On User Login event +++++++++++++++++++++++
+        socket.on("login", (userId) => {
+          // add the user to the connectedUsers object 
+          console.log("user >>>> ", userId);
+          socket.userId = userId;
+          connectedUsers[socket.id] = { 
+            socket: socket,
+            connected: true,
+            userId: userId
+          };
+          socket.join(`user:${userId}`);
+        });
+
+        // On UserLogout event +++++++++++++++++++++
+        socket.on("loogut", ({ userId, socketId }) => {
+          if (socket.userId) {
+            console.log("userLogout ", userId)
+            // myClient.del(socket.userId);
+          }
+        });
+
+        // Listen for the "activity" +++++++++++++++
+        // to ensure active users are 
+        socket.on('activity', async (userId) => {
+          console.log(userId)
+          socket.join('drawUpdate');
+          socket.join('notifyAlert');
+          socket.join(`user:${userId}`);
+          socket.userId = userId;
+          connectedUsers[socket.id] = { 
+            socket: socket,
+            connected: true,
+            userId: userId
+          };
+        });
+
+        // Emitting a message to all channels
+        //below is an example of how to chain messages emit to a number of channels
+        // io.to('channel1').to('channel2').to('channel3').emit('message', 'Hello, channels!');
+
+        // Private message to user ++++++++++++++++++++++++
+        socket.on('privateMessage', async (channel, message) => {
+          // const userId = channel.slice('user:'.length);
+          emitter.emit(channel, message);
+        });
+
+        // Handle disconnection ++++++++++++++++++++++++
+        socket.on('disconnect', () => {
+          console.log(` >> Client disconnected: ${socket.id}`);
+          // Unsubscribe the socket from the 'drawUpdate' channel
+          delete connectedUsers[socket.id];
+        });
+
+
+    });
+//----------------------------------------------------------------
+// START ALL APPLICATIONS
+  app.listen(ADMIN_PORT, () => console.log('AdminBro is under localhost:8080/admin'))
+  app.listen(PORT, () => console.log('Judiciary of Trinidad and Tobago Web Forms Portal:3000!'))
+//----------------------------------------------------------------
+//----------------------------------------------------------------

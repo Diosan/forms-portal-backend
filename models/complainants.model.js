@@ -1,5 +1,8 @@
-const {DataTypes} = require("sequelize");
-module.exports = (sequelize, Sequelize) => {
+
+
+import { DataTypes } from "sequelize";
+
+export default (sequelize) => {
     const Complainant = sequelize.define("complainants", {
     //   id: {
     //     type: DataTypes.UUID,
@@ -13,23 +16,23 @@ module.exports = (sequelize, Sequelize) => {
             unique: true
         },
         firstName: {
-            type: Sequelize.DataTypes.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         },
         lastName: {
-            type: Sequelize.DataTypes.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         },
         email: {
-            type: Sequelize.DataTypes.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         },
         agency: {
-            type: Sequelize.DataTypes.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         },
         regNum: {
-            type: Sequelize.DataTypes.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         }
     });

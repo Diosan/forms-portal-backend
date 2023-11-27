@@ -1,22 +1,30 @@
-const db = require("../models/index");
-const User = db.users;
-const PasswordResetToken = db.password_reset_token;
-const Op = db.Sequelize.Op;
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+// const User = db.users;
+// const PasswordResetToken = db.password_reset_token;
+// const Op = db.Sequelize.Op;
+import jwt from 'jsonwebtoken';
+// const bcrypt = require('bcrypt');
+// const JWT_SECRET = process.env.JWT_SECRET;
+// const formidable = require('formidable')
+import nodemailer from 'nodemailer';
+import moment from 'moment';
+import {format} from 'date-fns';
+import { v4 as uuidv4 } from 'uuid';
+import { db, UserModel } from "../models/index.js";
+import fs from "fs";
+import formidable from 'formidable'
+import {dbConfig} from "../config/db.config.js"
+import mysql from 'mysql2'
+import bcrypt from 'bcrypt'
+import { TOTPGenerator } from '../utilities/TOTPGenerator.class.js' 
+import { redisClient, } from '../redis/redisConfig.js';
+
+const saltRounds = 10; 
 const JWT_SECRET = process.env.JWT_SECRET;
-const formidable = require('formidable')
-const nodemailer = require('nodemailer');
-const moment = require('moment');
-const {format} = require('date-fns')
-const { v4: uuidv4 } = require('uuid');
-const TOTPGenerator = require('../utilities/TOTPGenerator.class');
 
 
 
 //**************** */
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
     var sortObject = {};
     var filterObject = {};
     var stype = req.query.sort_field
@@ -51,15 +59,14 @@ exports.findAll = (req, res) => {
     // }
 
 
-User.findAndCountAll(
-  // {
-  //   where: where,
-  // }
-)
-    .then(data => {
+    UserModel.findAndCountAll(
+      // {
+      //   where: where,
+      // }
+    ).then(data => {
       let x = data.rows.length;
       //console.log(x); 
-      User.findAndCountAll(
+      UserModel.findAndCountAll(
       //   {
       //     offset: (page - 1) * limit,
       //     limit: limit * 1,
@@ -92,9 +99,9 @@ User.findAndCountAll(
 
 };
 
-exports.findOne = (req, res) => {
+export const findOne = (req, res) => {
   const id = req.params.id;
-  User.findByPk(id)
+  UserModel.findByPk(id)
     .then(data => {
       res.send(data);
     })
@@ -105,7 +112,7 @@ exports.findOne = (req, res) => {
     });
 };
 
-exports.authenticateUser = async (req, res) => {
+export const authenticateUser = async (req, res) => {
   console.log(req.body)
   // Validate request
   if(
@@ -129,7 +136,7 @@ exports.authenticateUser = async (req, res) => {
   }
   //check if user exist
   //if user doesn't exists create new user
-    User.findOrCreate({
+    UserModel.findOrCreate({
       where: {
         firebaseId: data.firebaseId
       },
@@ -181,11 +188,12 @@ exports.authenticateUser = async (req, res) => {
 
 };
 
-exports.create = async (req, res) => {
+export const create = async (req, res) => {
 
   let new_user = {
       agencyMemberUniqueId: req.body.reg_number,
       agencyName: req.body.agency,
+      role: req.body.role,
       password: bcrypt.hashSync(req.body.password, 8),
       username: req.body.email,
       firstName: req.body.first_name,
@@ -194,9 +202,10 @@ exports.create = async (req, res) => {
   }
 
   try {
-    const user = await User.create(new_user)
+    const user = await UserModel.create(new_user)
+    const sessionId = req?.session?.id ?? 'default-value';
     const totp = new TOTPGenerator()
-    totp.generateOTP(req.body.email)
+    totp.generateOTP(sessionId, req.body.email)
     console.log('New User Created In Sequelize')
     res.status(201).json({
       outcome: 'success', 
@@ -215,7 +224,7 @@ exports.create = async (req, res) => {
   
 }
 
-// exports.create = async (req, res) => {
+// export const create = async (req, res) => {
 //   const form = new formidable.IncomingForm();
 //     form.parse(req, async (err, fields, files) => {
 //         if (err) {
@@ -230,7 +239,7 @@ exports.create = async (req, res) => {
 //         }
 
 //         try {
-//             const user = await User.create({
+//             const user = await UserModel.create({
 //                 firebase_id,
 //                 password: bcrypt.hashSync(password, 8),
 //                 username,
@@ -251,7 +260,7 @@ exports.create = async (req, res) => {
 
 async function getPass(newPass, id){
   //check to see if the password has been changed
-  User.findByPk(id)
+  UserModel.findByPk(id)
     .then(async data => {
       var oldpass = data.password
       console.log("+++++++++++++++++++++++++++++++++++++++++++" + oldpass + "+++++++++++++++++++++++++++++++++++++++++++")
@@ -274,7 +283,7 @@ async function getPass(newPass, id){
     });
 };
 
-exports.update = async (req, res) => {
+export const update = async (req, res) => {
   //console.log(req.body)
   // Validate request
   if (!req.body.username
@@ -311,7 +320,7 @@ exports.update = async (req, res) => {
         const address = req.body.address?req.body.address:"";
 
         //return
-        User.update(user,
+        UserModel.update(user,
           {
           where: { id: id }
         })
@@ -335,7 +344,7 @@ exports.update = async (req, res) => {
   });
 };
 
-exports.updateMessage = async (req, res) => {
+export const updateMessage = async (req, res) => {
   //console.log(req.body)
   // Validate request
   if (!req.body.firebaseId
@@ -356,7 +365,7 @@ exports.updateMessage = async (req, res) => {
   console.log(user)
   
   //return
-  User.update(user,
+  UserModel.update(user,
     {
     where: { firebaseId: req.body.firebaseId }
   })
@@ -380,13 +389,13 @@ exports.updateMessage = async (req, res) => {
 
 };
 
-exports.delete = (req, res) => {
+export const del = (req, res) => {
   console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   console.log(req.params.id)
   console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   const id = req.params.id;
 
-  User.destroy({
+  UserModel.destroy({
     where: { id: id }
   })
     .then(num => {
@@ -407,8 +416,8 @@ exports.delete = (req, res) => {
     });
 };
 
-exports.findAllPublished = (req, res) => {
-  User.findAll({ where: { published: true } })
+export const findAllPublished = (req, res) => {
+  UserModel.findAll({ where: { published: true } })
     .then(data => {
       res.send(data);
     })
@@ -420,7 +429,7 @@ exports.findAllPublished = (req, res) => {
     });
 };
 
-exports.resetPassword = async (req, res) => {
+export const resetPassword = async (req, res) => {
   console.log(req.body)
   // Validate request
   if (!req.body.password) {
@@ -444,7 +453,7 @@ exports.resetPassword = async (req, res) => {
       password: hash
     };
     
-    User.update(user, {
+    UserModel.update(user, {
       where: { firebaseId: req.body.firebaseId,  username: req.body.email}
     })
     .then(num => {
@@ -483,7 +492,7 @@ exports.resetPassword = async (req, res) => {
 };
 
 //handle Request to reset password from email
-exports.forgotPasswordRequest = async (req, res) => {
+export const forgotPasswordRequest = async (req, res) => {
   const { username } = req.body;
 
   // Generate a unique password reset token
@@ -519,7 +528,7 @@ exports.forgotPasswordRequest = async (req, res) => {
 }
 
 // password forget page
-exports.handlePasswordForgotPage = async (req, res) => {
+export const handlePasswordForgotPage = async (req, res) => {
   const { token } = req.query;
 
   // Find the password reset token in the database
@@ -538,7 +547,7 @@ exports.handlePasswordForgotPage = async (req, res) => {
 }
 
 // handle forgot password
-exports.resetPasswordFromEmail = async (req, res) => {
+export const resetPasswordFromEmail = async (req, res) => {
   const { password, token } = req.body;
   console.log("Query: ",req.body)
 
@@ -556,7 +565,7 @@ exports.resetPasswordFromEmail = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Update the user's password in the database
-  await User.update({ password: hashedPassword }, { where: { username: resetToken.username } });
+  await UserModel.update({ password: hashedPassword }, { where: { username: resetToken.username } });
 
   // Delete the password reset token from the database
   await resetToken.destroy();

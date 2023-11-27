@@ -1,6 +1,6 @@
-const dbConfig = require("../config/db.config.js");
+import { dbConfig } from "../config/db.config.js";
 
-const {Sequelize, } = require("sequelize");
+import {Sequelize, } from "sequelize";
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
   dialect: dbConfig.dialect,
@@ -13,30 +13,43 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   }
 });
 
-const db = {};
+export const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
+import createUserModel from "./users.model.js";
+import createAdminUserModel from "./admin_users.model.js";
+import createSubmissionModel from "./submissions.model.js";
+import createComplainantModel from "./complainants.model.js";
+import createAccessLogModel from "./accesslogs.model.js";
+import createErrorLogModel from "./errorlogs.model.js";
+import createErrorTypeModel from "./errorlogs.model.js";
+import createAccusedModel from "./accuseds.model.js";
+import createChargesModel from "./charges.model.js";
 
-db.users = require("./users.model.js")(sequelize, Sequelize);
-db.submissions = require("./submissions.model.js")(sequelize, Sequelize);
-db.complainants = require("./complainants.model.js")(sequelize, Sequelize);
-db.accuseds = require("./accuseds.model.js")(sequelize, Sequelize);
-db.charges = require("./charges.model.js")(sequelize, Sequelize);
+export const UserModel = createUserModel(sequelize);
+export const AdminUserModel = createAdminUserModel(sequelize);
+export const SubmissionModel = createSubmissionModel(sequelize);
+export const ComplainantModel = createComplainantModel(sequelize);
+export const AccessLogModel = createAccessLogModel(sequelize);
+export const ErrorLogModel = createErrorLogModel(sequelize);
+export const ErrorTypeModel = createErrorTypeModel(sequelize);
+export const AccusedModel = createAccusedModel(sequelize);
+export const ChargesModel = createChargesModel(sequelize);
+// db.accuseds = require("./accuseds.model.js")(sequelize, Sequelize);
+// db.charges = require("./charges.model.js")(sequelize, Sequelize);
 
 // ---------------------
 // ASSOCIATIONS
 // Users ++++++++++
-db.submissions.belongsTo(db.users, { foreignKey: 'userId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
-db.users.hasMany(db.submissions);
+SubmissionModel.belongsTo(UserModel, { foreignKey: 'userId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+UserModel.hasMany(SubmissionModel);
 // Submissions ++++++++++
-db.complainants.belongsTo(db.submissions, { foreignKey: 'submissionId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
-db.submissions.hasOne(db.complainants)
+ComplainantModel.belongsTo(SubmissionModel, { foreignKey: 'submissionId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+SubmissionModel.hasOne(ComplainantModel)
 // Complainants ++++++++++
-db.accuseds.belongsTo(db.submissions, { foreignKey: 'submissionId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
-db.submissions.hasMany(db.accuseds)
+AccusedModel.belongsTo(SubmissionModel, { foreignKey: 'submissionId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+SubmissionModel.hasMany(UserModel)
 // Accuseds ++++++++++
-db.charges.belongsTo(db.accuseds, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
-db.accuseds.hasMany(db.charges)
+ChargesModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+AccusedModel.hasMany(ChargesModel)
 // Charges ++++++++++
-
-module.exports = db; 

@@ -1,6 +1,9 @@
-const {DataTypes} = require("sequelize");
-module.exports = (sequelize, Sequelize) => {
-  const Notification = sequelize.define('Notification', {
+import { DataTypes } from "sequelize";
+
+export default (sequelize) => {
+    const Notification = sequelize.define("Notification", {
+
+
     msgId: {
       type: DataTypes.UUID,
       primaryKey: true,

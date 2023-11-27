@@ -2,7 +2,7 @@ const db = require("../models/index");
 const Role = db.roles;
 const { Op } = require("sequelize");
 
-exports.create = (req, res) => {
+export const create = (req, res) => {
     const role = {
       roleLabel: req.body.roleLabel,
       roleDescription: req.body.roleDescription
@@ -20,7 +20,7 @@ exports.create = (req, res) => {
       });
   };
   
-  exports.findAll = (req, res) => {
+  export const findAll = (req, res) => {
     Role.findAll()
       .then(data => {
         res.send(data);
@@ -33,7 +33,7 @@ exports.create = (req, res) => {
       });
   };
   
-  exports.findOne = (req, res) => {
+  export const findOne = (req, res) => {
     const id = req.params.id;
   
     Role.findByPk(id)
@@ -47,7 +47,7 @@ exports.create = (req, res) => {
       });
   };
   
-  exports.update = (req, res) => {
+  export const update = (req, res) => {
     const id = req.params.id;
   
     Role.update(req.body, {
@@ -71,7 +71,7 @@ exports.create = (req, res) => {
       });
   };
   
-  exports.delete = (req, res) => {
+  export const del = (req, res) => {
     const id = req.params.id;
   
     Role.destroy({

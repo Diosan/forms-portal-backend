@@ -1,17 +1,21 @@
-  module.exports = app => {
-    const permissions = require("../controllers/permissions.controller.js");
-    var router = require("express").Router();
+import {findAll, findOne, create, update, del
+
+} from "../controllers/permissions..controller.js";
+import express from "express";
+
+export default function(app) {
+  const router = express.Router();
     
     // Retrieve all permissions
-    router.get("/", permissions.findAll);
+    router.get("/", findAll);
     // Retrieve one permission
-    router.get("/:id", permissions.findOne);
+    router.get("/:id", findOne);
     // Create a new permission
-    router.post("/", permissions.create);
+    router.post("/", create);
     // Update a new permission
-    router.put("/:id", permissions.update);
+    router.put("/:id", update);
     // Delete a permission
-    router.delete("/:id", permissions.delete);
+    router.delete("/:id", del);
 
 
    

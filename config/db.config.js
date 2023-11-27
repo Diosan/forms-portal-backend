@@ -1,9 +1,9 @@
 //SQL SERVER
 
-module.exports = {
+export const dbConfig = {
     HOST: "localhost",
     USER: "root",
-    PASSWORD: "piccolo",
+    PASSWORD: "Tt,7$kz,m<`9<9qs",
     DB: "jsswf_admin",
     dialect: "mysql",
     pool: {
@@ -12,4 +12,4 @@ module.exports = {
       acquire: 30000,
       idle: 10000
     }
-};
+  };

@@ -1,6 +1,10 @@
-const {DataTypes} = require("sequelize");
-module.exports = (sequelize, Sequelize) => {
-    const Charge = sequelize.define("charges", {
+
+import  {DataTypes} from "sequelize";
+export default sequelize => {
+const Charge = sequelize.define("charges", {
+
+
+
     //   id: {
     //     type: DataTypes.UUID,
     //     defaultValue: DataTypes.UUIDV4,
@@ -13,34 +17,34 @@ module.exports = (sequelize, Sequelize) => {
             unique: true
         },
         name: {
-            type: Sequelize.DataTypes.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         },
         ICCS: {
-            type: Sequelize.DataTypes.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         },
         UNODC: {
-            type: Sequelize.DataTypes.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         },
         counts: {
-            type: Sequelize.DataTypes.INTEGER,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         particulars: {
-            type: Sequelize.DataTypes.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         },
         dateOfOffence: {
-          type: Sequelize.DataTypes.DATEONLY,
+          type: DataTypes.DATEONLY,
           allowNull: true
         }
     });
 
-    Charge.associate = function (models) {
-        Complainant.belongsTo(models.submission);
-    };
+    // Charge.associate = function (models) {
+    //     Complainant.belongsTo(models.submission);
+    // };
 
     return Charge;
 };

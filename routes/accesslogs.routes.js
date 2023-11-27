@@ -1,14 +1,17 @@
-module.exports = app => {
-    const accesslogs = require("../controllers/accesslogs.controller.js");
-    var router = require("express").Router();
+import {findAll, create} from "../controllers/accesslogs.controller.js";
+import express from "express";
+
+export default function(app) {
+    const router = express.Router();
 
     // Files ***********************************
         // Retrieve all Log Entries
-        router.get("/", accesslogs.findAll); 
+        router.get("/", findAll); 
         //Create a new Log Entries
-        router.post("/", accesslogs.create);
+        router.post("/", create);
   
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  
     app.use('/api/logs/access', router);
 
   };
+

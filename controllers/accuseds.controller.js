@@ -1,9 +1,12 @@
-const db = require("../models/index");
-const Submission = db.submissions;
-const Accused = db.accuseds;
-const Charge = db.charges;
+import { db, SubmissionModel, AccusedModel, ChargesModel } from "../models/index.js";
+import fs from "fs";
+import formidable from 'formidable'
+import {dbConfig} from "../config/db.config.js"
+import mysql from 'mysql2'
 
-exports.saveCharge = async (req, res) => {
+
+
+export const saveCharge = async (req, res) => {
     
     // let charge = {
     //     name: 'Espionage',
@@ -25,7 +28,7 @@ exports.saveCharge = async (req, res) => {
 
 };
 
-exports.charges = async (req, res) => {
+export const charges = async (req, res) => {
     const id = req.params.id;
     let returned_charges = await Charge.findAll({
         where: {

@@ -1,19 +1,25 @@
-module.exports = app => {
-  const admin_users = require("../controllers/admin_users.controller.js");
-  var router = require("express").Router();
+
+import {findAll, create, findOne, update, del, adminLogin, verifyOtp} from "../controllers/admin_users.controller.js";
+import express from "express";
+
+export default function(app) {
+  
+  const router = express.Router();
   
   // Retrieve all admin_users
-  router.get("/", admin_users.findAll);
+  router.get("/", findAll);
   // Retrieve one user
-  router.get("/:id", admin_users.findOne);
+  router.get("/:id", findOne);
   // Create a new user
-  router.post("/", admin_users.create);
+  router.post("/", create);
+  // Login a user
+  router.post("/login", adminLogin);
+  // Verify OTP
+  router.post("/verify-otp", verifyOtp);
   // Update a new user
-  router.put("/:id", admin_users.update);
+  router.put("/:id", update);
   // Delete a user
-  router.delete("/:id", admin_users.delete);
+  router.delete("/:id", del);
 
-
- 
   app.use('/api/admin/users', router);
 };

@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 
 
 // Create and Save a new Account
-exports.create = (req, res) => {
+export const create = (req, res) => {
   // Validate request
   if (!req.body.userId) {
     res.status(400).send({
@@ -41,7 +41,7 @@ exports.create = (req, res) => {
 };
 
 // Retrieve all Accounts from the database.
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
   const userId = req.query.userId;
   var condition = userId ? { userId: { [Op.like]: `%${userId}%` } } : null;
 
@@ -58,7 +58,7 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single Account with an id
-exports.findOne = (req, res) => {
+export const findOne = (req, res) => {
   const id = req.params.id;
 
   Account.findByPk(id)
@@ -73,7 +73,7 @@ exports.findOne = (req, res) => {
 };
 
 // Update a Account by the id in the request
-exports.update = (req, res) => {
+export const update = (req, res) => {
     const id = req.params.id;
 
     Account.update(req.body, {
@@ -97,7 +97,7 @@ exports.update = (req, res) => {
         });
 };
 
-exports.delete = (req, res) => {
+export const del = (req, res) => {
     const id = req.params.id;
   
     Account.destroy({

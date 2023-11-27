@@ -1,5 +1,5 @@
-const {DataTypes} = require("sequelize");
-module.exports = (sequelize, Sequelize) => {
+import  {DataTypes} from "sequelize";
+export default sequelize => {
     const Submission = sequelize.define("submissions", {
     //   id: {
     //     type: DataTypes.UUID,
@@ -16,29 +16,29 @@ module.exports = (sequelize, Sequelize) => {
     //     primaryKey: true,
     //     unique: true
     //   },
-      description: {           
-        type: Sequelize.STRING,
+      description: {           //your unique id from your agency. eg. Regimental number
+        type: DataTypes.STRING,
         allowNull: false
       },
-      status: { 
-        type: Sequelize.STRING,
+      status: {           //your unique id from your agency. eg. Regimental number
+        type: DataTypes.STRING,
         allowNull: false
       },
       userId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
       }
     });
 
-    Submission.associate = function (models) {
-        Submission.belongsTo(models.user);
-        Submission.hasOne(models.complainant, {
-          onDelete: "CASCADE",
-        });
-        Submission.hasMany(models.accused, {
-          onDelete: "CASCADE",
-        });
-    };
+    // Submission.associate = function (models) {
+    //     Submission.belongsTo(models.user);
+    //     Submission.hasOne(models.complainant, {
+    //       onDelete: "CASCADE",
+    //     });
+    //     Submission.hasMany(models.accused, {
+    //       onDelete: "CASCADE",
+    //     });
+    // };
 
     return Submission;
 };

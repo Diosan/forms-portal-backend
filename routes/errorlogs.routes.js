@@ -1,18 +1,21 @@
-module.exports = app => {
-    const errorlogs = require("../controllers/errorlogs.controller.js");
-    var router = require("express").Router();
+import {findAll, findOne, create, update, del} from "../controllers/errorlogs.controller.js";
+import express from "express";
 
+export default function(app) {
+  const router = express.Router();
+
+  
     // Files ***********************************
         // Retrieve all Log Entries
-        router.get("/", errorlogs.findAll); 
+        router.get("/", findAll); 
         // Retrieve one Error Log
-        router.get("/:id", errorlogs.findOne);
+        router.get("/:id", findOne);
         //Create a new Log Entries
-        router.post("/", errorlogs.create);
+        router.post("/", create);
         // Update Log Entry
-        router.put("/:id", errorlogs.update);
+        router.put("/:id", update);
         // Delete a Log Entry
-        router.delete("/:id", errorlogs.delete);
+        router.delete("/:id", del);
 
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  
     app.use('/api/logs/error', router);

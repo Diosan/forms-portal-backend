@@ -1,21 +1,26 @@
-module.exports = app => {
-  const account = require("../controllers/accounts.controller.js");
-  var router = require("express").Router();
+import {findAll, findOne, update, del} from "../controllers/accounts.controller.js";
+import express from "express";
+
+export default function(app) {
+  
+
+  
+  const router = express.Router();
   
   // Create a new account
-  router.post('/', account.create);
+  router.post('/', create);
 
   // Get all accounts
-  router.get('/', account.findAll);
+  router.get('/', findAll);
 
   // Get a single account by ID
-  router.get('/:id', account.findOne);
+  router.get('/:id', findOne);
 
   // Update a account by ID
-  router.put('/:id', account.update);
+  router.put('/:id', update);
 
   // Delete a account by ID
-  router.delete('/:id', account.delete);
+  router.delete('/:id', del);
  
   app.use('/api/account', router);
 };

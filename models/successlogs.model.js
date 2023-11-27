@@ -1,5 +1,10 @@
-module.exports = (sequelize, Sequelize) => {
+import { DataTypes } from "sequelize";
+
+export default (sequelize) => {
     const SuccessLog = sequelize.define("successlogs", {
+
+
+
       id:{
         type: Sequelize.INTEGER,
         allowNull: false,
