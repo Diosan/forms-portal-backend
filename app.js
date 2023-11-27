@@ -47,6 +47,7 @@ import errortypesRoutes from './routes/errortypes.routes.js';
 import submissionsRoutes from './routes/submissions.routes.js';
 // import rolesRoutes from './routes/roles.routes.js';
 import pdfRoutes from './routes/pdf.routes.js';
+import efilingRoutes from './routes/efiling.routes.js';
 
 
 
@@ -543,6 +544,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
     accessLogsRoutes(app);
     authenticateRoutes(app);
     pdfRoutes(app);
+    efilingRoutes(app);
     // configRoutes(app);
     // accountRoutes(app);
     // adminUserRoutes(app);

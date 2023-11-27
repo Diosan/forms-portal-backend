@@ -22,9 +22,14 @@ export const generatePdf = async(req, res) =>{
 
     // generate the pdf
     const generator = new PDFGenerator(data, '../templates/form_template.json');
-    generator.generatePDF('test_output/output.pdf')
-    .then(outputPath => console.log(`PDF saved to ${outputPath}`))
-    .catch(error => console.error('Error generating PDF:', error));
 
+    try {
+        const pdfPath =  await generator.generatePDF('test_output/output.pdf')
+        console.log(`PDF saved`);
+        res.sendFile(pdfPath);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error generating PDF');
+    }
 
 }

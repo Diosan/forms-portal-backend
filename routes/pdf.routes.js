@@ -1,5 +1,4 @@
 
-import {findAll, create, findOne, update, del, adminLogin, verifyOtp} from "../controllers/admin_users.controller.js";
 import express from "express";
 
 import {generatePdf} from "../controllers/pdf.controller.js";
