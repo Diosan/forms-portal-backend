@@ -13,7 +13,7 @@ export class TOTPGenerator {
 
   async generateOTP(sessionId, email) {
     //check if an OTP for this session already exists
-    console.log(sessionId);
+    console.log(sessionId), "", email;
     const key = `otp:${sessionId}`;
 
     try {
@@ -39,12 +39,18 @@ export class TOTPGenerator {
       } while (i >= 2 && otp[i - 1] === nextDigit && otp[i - 2] === nextDigit);
       otp += nextDigit;
     }
-    // console.log(otp);
-    // Store OTP in Redis
-    await this.storeOTPInRedis(sessionId, otp);
-
-    // Send OTP via email
-    await this.sendOTPViaEmail(email, otp);
+    try {
+      // Assuming storeOTPInRedis and sendOTPViaEmail are asynchronous functions
+      // Store OTP in Redis
+      await this.storeOTPInRedis(sessionId, otp);
+      // Send OTP via email
+      await this.sendOTPViaEmail(email, otp);
+      // If both operations are successful
+      console.log("OTP stored and sent successfully.");
+    } catch (error) {
+        // Handle errors that might occur during the OTP storage or email sending
+        console.error("An error occurred:", error.message);
+    }
   }
 
   async storeOTPInRedis(sessionId, otp) {

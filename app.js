@@ -29,7 +29,7 @@ import bcrypt from 'bcrypt'
 
 // Internal libraries next
 
-import { db, UserModel } from "./models/index.js";
+import { db, UserModel, SubmissionModel } from "./models/index.js";
 import { dbConfig } from './config/db.config.js';
 import { TOTPGenerator } from './utilities/TOTPGenerator.class.js';
 import { mailConfig } from './config/mail.config.js';
@@ -40,6 +40,7 @@ import authenticateRoutes from './routes/authenticate.routes.js';
 // import configRoutes from './routes/config.routes.js';
 // import accountRoutes from './routes/account.routes.js';
 import adminUserRoutes from './routes/admin_users.routes.js';
+import userRoutes from './routes/users.routes.js';
 // import notificationsRoutes from './routes/notifications.routes.js';
 import errorLogsRoutes from './routes/errorlogs.routes.js';
 import errortypesRoutes from './routes/errortypes.routes.js';
@@ -92,14 +93,18 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
     console.log("Connected!");
     connection.query(`CREATE DATABASE IF NOT EXISTS ${dbConfig.DB}`, function (err, result) {
         if (err) throw err;
-        console.log("Database created");
+        console.log("Database running successfully");
     });
   });
 
   // Close the connection
   //connection.end();
-  db.sequelize.sync();
-//----------------------------------------------------------------
+
+  //________________________________________________
+  // SYNC Database -  USE WHEN NECESSARY
+  //---------------------------------------------
+  // db.sequelize.sync();
+  //----------------------------------------------------------------
 
 
 //________________________________________________
@@ -389,7 +394,29 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
               delete: { isAccessible: canModifyUsers },
             },
           }
-      }],
+      },
+      {
+        resource: SubmissionModel,
+        options: {
+          properties: {
+            createdAt: {
+              isVisible: { list: true, filter: true, show: true, edit: false }, 
+            },
+            username: {
+              isVisible: { list: true, filter: true, show: true, edit: false }, 
+            },
+            email: {
+              isVisible: { list: true, filter: true, show: true, edit: false }, 
+            },
+          },
+          actions: {
+            new: { isAccessible: canCreateAdmins },
+            edit: { isAccessible: canModifyUsers },
+            delete: { isAccessible: canModifyUsers },
+          },
+        }
+    }
+    ],
       rootPath: '/admin',
       assets: {
         styles: ['/admin-bro.css'], 
@@ -549,7 +576,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
     efilingRoutes(app);
     // configRoutes(app);
     // accountRoutes(app);
-    // adminUserRoutes(app);
+    adminUserRoutes(app);
     // notificationsRoutes(app);
     errorLogsRoutes(app);
     errortypesRoutes(app);
@@ -557,6 +584,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
     // rolesRoutes(app);
     submissionsRoutes(app);
     accusedRoutes(app);
+    userRoutes(app);
 
 
     // require("./routes/config.routes")(app);
@@ -602,18 +630,18 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
       res.json(form_schema);
     });
 
-    //ROUTE TO FORM SCHEMAS
-      app.post('/register', async (req, res) => {
-        let data = req.body;    
-        let new_user = await User.create({
-          username: 'janedoe',
-          birthday: new Date(1980, 6, 20),
-        });
+    // //ROUTE TO FORM SCHEMAS
+    //   app.post('/register', async (req, res) => {
+    //     let data = req.body;    
+    //     let new_user = await User.create({
+    //       username: 'janedoe',
+    //       birthday: new Date(1980, 6, 20),
+    //     });
         
-        const users = await User.findAll();    
-        res.send(data);
+    //     const users = await User.findAll();    
+    //     res.send(data);
 
-      });
+    //   });
 
 
 
