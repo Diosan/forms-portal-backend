@@ -31,6 +31,10 @@ module.exports = (sequelize, Sequelize) => {
         particulars: {
             type: Sequelize.DataTypes.STRING,
             allowNull: false
+        },
+        dateOfOffence: {
+          type: Sequelize.DataTypes.DATEONLY,
+          allowNull: true
         }
     });
 

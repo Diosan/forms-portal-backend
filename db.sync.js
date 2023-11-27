@@ -112,8 +112,9 @@ const Accused = sequelize.define('accuseds',
           defaultValue: 'Unknown'
         },
         dateOfBirth:{
-          type: Sequelize.DataTypes.DATE, 
-          allowNull: true
+          type: Sequelize.DataTypes.DATEONLY, 
+          allowNull: true,
+          defaultValue: Sequelize.NOW
         }
     }
 );
@@ -216,8 +217,9 @@ const Charge = sequelize.define('charges',
           defaultValue: ''
         },
         dateOfOffence: {
-          type: Sequelize.DataTypes.DATE,
-          allowNull: true
+          type: Sequelize.DataTypes.DATEONLY,
+          allowNull: true,
+          defaultValue: Sequelize.NOW
         }
 
 

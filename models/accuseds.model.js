@@ -13,6 +13,50 @@ module.exports = (sequelize, Sequelize) => {
         address: {           
             type: Sequelize.STRING,
             allowNull: false
+        },
+        tntNational:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: false
+        },
+        tntResident:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: false
+        },
+        otherNational:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: false
+        },
+        otherResident:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: false
+        },
+        otherNationalCountry:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false
+        },
+        otherResidentCountry:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false
+        },
+        identification:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false
+        },
+        gender:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false
+        },
+        adulthood:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false
+        },
+        previousCriminalRecord:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false
+        },
+        dateOfBirth:{
+          type: Sequelize.DataTypes.DATEONLY, 
+          allowNull: true
         }
     });
 
