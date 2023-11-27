@@ -1,17 +1,12 @@
-import { db, ErrorLogModel, SubmissionModel, ComplainantModel, UserModel } from "../models/index.js";
+
+import { db, ErrorLogModel, PasswordResetToken, SubmissionModel, ComplainantModel, UserModel, AccusedModel } from "../models/index.js";
 import fs from "fs";
 import formidable from 'formidable'
 import {dbConfig} from "../config/db.config.js"
 import mysql from 'mysql2'
 import { Op } from "sequelize";
+ 
 
-
-// const db from "../models/index");
-// const Submission = db.submissions;
-// const Complainant = db.complainants;
-// const User = db.users; 
-const PasswordResetToken = db.password_reset_token;
-// const Op = db.Sequelize.Op;
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 const saltRounds = 10;
@@ -191,12 +186,12 @@ export const saveComplainant = async (req, res) => {
 
         // await submission.addComplainant(complainant);
 
-        await transporter.sendMail({
-            from: 'JSSWF <omm@link868.com>',
-            to: req.body.email,
-            subject: 'Complaint with Oath',
-            text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/${req.body.submissionId}`
-        });
+        // await transporter.sendMail({
+        //     from: 'JSSWF <omm@link868.com>',
+        //     to: req.body.email,
+        //     subject: 'Complaint with Oath',
+        //     text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/${req.body.submissionId}`
+        // });
 
         res.status(201).json({
           outcome: 'success', 
@@ -212,6 +207,54 @@ export const saveComplainant = async (req, res) => {
     }
     
 
+}
+
+exports.saveAccused = async (req, res) => {
+  let accused = req.body;
+  let new_accused = Accused.create(accused);
+  res.status(201).json({
+    outcome: 'success', 
+    accused: new_accused
+  })
+}
+
+exports.accuseds = async (req, res) => {
+  const id = req.params.id;
+  // console.log('\n\n\n Passed id for submission in path: ', id);
+  let returned_accuseds = await Accused.findAll({
+    where: {submissionId: id}
+  });
+  // let returned_accuseds = await Accused.findAll();
+  // console.log('All accuseds returned: ', returned_accuseds);
+  res.status(200).json({
+    outcome: 'success',
+    // accused: returned_accuseds 
+    accuseds: returned_accuseds
+  })
+}
+
+exports.saveAccused = async (req, res) => {
+  let accused = req.body;
+  let new_accused = Accused.create(accused);
+  res.status(201).json({
+    outcome: 'success', 
+    accused: new_accused
+  })
+}
+
+exports.accuseds = async (req, res) => {
+  const id = req.params.id;
+  // console.log('\n\n\n Passed id for submission in path: ', id);
+  let returned_accuseds = await Accused.findAll({
+    where: {submissionId: id}
+  });
+  // let returned_accuseds = await Accused.findAll();
+  // console.log('All accuseds returned: ', returned_accuseds);
+  res.status(200).json({
+    outcome: 'success',
+    // accused: returned_accuseds 
+    accuseds: returned_accuseds
+  })
 }
 
 export const updateTitle = async (req, res) => {
@@ -648,5 +691,20 @@ export const resetPasswordFromEmail = async (req, res) => {
   // Return a success response to the user
   res.send('Your password has been reset successfully.');
 };
+
+exports.requestSignature = async (req, res) => {
+  let signatureRequest = req.body;
+  console.log('\n\n\n Request Body: ', req.body);
+  let transporter = nodemailer.createTransport(mailConfig);
+  await transporter.sendMail({
+    from: 'JSSWF <omm@link868.com>',
+    to: req.body.complainant_email,
+    subject: 'Complaint with Oath',
+    text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/${req.body.submission_id}`
+  });
+  res.status(201).json({
+    outcome: 'success'
+  })
+}
 
 

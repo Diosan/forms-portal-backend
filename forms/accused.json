@@ -6,7 +6,9 @@
         "required": [
           "firstName",
           "lastName",
-          "address"
+          "address",
+          "dateOfBirth",
+          "gender"
         ],
         "properties": {
           "firstName": {
@@ -20,7 +22,37 @@
           "address": {
             "type": "string",
             "title": "Address"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date",
+            "title": "Date of Birth"
+          },
+          "gender": {
+            "type": "string",
+            "title": "Gender",
+            "enum": [
+              "Male",
+              "Female"
+            ],
+            "enumNames": [
+              "Male",
+              "Female"
+            ]
+          },
+          "adulthood": {
+            "type": "string",
+            "title": "Adult or Child",
+            "enum": [
+              "Adult",
+              "Child"
+            ],
+            "enumNames": [
+              "Adult",
+              "Child"
+            ]
           }
+
         }
     },
     "UI": {

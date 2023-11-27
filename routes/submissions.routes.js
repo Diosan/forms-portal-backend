@@ -32,11 +32,17 @@
     // Delete a user
     router.delete("/:id", del);
 
-    router.post('/saveComplainant', saveComplainant);
-  
-    router.post('/update_title', updateTitle);
+    router.post('/saveComplainant', submissions.saveComplainant);
 
-    router.post('/update_complainant', updateComplainant);
+    router.post('/save_accused', submissions.saveAccused);
+  
+    router.post('/update_title', submissions.updateTitle);
+
+    router.post('/update_complainant', submissions.updateComplainant);
    
+    router.get('/accuseds/:id', submissions.accuseds);
+
+    router.post('/request_signature', submissions.requestSignature);
+
     app.use('/api/submissions', router);
   };

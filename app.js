@@ -45,6 +45,7 @@ import errorLogsRoutes from './routes/errorlogs.routes.js';
 import errortypesRoutes from './routes/errortypes.routes.js';
 // import permissionsRoutes from './routes/permissions.routes.js';
 import submissionsRoutes from './routes/submissions.routes.js';
+import accusedRoutes from './routes/accuseds.routes.js';
 // import rolesRoutes from './routes/roles.routes.js';
 import pdfRoutes from './routes/pdf.routes.js';
 import efilingRoutes from './routes/efiling.routes.js';
@@ -554,6 +555,18 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
     // permissionsRoutes(app);
     // rolesRoutes(app);
     submissionsRoutes(app);
+    accusedRoutes(app);
+
+
+    // require("./routes/config.routes")(app);
+    // require("./routes/account.routes")(app);
+    // require("./routes/admin_users.routes")(app);
+    // require("./routes/notifications.routes")(app);
+    // require("./routes/permissions.routes")(app);
+    // require("./routes/roles.routes")(app);
+    // require("./routes/users.routes")(app);
+    // require("./routes/submissions.routes")(app);
+    // require("./routes/accuseds.routes")(app);
     // ++++++++++++++++++++++++++++++++++++++++++
 
     //ALL OTHER ROUTES

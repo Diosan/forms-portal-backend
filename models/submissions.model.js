@@ -31,7 +31,11 @@ export default sequelize => {
     });
 
     Submission.associate = function (models) {
+        Submission.belongsTo(models.user);
         Submission.hasOne(models.complainant, {
+          onDelete: "CASCADE",
+        });
+        Submission.hasMany(models.accused, {
           onDelete: "CASCADE",
         });
     };

@@ -44,9 +44,81 @@ const Complainant = sequelize.define('complainants',
             type: Sequelize.DataTypes.STRING,
             allowNull: false
         }
-
     }
-)
+);
+
+const Accused = sequelize.define('accuseds',
+    {
+        firstName: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        lastName: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        address: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        tntNational:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: false, 
+          defaultValue: true
+        },
+        tntResident:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: false, 
+          defaultValue: true
+        },
+        otherNational:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: false, 
+          defaultValue: true
+        },
+        otherResident:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: false, 
+          defaultValue: true
+        },
+        otherNationalCountry:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false, 
+          defaultValue: ''
+        },
+        otherResidentCountry:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false, 
+          defaultValue: ''
+        },
+        identification:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false, 
+          defaultValue: ''
+        },
+        gender:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false, 
+          defaultValue: 'Male'
+        },
+        adulthood:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false, 
+          defaultValue: 'Adult'
+        },
+        previousCriminalRecord:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false, 
+          defaultValue: 'Unknown'
+        },
+        dateOfBirth:{
+          type: Sequelize.DataTypes.DATEONLY, 
+          allowNull: true,
+          defaultValue: Sequelize.NOW
+        }
+    }
+);
+
 
 
 const User = sequelize.define("users", {
@@ -118,6 +190,42 @@ const User = sequelize.define("users", {
     }
 });
 
+const Charge = sequelize.define('charges',
+    {
+        name: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        ICCS: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false,
+            defaultValue: ''
+        },
+        UNODC: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false,
+            defaultValue: ''
+        },
+        counts: {
+            type: Sequelize.DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 1
+        },
+        particulars: {
+          type: Sequelize.DataTypes.STRING,
+          allowNull: true,
+          defaultValue: ''
+        },
+        dateOfOffence: {
+          type: Sequelize.DataTypes.DATEONLY,
+          allowNull: true,
+          defaultValue: Sequelize.NOW
+        }
+
+
+    }
+);
+
 Submission.belongsTo(User);
 
 User.hasMany(Submission);
@@ -125,6 +233,14 @@ User.hasMany(Submission);
 Submission.hasOne(Complainant);
 
 Complainant.belongsTo(Submission);
+
+Submission.hasMany(Accused);
+
+Accused.belongsTo(Submission);
+
+Accused.hasMany(Charge);
+
+Charge.belongsTo(Accused);
 
 sequelize.sync({alter: true})
 .then((data) => {
