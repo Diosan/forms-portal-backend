@@ -38,6 +38,7 @@ export const ChargesModel = createChargesModel(sequelize);
 // db.accuseds = require("./accuseds.model.js")(sequelize, Sequelize);
 // db.charges = require("./charges.model.js")(sequelize, Sequelize);
 
+<<<<<<< HEAD
 // ---------------------
 // ASSOCIATIONS
 // Users ++++++++++
@@ -53,3 +54,7 @@ SubmissionModel.hasMany(UserModel)
 ChargesModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 AccusedModel.hasMany(ChargesModel)
 // Charges ++++++++++
+=======
+
+module.exports = db ; 
+>>>>>>> 23c84a2 (Commit)

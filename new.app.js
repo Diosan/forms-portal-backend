@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //External libraries first
 const express = require('express');
 const dotenv = require('dotenv');
@@ -11,10 +12,29 @@ const { Sequelize, DataTypes } = require('sequelize');
 const AdminBro = require('admin-bro')
 const AdminBroExpress = require('@admin-bro/express')
 const AdminBroSequelize = require('@admin-bro/sequelize')
+=======
+
+
+const express = require('express');
+
+const dotenv = require('dotenv');
+dotenv.config();
+
+const bodyParser = require('body-parser')
+const path = require('path');
+const cors = require('cors');
+const db_conf = require('./config/db.config')
+const _= require("lodash");
+const { v4: uuid } = require("uuid");
+const { Sequelize, DataTypes } = require('sequelize');
+
+const db = require("./models/index");
+>>>>>>> 23c84a2 (Commit)
 const mysql = require("mysql2");
 const winston = require('winston');
 const fs = require('fs');
 const expressListRoutes = require('express-list-routes');
+<<<<<<< HEAD
 const nodemailer = require('nodemailer');
 var session = require('express-session')
 const http = require("http");
@@ -41,6 +61,12 @@ const { redisClient, redisURL, userChannel, redisAdapter, emitter } = require('.
 const RedisStore = require('connect-redis');
 
 
+=======
+const TOTPGenerator = require('./utilities/TOTPGenerator.class');
+const nodemailer = require('nodemailer');
+const mailConfig = require('./config/mail.config');
+const AGENCY_NAME = process.env.REACT_APP_AGENCY_NAME
+>>>>>>> 23c84a2 (Commit)
 
 
 
@@ -79,6 +105,7 @@ const RedisStore = require('connect-redis');
   //connection.end();
   db.sequelize.sync();
 //----------------------------------------------------------------
+<<<<<<< HEAD
 
 
 //________________________________________________
@@ -100,6 +127,48 @@ const RedisStore = require('connect-redis');
 //------------------------------------------------
   var allowedDomains = [
     'http://swf.ttlawcourts.org', 'https://swf.ttlawcourts.org', 
+=======
+//________________________________________________
+// APP - HTTP
+//------------------------------------------------
+  const app = express();
+
+  app.use(express.static('public'));
+
+  // Use Morgan for logging HTTP requests
+  // with the 'combined' predefined format, 
+  // or customize it as needed
+  //.......................................
+  const http = require("http");
+  const server = http.createServer(app);
+
+  const io = require("socket.io")(server, {
+    cors: {
+      origin: function (origin, callback) {
+        // bypass the requests with no origin (like curl requests, mobile apps, etc )
+        if (!origin) return callback(null, true);
+  
+        if (allowedDomains.indexOf(origin) === -1) {
+          var msg = `This site ${origin} does not have an access.`;
+          return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+      },
+      methods: ["GET", "POST"],
+    //   allowedHeaders: ["my-custom-header"],
+      credentials: true,
+      transports: ['websocket', 'polling'],
+    }
+  });
+  // Use redis adapter
+
+
+
+  let connectedUsers = {};
+
+  var allowedDomains = [
+    'http://jsswf.ttlawcourts.org', 'https://jsswf.ttlawcourts.org', 
+>>>>>>> 23c84a2 (Commit)
     'http://jsswf.sytes.net', 'https://jsswf.sytes.net', 
     'http://localhost:3000', 'https://localhost:3000',
     'http://localhost:5173', 'https://localhost:5173',
@@ -123,6 +192,7 @@ const RedisStore = require('connect-redis');
       transports: ['websocket', 'polling'],
   }));
 
+<<<<<<< HEAD
 
 
   //----------------------------------------------------------------
@@ -313,6 +383,42 @@ const RedisStore = require('connect-redis');
   //----------------------------------------------------------------
   //----------------------------------------------------------------
   //LOGGER INCOMING REQUESTS
+=======
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+const PORT = process.env.PORT || 3000
+const ADMIN_PORT = process.env.ADMIN_PORT || 8080
+const indexPath  = path.resolve(__dirname, '..', 'public', 'index.html');
+//----------------------------------------------------------------
+
+//ADMINBRO
+  const ADMIN = {
+    email: 'off_admin@link868.com',
+    password: '12345678',
+  };
+
+
+
+
+  // app.use(bodyParser.json())
+  // app.use(bodyParser.urlencoded({ extended: false }))
+  app.use(bodyParser.json({ limit: '5mb' }))
+  app.use(bodyParser.urlencoded({ limit: '5mb', extended: true }));
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//CORS
+  app.use(cors({
+    origin: 'http://localhost:5173'
+    // origin: 'http://jsswf.sytes.net:5173'
+  }));
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//MIDDLEWARE FOR PRINTING INCOMING REQUESTS
+
+>>>>>>> 23c84a2 (Commit)
     // Custom middleware to log incoming requests
     function logRequests(req, res, next) {
       console.log(`${new Date().toISOString()} - ${req.method} Request to ${req.url}`);
@@ -321,6 +427,7 @@ const RedisStore = require('connect-redis');
 
     // Apply the middleware to all incoming requests
     app.use(logRequests);
+<<<<<<< HEAD
     // **CONSIDER USING >> Morgan for logging HTTP requests
     // with the 'combined' predefined format, 
     // or customize it as needed
@@ -428,6 +535,12 @@ const RedisStore = require('connect-redis');
 //----------------------------------------------------------------
 //ROUTES
 //----------------------------------------------------------------
+=======
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//ROUTES
+>>>>>>> 23c84a2 (Commit)
     // ++++++++++++++++++++++++++++++++++++++++++
     require("./routes/accesslogs.routes")(app);
     require("./routes/authenticate.routes")(app);
@@ -443,6 +556,7 @@ const RedisStore = require('connect-redis');
     require("./routes/submissions.routes")(app);
     // ++++++++++++++++++++++++++++++++++++++++++
 
+<<<<<<< HEAD
     //ALL OTHER ROUTES
     app.get('/', async (req, res) => {
       expressListRoutes(app, {  });
@@ -514,5 +628,146 @@ const RedisStore = require('connect-redis');
   app.listen(PORT, () => console.log('Judiciary of Trinidad and Tobago Web Forms Portal:3000!'))
   //START THE ADMIN SERVER
   app.listen(ADMIN_PORT, () => console.log('AdminBro is under localhost:8080/admin'))
+=======
+
+app.get('/', async (req, res) => {
+  expressListRoutes(app, {  });
+  // const transporter = nodemailer.createTransport(mailConfig);
+  // transporter.sendMail({
+  //   from: 'omm@link868.com',
+  //   to: 'dion.santana@gmail.com',
+  //   subject: 'hello world!',
+  //   text: 'hello world!'
+  // });
+  res.json({message: 'JSSWF-API-TS'});
+})
+
+
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//ROUTE TO FORM SCHEMAS
+  app.get('/schema/:schemaId', async (req, res) => {
+    // try {
+    //   await Sequelize.authenticate();
+    //   console.log('Connection has been established successfully.');
+    // } catch (error) {
+    //   console.error('Unable to connect to the database:', error);
+    // }
+    let schemaId = req.params.schemaId
+    console.log('schemaId: ' + schemaId)
+    const form_schema_file = await fs.readFileSync('./forms/' + schemaId + '.json');
+    const form_schema = JSON.parse(form_schema_file);
+    res.json(form_schema);
+  });
+
+
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//ROUTE TO FORM SCHEMAS
+  app.post('/register', async (req, res) => {
+    let data = req.body;    
+    let new_user = await User.create({
+      username: 'janedoe',
+      birthday: new Date(1980, 6, 20),
+    });
+    
+    const users = await User.findAll();    
+    res.send(data);
+
+  });
+
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+    // Current servier time route, used to sync app with server
+    app.get("/api/jsswf-time", (req, res) => {
+      // console.log("Current time ")
+      res.json({ time: new Date().toISOString() });
+    });
+    //------------------------------------------------
+
+    // here all other routes go to react
+    app.use(function(req, res, next) {
+      console.log("Route not found, sending 404");
+      res.status(404).send('Sorry, can\'t find that');
+    });
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+
+// ================================================
+// socket connections + redis connections
+// ================================================
+      io.on("connection", async (socket) => {
+        console.log(">> A user connected:", socket.id);  
+
+        //channels ++++++++++++++
+        // join user to channels when they connect
+        socket.join('drawUpdate');
+        socket.join('notifyAlert');
+        //--------------------------------------------  
+
+        // On User Login event +++++++++++++++++++++++
+        socket.on("login", (userId) => {
+          // add the user to the connectedUsers object 
+          console.log("user >>>> ", userId);
+          socket.userId = userId;
+          connectedUsers[socket.id] = { 
+            socket: socket,
+            connected: true,
+            userId: userId
+          };
+          socket.join(`user:${userId}`);
+        });
+
+        // On UserLogout event +++++++++++++++++++++
+        socket.on("loogut", ({ userId, socketId }) => {
+          if (socket.userId) {
+            console.log("userLogout ", userId)
+            // myClient.del(socket.userId);
+          }
+        });
+
+        // Listen for the "activity" +++++++++++++++
+        // to ensure active users are 
+        socket.on('activity', async (userId) => {
+          console.log(userId)
+          socket.join('drawUpdate');
+          socket.join('notifyAlert');
+          socket.join(`user:${userId}`);
+          socket.userId = userId;
+          connectedUsers[socket.id] = { 
+            socket: socket,
+            connected: true,
+            userId: userId
+          };
+        });
+
+        // Emitting a message to all channels
+        //below is an example of how to chain messages emit to a number of channels
+        // io.to('channel1').to('channel2').to('channel3').emit('message', 'Hello, channels!');
+
+        // Private message to user ++++++++++++++++++++++++
+        socket.on('privateMessage', async (channel, message) => {
+          // const userId = channel.slice('user:'.length);
+          emitter.emit(channel, message);
+        });
+
+        // Handle disconnection ++++++++++++++++++++++++
+        socket.on('disconnect', () => {
+          console.log(` >> Client disconnected: ${socket.id}`);
+          // Unsubscribe the socket from the 'drawUpdate' channel
+          delete connectedUsers[socket.id];
+        });
+
+
+    });
+//----------------------------------------------------------------
+// START ALL APPLICATIONS
+
+
+  app.listen(ADMIN_PORT, () => console.log('AdminBro is under localhost:8080/admin'))
+
+
+  app.listen(PORT, () => console.log('Judiciary of Trinidad and Tobago Web Forms Portal:3000!'))
+>>>>>>> 23c84a2 (Commit)
 //----------------------------------------------------------------
 //----------------------------------------------------------------
