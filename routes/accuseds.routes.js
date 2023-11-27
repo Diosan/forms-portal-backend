@@ -1,10 +1,12 @@
-module.exports = app => {
-    const accuseds = require("../controllers/accuseds.controller");
-    var router = require("express").Router();
+import {saveCharge, charges} from "../controllers/accuseds.controller.js";
+import express from "express";
 
-    router.get('/charges/:id', accuseds.charges);
+export default function(app) {
+    const router = express.Router();
 
-    router.post('/charges', accuseds.saveCharge);
+    router.get('/charges/:id', charges);
+
+    router.post('/charges', saveCharge);
 
     app.use('/api/accuseds', router);
 

@@ -1,8 +1,6 @@
   import {findAll, findOne, authenticateUser, create, update, del, resetPassword,
     updateMessage, forgotPasswordRequest, handlePasswordForgotPage, resetPasswordFromEmail,
-    saveComplainant, updateTitle, updateComplainant
-
-
+    saveComplainant, updateTitle, updateComplainant, saveAccused, accuseds, requestSignature
   } from "../controllers/submissions.controller.js";
   import express from "express";
   
@@ -32,17 +30,17 @@
     // Delete a user
     router.delete("/:id", del);
 
-    router.post('/saveComplainant', submissions.saveComplainant);
+    router.post('/saveComplainant', saveComplainant);
 
-    router.post('/save_accused', submissions.saveAccused);
+    router.post('/save_accused', saveAccused);
   
-    router.post('/update_title', submissions.updateTitle);
+    router.post('/update_title', updateTitle);
 
-    router.post('/update_complainant', submissions.updateComplainant);
+    router.post('/update_complainant', updateComplainant);
    
-    router.get('/accuseds/:id', submissions.accuseds);
+    router.get('/accuseds/:id', accuseds);
 
-    router.post('/request_signature', submissions.requestSignature);
+    router.post('/request_signature', requestSignature);
 
     app.use('/api/submissions', router);
   };

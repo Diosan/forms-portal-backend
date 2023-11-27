@@ -95,6 +95,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
         console.log("Database created");
     });
   });
+
   // Close the connection
   //connection.end();
   db.sequelize.sync();

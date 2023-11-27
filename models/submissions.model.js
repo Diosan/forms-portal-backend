@@ -25,20 +25,20 @@ export default sequelize => {
         allowNull: false
       },
       userId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
       }
     });
 
-    Submission.associate = function (models) {
-        Submission.belongsTo(models.user);
-        Submission.hasOne(models.complainant, {
-          onDelete: "CASCADE",
-        });
-        Submission.hasMany(models.accused, {
-          onDelete: "CASCADE",
-        });
-    };
+    // Submission.associate = function (models) {
+    //     Submission.belongsTo(models.user);
+    //     Submission.hasOne(models.complainant, {
+    //       onDelete: "CASCADE",
+    //     });
+    //     Submission.hasMany(models.accused, {
+    //       onDelete: "CASCADE",
+    //     });
+    // };
 
     return Submission;
 };

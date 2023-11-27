@@ -1,5 +1,7 @@
 
-import { db, ErrorLogModel, PasswordResetToken, SubmissionModel, ComplainantModel, UserModel, AccusedModel } from "../models/index.js";
+import { db, ErrorLogModel, SubmissionModel, ComplainantModel, UserModel, AccusedModel } from "../models/index.js";
+// import { PasswordResetToken} from "../models/index.js";
+
 import fs from "fs";
 import formidable from 'formidable'
 import {dbConfig} from "../config/db.config.js"
@@ -25,7 +27,7 @@ export const findAll = (req, res) => {
 
     Submission.findAndCountAll()
     .then(data => {
-        console.log('Submissions Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
+        console.log('SubmissionModel. Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
         res.status(201).json({
             outcome: 'success',
             submissions: data
@@ -209,7 +211,7 @@ export const saveComplainant = async (req, res) => {
 
 }
 
-exports.saveAccused = async (req, res) => {
+export const saveAccused = async (req, res) => {
   let accused = req.body;
   let new_accused = Accused.create(accused);
   res.status(201).json({
@@ -218,7 +220,7 @@ exports.saveAccused = async (req, res) => {
   })
 }
 
-exports.accuseds = async (req, res) => {
+export const accuseds = async (req, res) => {
   const id = req.params.id;
   // console.log('\n\n\n Passed id for submission in path: ', id);
   let returned_accuseds = await Accused.findAll({
@@ -233,29 +235,7 @@ exports.accuseds = async (req, res) => {
   })
 }
 
-exports.saveAccused = async (req, res) => {
-  let accused = req.body;
-  let new_accused = Accused.create(accused);
-  res.status(201).json({
-    outcome: 'success', 
-    accused: new_accused
-  })
-}
 
-exports.accuseds = async (req, res) => {
-  const id = req.params.id;
-  // console.log('\n\n\n Passed id for submission in path: ', id);
-  let returned_accuseds = await Accused.findAll({
-    where: {submissionId: id}
-  });
-  // let returned_accuseds = await Accused.findAll();
-  // console.log('All accuseds returned: ', returned_accuseds);
-  res.status(200).json({
-    outcome: 'success',
-    // accused: returned_accuseds 
-    accuseds: returned_accuseds
-  })
-}
 
 export const updateTitle = async (req, res) => {
   const id = req.body.id
@@ -320,8 +300,8 @@ export const create = async (req, res) => {
     await Submission.findAndCountAll()
     .then(data => {
         last_id = data.rows[data.rows.length - 1].dataValues.id
-        // console.log('Sucessfully fetched all submissions. Last ID is: ', data.rows[data.rows.length - 1].dataValues.id);
-        console.log('Sucessfully fetched all submissions. Last ID is: ', last_id);
+        // console.log('Sucessfully fetched all SubmissionModel.. Last ID is: ', data.rows[data.rows.length - 1].dataValues.id);
+        console.log('Sucessfully fetched all SubmissionModel.. Last ID is: ', last_id);
     });
 
     console.log('New Submission Created In Sequelize with ID: ', last_id)
@@ -692,7 +672,7 @@ export const resetPasswordFromEmail = async (req, res) => {
   res.send('Your password has been reset successfully.');
 };
 
-exports.requestSignature = async (req, res) => {
+export const requestSignature = async (req, res) => {
   let signatureRequest = req.body;
   console.log('\n\n\n Request Body: ', req.body);
   let transporter = nodemailer.createTransport(mailConfig);

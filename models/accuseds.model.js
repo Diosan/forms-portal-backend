@@ -6,59 +6,59 @@ export default sequelize => {
 
 
         firstName: {           
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         },
         lastName: {           
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         },
         address: {           
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         },
         tntNational:{
-          type: Sequelize.DataTypes.BOOLEAN, 
+          type: DataTypes.BOOLEAN, 
           allowNull: false
         },
         tntResident:{
-          type: Sequelize.DataTypes.BOOLEAN, 
+          type: DataTypes.BOOLEAN, 
           allowNull: false
         },
         otherNational:{
-          type: Sequelize.DataTypes.BOOLEAN, 
+          type: DataTypes.BOOLEAN, 
           allowNull: false
         },
         otherResident:{
-          type: Sequelize.DataTypes.BOOLEAN, 
+          type: DataTypes.BOOLEAN, 
           allowNull: false
         },
         otherNationalCountry:{
-          type: Sequelize.DataTypes.STRING, 
+          type: DataTypes.STRING, 
           allowNull: false
         },
         otherResidentCountry:{
-          type: Sequelize.DataTypes.STRING, 
+          type: DataTypes.STRING, 
           allowNull: false
         },
         identification:{
-          type: Sequelize.DataTypes.STRING, 
+          type: DataTypes.STRING, 
           allowNull: false
         },
         gender:{
-          type: Sequelize.DataTypes.STRING, 
+          type: DataTypes.STRING, 
           allowNull: false
         },
         adulthood:{
-          type: Sequelize.DataTypes.STRING, 
+          type: DataTypes.STRING, 
           allowNull: false
         },
         previousCriminalRecord:{
-          type: Sequelize.DataTypes.STRING, 
+          type: DataTypes.STRING, 
           allowNull: false
         },
         dateOfBirth:{
-          type: Sequelize.DataTypes.DATEONLY, 
+          type: DataTypes.DATEONLY, 
           allowNull: true
         }
     });
