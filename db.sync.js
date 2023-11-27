@@ -44,7 +44,6 @@ const Complainant = sequelize.define('complainants',
             type: Sequelize.DataTypes.STRING,
             allowNull: false
         }
-
     }
 );
 
@@ -61,6 +60,60 @@ const Accused = sequelize.define('accuseds',
         address: {
             type: Sequelize.DataTypes.STRING,
             allowNull: false
+        },
+        tntNational:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: false, 
+          defaultValue: true
+        },
+        tntResident:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: false, 
+          defaultValue: true
+        },
+        otherNational:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: false, 
+          defaultValue: true
+        },
+        otherResident:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: false, 
+          defaultValue: true
+        },
+        otherNationalCountry:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false, 
+          defaultValue: ''
+        },
+        otherResidentCountry:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false, 
+          defaultValue: ''
+        },
+        identification:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false, 
+          defaultValue: ''
+        },
+        gender:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false, 
+          defaultValue: 'Male'
+        },
+        adulthood:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false, 
+          defaultValue: 'Adult'
+        },
+        previousCriminalRecord:{
+          type: Sequelize.DataTypes.STRING, 
+          allowNull: false, 
+          defaultValue: 'Unknown'
+        },
+        dateOfBirth:{
+          type: Sequelize.DataTypes.DATE, 
+          allowNull: true
         }
     }
 );
@@ -161,7 +214,12 @@ const Charge = sequelize.define('charges',
           type: Sequelize.DataTypes.STRING,
           allowNull: true,
           defaultValue: ''
+        },
+        dateOfOffence: {
+          type: Sequelize.DataTypes.DATE,
+          allowNull: true
         }
+
 
     }
 );
