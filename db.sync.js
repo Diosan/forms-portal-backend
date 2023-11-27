@@ -74,12 +74,12 @@ const Accused = sequelize.define('accuseds',
         otherNational:{
           type: Sequelize.DataTypes.BOOLEAN, 
           allowNull: false, 
-          defaultValue: true
+          defaultValue: false
         },
         otherResident:{
           type: Sequelize.DataTypes.BOOLEAN, 
           allowNull: false, 
-          defaultValue: true
+          defaultValue: false
         },
         otherNationalCountry:{
           type: Sequelize.DataTypes.STRING, 
