@@ -192,6 +192,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
   //------------------------------------------------
     app.use(express.static('public'));
     app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')));
+    app.use(express.static( 'dist'));
 
 
   //----------------------------------------------------------------
@@ -600,18 +601,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
     // require("./routes/accuseds.routes")(app);
     // ++++++++++++++++++++++++++++++++++++++++++
 
-    //ALL OTHER ROUTES
-    app.get('/', async (req, res) => {
-      expressListRoutes(app, {  });
-      // const transporter = nodemailer.createTransport(mailConfig);
-      // transporter.sendMail({
-      //   from: 'omm@link868.com',
-      //   to: 'dion.santana@gmail.com',
-      //   subject: 'hello world!',
-      //   text: 'hello world!'
-      // });
-      res.json({message: 'JSSWF-API-TS'});
-    })
+    
 
 
 
@@ -645,10 +635,35 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
 
     //   });
 
+        
+//----------------------------------------------------------------
+//----------------------------------------------------------------
 
 
-      //----------------------------------------------------------------
-      //----------------------------------------------------------------
+
+
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+          // ALL OTHER ROUTES GO TO REACT
+          // All other requests serve the index.html
+          app.get('*', (req, res) => {
+            res.sendFile(path.join(__dirname, 'dist/index.html'));
+          });
+
+          //ALL OTHER ROUTES
+          app.get('/', async (req, res) => {
+            expressListRoutes(app, {  });
+            // const transporter = nodemailer.createTransport(mailConfig);
+            // transporter.sendMail({
+            //   from: 'omm@link868.com',
+            //   to: 'dion.santana@gmail.com',
+            //   subject: 'hello world!',
+            //   text: 'hello world!'
+            // });
+            res.json({message: 'JSSWF-API-TS'});
+          })
+
         // Current servier time route, used to sync app with server
         app.get("/api/jsswf-time", (req, res) => {
           // console.log("Current time ")
@@ -661,6 +676,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
           console.log("Route not found, sending 404");
           res.status(404).send('Sorry, can\'t find that');
         });
+//----------------------------------------------------------------
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 

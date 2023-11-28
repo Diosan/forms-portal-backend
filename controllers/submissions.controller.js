@@ -27,7 +27,7 @@ export const findAll = (req, res) => {
 
     SubmissionModel.findAndCountAll()
     .then(data => {
-        console.log('SubmissionModel. Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
+        console.log('Submission. Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
         res.status(201).json({
             outcome: 'success',
             submissions: data
@@ -36,7 +36,7 @@ export const findAll = (req, res) => {
     .catch(error => {
         res.status(201).json({
             outcome: 'error', 
-            error: error.errors[0].message 
+            error: error
           });
     });
 
@@ -164,6 +164,7 @@ export const saveComplainant = async (req, res) => {
     let transporter = nodemailer.createTransport(mailConfig);
 
     submission = SubmissionModel.findByPk(req.body.submissionId);
+    console.log(req.body.submissionId);
 
     let new_complainant = {
         agency: "TTPS",
@@ -172,7 +173,7 @@ export const saveComplainant = async (req, res) => {
         email: req.body.email,
         regNum: req.body.regNum,
         submissionId: req.body.submissionId
-    }
+    };
 
      
 
@@ -242,7 +243,7 @@ export const updateTitle = async (req, res) => {
   const title = req.body.title
   console.log('updateTitle posted to for ID ' + id, req.body);
   let submission = await SubmissionModel.findByPk(id)
-  updated_submission = await submission.update({ description: title })
+  updated_submission = await SubmissionModel.update({ description: title })
   // console.log('')
   res.status(201).json({
     outcome: 'success',
@@ -262,7 +263,7 @@ export const updateComplainant = async (req, res) => {
       submissionId: complainant.submissionId
     }
   });
-  let updated_complainant = await returned_complainant.update(complainant);
+  let updated_complainant = await ComplainantModel.update(complainant);
   
   res.status(200).json({
     outcome: 'success',
