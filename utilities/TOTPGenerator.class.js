@@ -11,9 +11,11 @@ export class TOTPGenerator {
     this.transporter = nodemailer.createTransport(mailConfig);
   }
 
+  
+
   async generateOTP(sessionId, email) {
     //check if an OTP for this session already exists
-    console.log(sessionId), "", email;
+    console.log(sessionId, "----------", email);
     const key = `otp:${sessionId}`;
 
     try {
@@ -41,6 +43,7 @@ export class TOTPGenerator {
     }
     try {
       // Assuming storeOTPInRedis and sendOTPViaEmail are asynchronous functions
+      console.log(otp)
       // Store OTP in Redis
       await this.storeOTPInRedis(sessionId, otp);
       // Send OTP via email
@@ -55,13 +58,13 @@ export class TOTPGenerator {
 
   async storeOTPInRedis(sessionId, otp) {
     const key = `otp:${sessionId}`;
-    // console.log(key, otp)
+    console.log("my key.........  ",key)
     await this.redisClient.set(key, otp, {
       EX: 180, // Expires in 180 seconds (3 minutes)
       NX: true
     }); 
-    const savedKey = await this.redisClient.get(key);
-    console.log("Saved Key:",savedKey);
+    // const savedKey = await redisClient.get(key);
+    // console.log("Saved Key:",savedKey);
   }
 
   async sendOTPViaEmail(email, otp) {
@@ -73,12 +76,37 @@ export class TOTPGenerator {
     });
   }
 
-  async verifyOTP(email, otp) {
-    const key = `otp:${email}`;
-    let stored_OTP = await this.redisClient.get(key);
+  async verifyOTP(sessionId, otp) {
+    const key = `otp:${sessionId}`;
+    let stored_OTP = await redisClient.get(key);
     console.log('Redis OTP Key: ' + key);
     console.log('OTP Values: ', { stored_OTP: stored_OTP, otp: otp })
     return stored_OTP == otp;
+  }
+
+  // async  verifyOTP(sessionId, otp) {
+  //   let verified = await getStoredOTP(`${otp}:${sessionId}`) 
+  //   if (verified) {
+  //     console.log(verified)
+  //     return res.status(200).json({
+  //       outcome: 'success',
+  //     })
+  //   } else {
+  //     return res.status(200).json({
+  //       outcome: 'error'
+  //     })
+  //   }
+  // } 
+
+  async getStoredOTP (theKey){
+    console.log("get this key: ",theKey);
+    const stored_OTP = await redisClient.get(theKey);
+    console.log("the stored otp: ", stored_OTP)
+    if(stored_OTP){
+      return({status: "ok", code: stored_OTP})
+    }else{
+      return({status: "error"})
+    }
   }
 
 }

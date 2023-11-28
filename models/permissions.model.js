@@ -5,25 +5,25 @@ export default (sequelize) => {
 
 
       id: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
       },
       roleId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       permissions: {
-        type: Sequelize.STRING(1000),
+        type: DataTypes.STRING(1000),
         allowNull: false,
       },
       description: {
-        type: Sequelize.STRING(1000),
+        type: DataTypes.STRING(1000),
         allowNull: false,
       },
       selectable:{
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       // createdAt: {

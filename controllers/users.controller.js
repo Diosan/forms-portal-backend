@@ -203,7 +203,7 @@ export const create = async (req, res) => {
 
   try {
     const user = await UserModel.create(new_user)
-    const sessionId = req?.session?.id ?? 'default-value';
+    const sessionId = req?.session?.id ?? '';
     const totp = new TOTPGenerator()
     totp.generateOTP(sessionId, req.body.email)
     console.log('New User Created In Sequelize')
