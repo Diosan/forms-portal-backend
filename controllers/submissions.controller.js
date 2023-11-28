@@ -25,7 +25,7 @@ const ErrorLog = ErrorLogModel;
 
 export const findAll = (req, res) => {
 
-    Submission.findAndCountAll()
+    SubmissionModel.findAndCountAll()
     .then(data => {
         console.log('SubmissionModel. Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
         res.status(201).json({
@@ -68,15 +68,15 @@ export const findOne = async (req, res) => {
 
   const id = req.params.id;
 
-  let submission = await Submission.findByPk(id)
+  let submission = await SubmissionModel.findByPk(id)
 
-  let complainants = await Complainant.findOne({
+  let complainants = await ComplainantModel.findOne({
     where: {
       submissionId: id
     }
   })
 
-  let accuseds = await Accused.findAll({
+  let accuseds = await AccusedModel.findAll({
     where: {
       submissionId: id
     }
@@ -170,7 +170,7 @@ export const saveComplainant = async (req, res) => {
 
     let transporter = nodemailer.createTransport(mailConfig);
 
-    submission = Submission.findByPk(req.body.submissionId);
+    submission = SubmissionModel.findByPk(req.body.submissionId);
 
     let new_complainant = {
         agency: "TTPS",
@@ -188,7 +188,7 @@ export const saveComplainant = async (req, res) => {
     console.log('New Complainant: ', new_complainant);
 
     try {
-        const complainant = await Complainant.create(new_complainant, {});
+        const complainant = await ComplainantModel.create(new_complainant, {});
         console.log('New Complainant Created In Sequelize', complainant);
 
         await  submission.update({status: 'complainant_saved'});
@@ -220,7 +220,7 @@ export const saveComplainant = async (req, res) => {
 
 export const saveAccused = async (req, res) => {
   let accused = req.body;
-  let new_accused = Accused.create(accused);
+  let new_accused = AccusedModel.create(accused);
   res.status(201).json({
     outcome: 'success', 
     accused: new_accused
@@ -230,7 +230,7 @@ export const saveAccused = async (req, res) => {
 export const accuseds = async (req, res) => {
   const id = req.params.id;
   // console.log('\n\n\n Passed id for submission in path: ', id);
-  let returned_accuseds = await Accused.findAll({
+  let returned_accuseds = await AccusedModel.findAll({
     where: {submissionId: id}
   });
   // let returned_accuseds = await Accused.findAll();
@@ -248,7 +248,7 @@ export const updateTitle = async (req, res) => {
   const id = req.body.id
   const title = req.body.title
   console.log('updateTitle posted to for ID ' + id, req.body);
-  let submission = await Submission.findByPk(id)
+  let submission = await SubmissionModel.findByPk(id)
   updated_submission = await submission.update({ description: title })
   // console.log('')
   res.status(201).json({
@@ -264,7 +264,7 @@ export const updateComplainant = async (req, res) => {
 
   console.log('\n\n Complainant passed to update is: ', complainant);
 
-  let returned_complainant = await Complainant.findOne({
+  let returned_complainant = await ComplainantModel.findOne({
     where: {
       submissionId: complainant.submissionId
     }
@@ -290,7 +290,7 @@ export const create = async (req, res) => {
   //       email: req.body.email
   //   }
 
-  let user = await User.findOne({
+  let user = await UserModel.findOne({
     where: {email: req.body.email}
   })
 
@@ -300,11 +300,11 @@ export const create = async (req, res) => {
   }
 
   try {
-    const submission = await Submission.create(new_submission)
+    const submission = await SubmissionModel.create(new_submission)
 
     let last_id = 0;
 
-    await Submission.findAndCountAll()
+    await SubmissionModel.findAndCountAll()
     .then(data => {
         last_id = data.rows[data.rows.length - 1].dataValues.id
         // console.log('Sucessfully fetched all SubmissionModel.. Last ID is: ', data.rows[data.rows.length - 1].dataValues.id);
