@@ -7,7 +7,7 @@ import mysql from 'mysql2'
 
 
 export const saveCharge = async (req, res) => {
-    
+    console.log(req.body)
     // let charge = {
     //     name: 'Espionage',
     //     ICCS: '1Q2W3E',
@@ -29,6 +29,7 @@ export const saveCharge = async (req, res) => {
 };
 
 export const charges = async (req, res) => {
+    console.log(req.body)
     const id = req.params.id;
     let returned_charges = await ChargesModel.findAll({
         where: {

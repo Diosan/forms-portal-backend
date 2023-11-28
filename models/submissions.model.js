@@ -9,7 +9,8 @@ export default sequelize => {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        unique: true
+        unique: true,
+        autoIncrement: true
       },
     //   id: {
     //     type: DataTypes.UUID,
@@ -22,7 +23,8 @@ export default sequelize => {
       },
       status: {           //your unique id from your agency. eg. Regimental number
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 'started'
       },
       userId: {
         type: DataTypes.UUID,
@@ -30,15 +32,6 @@ export default sequelize => {
       }
     });
 
-    // Submission.associate = function (models) {
-    //     Submission.belongsTo(models.user);
-    //     Submission.hasOne(models.complainant, {
-    //       onDelete: "CASCADE",
-    //     });
-    //     Submission.hasMany(models.accused, {
-    //       onDelete: "CASCADE",
-    //     });
-    // };
 
     return Submission;
 };

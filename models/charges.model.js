@@ -14,7 +14,8 @@ const Charge = sequelize.define("charges", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
-            unique: true
+            unique: true,
+            autoIncrement: true
         },
         name: {
             type: DataTypes.STRING,

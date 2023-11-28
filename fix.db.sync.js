@@ -130,75 +130,6 @@ const Accused = sequelize.define('accuseds',
 
 
 
-const User = sequelize.define("users", {
-    agencyMemberUniqueId: {           //your unique id from your agency. eg. Regimental number
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    agencyName: {                     // name of the agency. eg. TTPS
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    username: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: false
-    },
-    status:{
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: 0,
-    },
-    notifications: {
-      type: DataTypes.JSON,
-      allowNull: true
-    },
-    active:{
-      type: DataTypes.BOOLEAN,
-      defaultValue: 0,
-      allowNull: false
-    },
-    firstName: {
-      type: DataTypes.STRING(30),
-    },
-    middleName: {
-      type: DataTypes.STRING(30),
-    },
-    lastName: {
-      type: DataTypes.STRING(30),
-    },
-    email: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: false
-    },
-    address: {
-      type: DataTypes.STRING(300),
-    },
-    phone: {
-      type: DataTypes.STRING(20),
-      unique: true,
-      validate: {
-        is: /^\+(?:[0-9] ?){6,14}[0-9]$/
-      },
-    },
-    role:{
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0
-    },
-    createdAt: {
-      type: DataTypes.DATE
-    },
-    updatedAt: {
-      type: DataTypes.DATE
-    }
-});
-
 const Charge = sequelize.define('charges',
     {
         name: {
@@ -234,6 +165,18 @@ const Charge = sequelize.define('charges',
 
     }
 );
+
+const User = sequelize.define("users", {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      unique: true
+    },
+    
+  }, {
+    tableName: 'users'
+  });
 
 Submission.belongsTo(User);
 

@@ -10,7 +10,8 @@ export default (sequelize) => {
       },
       agencyMemberUniqueId: { // Your unique id from your agency. eg. Regimental number
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
       },
       agencyName: { // Name of the agency. eg. TTPS
         type: DataTypes.STRING,

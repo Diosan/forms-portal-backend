@@ -163,8 +163,9 @@ export const saveComplainant = async (req, res) => {
 
     let transporter = nodemailer.createTransport(mailConfig);
 
-    submission = SubmissionModel.findByPk(req.body.submissionId);
-    console.log(req.body.submissionId);
+    const submission = SubmissionModel.findByPk(req.body.submissionId);
+    console.log(req.body);
+    // return
 
     let new_complainant = {
         agency: "TTPS",
@@ -185,16 +186,12 @@ export const saveComplainant = async (req, res) => {
         const complainant = await ComplainantModel.create(new_complainant, {});
         console.log('New Complainant Created In Sequelize', complainant);
 
-        await  submission.update({status: 'complainant_saved'});
+        await  complainant.update({status: 'complainant_saved'});
+        // await SubmissionModel.update(
+        //   { status: 'complainant_saved' },
+        //   { where: { id: req.body.submissionId } }
+        // );
 
-        // await submission.addComplainant(complainant);
-
-        // await transporter.sendMail({
-        //     from: 'JSSWF <omm@link868.com>',
-        //     to: req.body.email,
-        //     subject: 'Complaint with Oath',
-        //     text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/${req.body.submissionId}`
-        // });
 
         res.status(201).json({
           outcome: 'success', 
@@ -205,7 +202,7 @@ export const saveComplainant = async (req, res) => {
     console.log('Error Creating Complainant In Sequelize', error)
     res.status(201).json({
         outcome: 'error', 
-        error: error.errors[0].message 
+        error:  "error"
     });
     }
     
@@ -239,11 +236,13 @@ export const accuseds = async (req, res) => {
 
 
 export const updateTitle = async (req, res) => {
+  console.log(req.body);
+
   const id = req.body.id
   const title = req.body.title
   console.log('updateTitle posted to for ID ' + id, req.body);
   let submission = await SubmissionModel.findByPk(id)
-  updated_submission = await SubmissionModel.update({ description: title })
+  let updated_submission = await submission.update({ description: title })
   // console.log('')
   res.status(201).json({
     outcome: 'success',
@@ -263,7 +262,7 @@ export const updateComplainant = async (req, res) => {
       submissionId: complainant.submissionId
     }
   });
-  let updated_complainant = await ComplainantModel.update(complainant);
+  let updated_complainant = await returned_complainant.update(complainant);
   
   res.status(200).json({
     outcome: 'success',
@@ -290,7 +289,8 @@ export const create = async (req, res) => {
 
   let new_submission = {
     description: req.body.title,
-    userId: user.id
+    userId: user.id,
+    status: 'pending'
   }
 
   try {
@@ -322,40 +322,6 @@ export const create = async (req, res) => {
 
   
 }
-
-// export const create = async (req, res) => {
-//   const form = new formidable.IncomingForm();
-//     form.parse(req, async (err, fields, files) => {
-//         if (err) {
-//             res.status(500).json({ message: err });
-//             return;
-//         }
-//         console.log(fields)
-//         const { firebase_id, password, username, fullname, first_name, last_name, email, address, phone, role } = fields;
-//         if (!firebase_id || !password || !username || !fullname) {
-//             res.status(400).json({ message: "Please provide firebase_id, password, username, fullname" });
-//             return;
-//         }
-
-//         try {
-//             const user = await UserModel.create({
-//                 firebase_id,
-//                 password: bcrypt.hashSync(password, 8),
-//                 username,
-//                 fullname,
-//                 first_name,
-//                 last_name,
-//                 email,
-//                 address,
-//                 phone,
-//                 role,
-//             });
-//             res.status(201).json({ message: "User created successfully", user });
-//         } catch (error) {
-//             res.status(500).json({ message: error.message });
-//         }
-//     });
-// };
 
 async function getPass(newPass, id){
   //check to see if the password has been changed

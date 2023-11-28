@@ -13,7 +13,8 @@ export default (sequelize) => {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
-            unique: true
+            unique: true,
+            autoIncrement: true
         },
         firstName: {
             type: DataTypes.STRING,
