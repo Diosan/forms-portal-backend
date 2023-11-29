@@ -65,11 +65,14 @@ exports.findOne = async (req, res) => {
 
   let submission = await Submission.findByPk(id)
 
-  let complainants = await Complainant.findOne({
+  let complainant = await Complainant.findOne({
     where: {
       submissionId: id
     }
   })
+
+  console.log('\n\n\n\n Submission complainant: ', complainant);
+  console.log('\n\n\n\n');
 
   let accuseds = await Accused.findAll({
     where: {
@@ -79,7 +82,7 @@ exports.findOne = async (req, res) => {
 
   res.status(200).json({
     submission: submission,
-    complainant: complainants,
+    complainant: complainant,
     accuseds: accuseds
   })
 

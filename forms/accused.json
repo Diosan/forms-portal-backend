@@ -54,11 +54,13 @@
           },
           "tntNational": {
               "type": "boolean",
-              "title": "National of Trinidad and Tobago"
+              "title": "National of Trinidad and Tobago",
+              "default": true
           },
           "tntResident": {
               "type": "boolean",
-              "title": "Resident of Trinidad and Tobago"
+              "title": "Resident of Trinidad and Tobago",
+              "default": true
           },
           "otherNational": {
               "type": "boolean",
