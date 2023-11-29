@@ -168,6 +168,8 @@ exports.saveComplainant = async (req, res) => {
     submission = Submission.findByPk(req.body.submissionId);
 
     let new_complainant = {
+        court: req.court,
+        courtDistrict: req.courtDistrict,
         agency: "TTPS",
         firstName: req.body.firstName,
         lastName: req.body.lastName,

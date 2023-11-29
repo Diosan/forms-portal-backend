@@ -48,7 +48,16 @@ const Complainant = sequelize.define('complainants',
         regNum: {
             type: Sequelize.DataTypes.STRING,
             allowNull: false
+        },
+        courtDistrict: {
+          type: Sequelize.DataTypes.STRING,
+          allowNull: true
+        },
+        court: {
+          type: Sequelize.DataTypes.STRING,
+          allowNull: true
         }
+
     }
 );
 
