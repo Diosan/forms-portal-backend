@@ -51,6 +51,22 @@
               "Adult",
               "Child"
             ]
+          },
+          "tntNational": {
+              "type": "boolean",
+              "title": "National of Trinidad and Tobago"
+          },
+          "tntResident": {
+              "type": "boolean",
+              "title": "Resident of Trinidad and Tobago"
+          },
+          "otherNational": {
+              "type": "boolean",
+              "title": "National of other country"
+          },
+          "otherResident": {
+              "type": "boolean",
+              "title": "Resident of other country"
           }
 
         }
