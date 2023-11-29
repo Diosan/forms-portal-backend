@@ -17,6 +17,11 @@ const Submission = sequelize.define('submissions',
             type: Sequelize.DataTypes.STRING,
             allowNull: false,
             defaultValue: 'started'
+        },
+        type: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false,
+            defaultValue: 'complaint_with_oath'
         }
     }
 );
