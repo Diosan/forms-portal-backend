@@ -22,6 +22,8 @@ db.submissions = require("./submissions.model.js")(sequelize, Sequelize);
 db.complainants = require("./complainants.model.js")(sequelize, Sequelize);
 db.accuseds = require("./accuseds.model.js")(sequelize, Sequelize);
 db.charges = require("./charges.model.js")(sequelize, Sequelize);
+db.pendings = require("./pendings.model.js")(sequelize, Sequelize);
+db.convictions = require("./convictions.model.js")(sequelize, Sequelize);
 
 // ---------------------
 // ASSOCIATIONS
@@ -38,5 +40,8 @@ db.submissions.hasMany(db.accuseds)
 db.charges.belongsTo(db.accuseds, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 db.accuseds.hasMany(db.charges)
 // Charges ++++++++++
+db.pendings.belongsTo(db.pendings, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+db.accuseds.hasMany(db.pendings)
+// Pendings ++++++++++
 
 module.exports = db; 

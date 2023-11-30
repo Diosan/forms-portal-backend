@@ -8,6 +8,14 @@ module.exports = app => {
 
     router.post('/charges', accuseds.saveCharge);
 
+    router.get('/pendings/:id', accuseds.pendings);
+
+    router.post('/pendings', accuseds.savePending);
+
+    router.get('/convictions/:id', accuseds.convictions);
+
+    router.post('/convictions', accuseds.saveConviction);
+
     app.use('/api/accuseds', router);
 
 };

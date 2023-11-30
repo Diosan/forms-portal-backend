@@ -52,6 +52,24 @@
               "Child"
             ]
           },
+          "previousCriminalRecord": {
+              "type": "string",
+              "title": "Previous Criminal Record ?",
+              "enum": [
+                "Unknown",
+                "Yes",
+                "No"
+              ],
+              "enumNames": [
+                "Unknown",
+                "Yes",
+                "No"
+              ]
+          },
+          "relatedMatters": {
+              "type": "boolean",
+              "title": "Any Related Matters ?"
+          },
           "tntNational": {
               "type": "boolean",
               "title": "National of Trinidad and Tobago",
@@ -69,10 +87,6 @@
           "otherResident": {
               "type": "boolean",
               "title": "Resident of other country"
-          },
-          "PreviousCriminalRecord": {
-              "type": "boolean",
-              "title": "PreviousCriminalRecord"
           }
 
         }
@@ -80,6 +94,9 @@
     "UI": {
         "address": {
             "ui:widget": "textarea"
-        }
+        },
+        "relatedMatters": {
+          "ui:widget": "select"
+      }
     }
 }

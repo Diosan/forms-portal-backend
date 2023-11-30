@@ -129,8 +129,48 @@ const Accused = sequelize.define('accuseds',
           type: Sequelize.DataTypes.DATEONLY, 
           allowNull: true,
           defaultValue: Sequelize.NOW
+        },
+        relatedMatters:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: true, 
+          defaultValue: false
         }
+        
     }
+);
+
+const Pending = sequelize.define('pendings',
+    {
+      offence: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
+      },
+      dateOfOffence:{
+        type: Sequelize.DataTypes.DATEONLY, 
+        allowNull: true,
+        defaultValue: Sequelize.NOW
+      }
+    }
+);
+
+
+const Conviction = sequelize.define('convictions',
+    {
+      offence: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
+      },
+      dateOfOffence:{
+        type: Sequelize.DataTypes.DATEONLY, 
+        allowNull: true,
+        defaultValue: Sequelize.NOW
+      },
+      sentence: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
+      }
+    }
+
 );
 
 
@@ -255,6 +295,14 @@ Accused.belongsTo(Submission);
 Accused.hasMany(Charge);
 
 Charge.belongsTo(Accused);
+
+Accused.hasMany(Pending);
+
+Pending.belongsTo(Accused);
+
+Accused.hasMany(Conviction);
+
+Conviction.belongsTo(Accused);
 
 sequelize.sync({alter: true})
 .then((data) => {

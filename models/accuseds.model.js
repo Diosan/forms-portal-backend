@@ -57,6 +57,10 @@ module.exports = (sequelize, Sequelize) => {
         dateOfBirth:{
           type: Sequelize.DataTypes.DATEONLY, 
           allowNull: true
+        },
+        relatedMatters:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: true
         }
     });
 
