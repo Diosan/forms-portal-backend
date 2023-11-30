@@ -1,7 +1,5 @@
 import  {DataTypes} from "sequelize";
-
 import Sequelize from 'sequelize';
-
 
 const sequelize = new Sequelize(
     'jsswf_admin',
@@ -13,20 +11,14 @@ const sequelize = new Sequelize(
 const Submission = sequelize.define('submissions',
     {
         description: {
-            type: DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING,
             allowNull: false
         },
         status: {
-            type: DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING,
             allowNull: false,
             defaultValue: 'started'
-        },
-        id: {
-          type: DataTypes.INTEGER,
-          primaryKey: true,
-          unique: true,
-          autoIncrement: true
-        },
+        }
     }
 );
 
@@ -34,23 +26,23 @@ const Submission = sequelize.define('submissions',
 const Complainant = sequelize.define('complainants',
     {
         firstName: {
-            type: DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING,
             allowNull: false
         },
         lastName: {
-            type: DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING,
             allowNull: false
         },
         email: {
-            type: DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING,
             allowNull: false
         },
         agency: {
-            type: DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING,
             allowNull: false
         },
         regNum: {
-            type: DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING,
             allowNull: false
         }
     }
@@ -59,69 +51,69 @@ const Complainant = sequelize.define('complainants',
 const Accused = sequelize.define('accuseds',
     {
         firstName: {
-            type: DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING,
             allowNull: false
         },
         lastName: {
-            type: DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING,
             allowNull: false
         },
         address: {
-            type: DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING,
             allowNull: false
         },
         tntNational:{
-          type: DataTypes.BOOLEAN, 
+          type: Sequelize.DataTypes.BOOLEAN, 
           allowNull: false, 
           defaultValue: true
         },
         tntResident:{
-          type: DataTypes.BOOLEAN, 
+          type: Sequelize.DataTypes.BOOLEAN, 
           allowNull: false, 
           defaultValue: true
         },
         otherNational:{
-          type: DataTypes.BOOLEAN, 
+          type: Sequelize.DataTypes.BOOLEAN, 
           allowNull: false, 
-          defaultValue: true
+          defaultValue: false
         },
         otherResident:{
-          type: DataTypes.BOOLEAN, 
+          type: Sequelize.DataTypes.BOOLEAN, 
           allowNull: false, 
-          defaultValue: true
+          defaultValue: false
         },
         otherNationalCountry:{
-          type: DataTypes.STRING, 
+          type: Sequelize.DataTypes.STRING, 
           allowNull: false, 
           defaultValue: ''
         },
         otherResidentCountry:{
-          type: DataTypes.STRING, 
+          type: Sequelize.DataTypes.STRING, 
           allowNull: false, 
           defaultValue: ''
         },
         identification:{
-          type: DataTypes.STRING, 
+          type: Sequelize.DataTypes.STRING, 
           allowNull: false, 
           defaultValue: ''
         },
         gender:{
-          type: DataTypes.STRING, 
+          type: Sequelize.DataTypes.STRING, 
           allowNull: false, 
           defaultValue: 'Male'
         },
         adulthood:{
-          type: DataTypes.STRING, 
+          type: Sequelize.DataTypes.STRING, 
           allowNull: false, 
           defaultValue: 'Adult'
         },
         previousCriminalRecord:{
-          type: DataTypes.STRING, 
+          type: Sequelize.DataTypes.STRING, 
           allowNull: false, 
           defaultValue: 'Unknown'
         },
         dateOfBirth:{
-          type: DataTypes.DATEONLY, 
+          type: Sequelize.DataTypes.DATEONLY, 
           allowNull: true,
           defaultValue: Sequelize.NOW
         }
@@ -132,101 +124,101 @@ const Accused = sequelize.define('accuseds',
 
 const User = sequelize.define("users", {
     agencyMemberUniqueId: {           //your unique id from your agency. eg. Regimental number
-      type: DataTypes.STRING,
+      type: Sequelize.DataTypes.STRING,
       allowNull: false
     },
     agencyName: {                     // name of the agency. eg. TTPS
-      type: DataTypes.STRING,
+      type: Sequelize.DataTypes.STRING,
       allowNull: false
     },
     password: {
-      type: DataTypes.STRING,
+      type: Sequelize.DataTypes.STRING,
       allowNull: false
     },
     username: {
-      type: DataTypes.STRING,
+      type: Sequelize.DataTypes.STRING,
       unique: true,
       allowNull: false
     },
     status:{
-      type: DataTypes.BOOLEAN,
+      type: Sequelize.DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: 0,
     },
     notifications: {
-      type: DataTypes.JSON,
+      type: Sequelize.DataTypes.JSON,
       allowNull: true
     },
     active:{
-      type: DataTypes.BOOLEAN,
+      type: Sequelize.DataTypes.BOOLEAN,
       defaultValue: 0,
       allowNull: false
     },
     firstName: {
-      type: DataTypes.STRING(30),
+      type: Sequelize.DataTypes.STRING(30),
     },
     middleName: {
-      type: DataTypes.STRING(30),
+      type: Sequelize.DataTypes.STRING(30),
     },
     lastName: {
-      type: DataTypes.STRING(30),
+      type: Sequelize.DataTypes.STRING(30),
     },
     email: {
-      type: DataTypes.STRING,
+      type: Sequelize.DataTypes.STRING,
       unique: true,
       allowNull: false
     },
     address: {
-      type: DataTypes.STRING(300),
+      type: Sequelize.DataTypes.STRING(300),
     },
     phone: {
-      type: DataTypes.STRING(20),
+      type: Sequelize.DataTypes.STRING(20),
       unique: true,
       validate: {
         is: /^\+(?:[0-9] ?){6,14}[0-9]$/
       },
     },
     role:{
-      type: DataTypes.INTEGER,
+      type: Sequelize.DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
     },
     createdAt: {
-      type: DataTypes.DATE
+      type: Sequelize.DataTypes.DATE
     },
     updatedAt: {
-      type: DataTypes.DATE
+      type: Sequelize.DataTypes.DATE
     }
 });
 
 const Charge = sequelize.define('charges',
     {
         name: {
-            type: DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING,
             allowNull: false
         },
         ICCS: {
-            type: DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING,
             allowNull: false,
             defaultValue: ''
         },
         UNODC: {
-            type: DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING,
             allowNull: false,
             defaultValue: ''
         },
         counts: {
-            type: DataTypes.INTEGER,
+            type: Sequelize.DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 1
         },
         particulars: {
-          type: DataTypes.STRING,
+          type: Sequelize.DataTypes.STRING,
           allowNull: true,
           defaultValue: ''
         },
         dateOfOffence: {
-          type: DataTypes.DATEONLY,
+          type: Sequelize.DataTypes.DATEONLY,
           allowNull: true,
           defaultValue: Sequelize.NOW
         }

@@ -13,10 +13,10 @@ export class TOTPGenerator {
 
   
 
-  async generateOTP(sessionId, email) {
-    //check if an OTP for this session already exists
-    console.log(sessionId, "----------", email);
-    const key = `otp:${sessionId}`;
+  async generateOTP(jwttoken, email) {
+    //check if an OTP for this user already exists
+    console.log(jwttoken, "----------", email);
+    const key = `otp:${jwttoken}`; //should be jwttoken
 
     try {
       const storedOTP = await redisClient.get(key);
@@ -24,7 +24,7 @@ export class TOTPGenerator {
           console.log("Stored OTP already exists: " + storedOTP);
           return; // Return early from the function if OTP exists
       } else {
-          console.log("No OTP found for this session, generating a new one.");
+          console.log("No OTP found for this user, generating a new one.");
       }
     } catch (error) {
         console.error("Error retrieving OTP from Redis:", error);
@@ -45,7 +45,7 @@ export class TOTPGenerator {
       // Assuming storeOTPInRedis and sendOTPViaEmail are asynchronous functions
       console.log(otp)
       // Store OTP in Redis
-      await this.storeOTPInRedis(sessionId, otp);
+      await this.storeOTPInRedis(jwttoken, otp);
       // Send OTP via email
       await this.sendOTPViaEmail(email, otp);
       // If both operations are successful
@@ -56,8 +56,8 @@ export class TOTPGenerator {
     }
   }
 
-  async storeOTPInRedis(sessionId, otp) {
-    const key = `otp:${sessionId}`;
+  async storeOTPInRedis(jwttoken, otp) {
+    const key = `otp:${jwttoken}`;
     console.log("my key.........  ",key)
     await this.redisClient.set(key, otp, {
       EX: 180, // Expires in 180 seconds (3 minutes)
@@ -76,16 +76,16 @@ export class TOTPGenerator {
     });
   }
 
-  async verifyOTP(sessionId, otp) {
-    const key = `otp:${sessionId}`;
+  async verifyOTP(jwttoken, otp) {    //get token from user browser
+    const key = `otp:${jwttoken}`;
     let stored_OTP = await redisClient.get(key);
     console.log('Redis OTP Key: ' + key);
     console.log('OTP Values: ', { stored_OTP: stored_OTP, otp: otp })
     return stored_OTP == otp;
   }
 
-  // async  verifyOTP(sessionId, otp) {
-  //   let verified = await getStoredOTP(`${otp}:${sessionId}`) 
+  // async  verifyOTP(jwttoken, otp) {
+  //   let verified = await getStoredOTP(`${otp}:${jwttoken}`) 
   //   if (verified) {
   //     console.log(verified)
   //     return res.status(200).json({

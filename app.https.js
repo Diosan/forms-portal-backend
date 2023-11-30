@@ -161,7 +161,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
       }
       return callback(null, true);
       },
-      // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       // allowedHeaders: ["my-custom-header"],
       credentials: true,
       transports: ['websocket', 'polling'],
@@ -197,25 +197,24 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
       resave: true,
       saveUninitialized: true,
       cookie: {
-        secure: true, // Set to false if in development with self-signed certificates
-        httpOnly: true, // Mitigate XSS attacks
+        secure: false, // Set to false if in development with self-signed certificates
+        httpOnly: false, // Mitigate XSS attacks
         maxAge: 1000 * 60 * 60 * 24, // 24 hours (for example)
-        sameSite: 'Lax' //Lax or 'strict' or 'none' // 'none' Needed for cross-site requests
+        sameSite: 'none' //Lax or 'strict' or 'none' // 'none' Needed for cross-site requests
       }
     }));
 
     //LOGGING 
-          // app.use((req, res, next) => {
-          //   console.log('Incoming request:', req.method, req.path);
-          //   console.log('Headers:', req.headers);
-          //   next();
-          // });
+          app.use((req, res, next) => {
+            console.log('Incoming request:', req.method, req.path);
+            console.log('Headers:', req.headers);
+            next();
+          });
 
-          // app.use((req, res, next) => {
-          //   console.log('Session data:', req.session);
-          //   next();
-          // });
-          
+          app.use((req, res, next) => {
+            console.log('Session data:', req.session);
+            next();
+          });
     //LOGGING
 
 
@@ -726,12 +725,12 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
 //----------------------------------------------------------------
 // START ALL APPLICATIONS
   //START THE HTTP SERVER - (remember to change in code on at top if  using HTTP)
-    app.listen(PORT, () => console.log('Judiciary of Trinidad and Tobago Web Forms Portal:3000!'))
+    // app.listen(PORT, () => console.log('Judiciary of Trinidad and Tobago Web Forms Portal:3000!'))
   // Start the HTTPS server - (remember to change in code on at top if  using HTTPS)
   // app.listen(PORT_SSL, () => { console.log(`Server running at https://localhost:${PORT_SSL}`);});
-  // server.listen(PORT_SSL, () => {
-  //   console.log(`Server running at https://localhost:${PORT_SSL}`);
-  // });
+  server.listen(PORT_SSL, () => {
+    console.log(`Server running at https://localhost:${PORT_SSL}`);
+  });
 //------------------------
   //START THE ADMIN SERVER
   app.listen(ADMIN_PORT, () => console.log('AdminBro is under localhost:8080/admin'))

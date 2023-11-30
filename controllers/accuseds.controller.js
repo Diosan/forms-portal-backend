@@ -8,23 +8,27 @@ import mysql from 'mysql2'
 
 export const saveCharge = async (req, res) => {
     console.log(req.body)
-    // let charge = {
-    //     name: 'Espionage',
-    //     ICCS: '1Q2W3E',
-    //     UNODC: 'P0O9I8',
-    //     counts: 1,
-    //     accusedId: 6
-    // };
-    let charge = req.body;
+    let charge = {
+            name: req.body.name,
+            ICCS: req.body.ICCS,
+            UNODC: req.body.UNODC,
+            counts: req.body.counts,
+            accusedId: req.body.accusedId,
+            particulars: req.body.particulars
+    }
+
+    // let charge = req.body;
     let new_charge = await ChargesModel.create(charge);
-    let accused = await AccusedModel.findByPk(req.body.accusedId);
-    let submission = await SubmissionModel.findByPk(AccusedModel.submissionId);
-    await SubmissionModel.update({ status: 'charge_saved' });
+    let accused = await AccusedModel.findByPk(charge.accusedId);
+    let submission = await SubmissionModel.findByPk(accused.submissionId);
+    await submission.update({ status: 'charge_saved' });
     await submission.save();
     res.status(201).json({
         outcome: 'success',
         charge: new_charge
     });
+
+  
 
 };
 

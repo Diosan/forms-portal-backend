@@ -9,7 +9,6 @@ import formidable  from 'formidable'
 import winston from 'winston' 
 import jwt from 'jsonwebtoken' 
 import bcrypt from 'bcrypt' 
-const JWT_SECRET = process.env.JWT_SECRET;
 import nodemailer from 'nodemailer' 
 import moment from 'moment' 
 import {format} from 'date-fns' 
@@ -119,6 +118,7 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await getUserByEmail(email);
+    // console.log(user)
     if (!user) {
       // return res.status(401).send('Authentication failed');
       return res.status(201).json({
@@ -134,16 +134,24 @@ export const login = async (req, res) => {
 
       const totp = new TOTPGenerator();
       // console.log(totp);
-      const sessionId = req.session.id;
-      console.log(sessionId);
-      totp.generateOTP(sessionId, email)
+      //add user id to the session object
+      // req.session.uid = user.id
+      const userId = user.id || "";
+      console.log(userId);
+
+      const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '6h' })
+
+
+      totp.generateOTP(token, email)
       .then(() => console.log('OTP sent to user email.'))
       .catch(error => console.error('Error generating or sending OTP:', error));
 
       return res.status(200).json({
         outcome: 'success', 
         message: "Successfully logged in: OTP send to " + req.body.email,
-        email: req.body.email
+        email: req.body.email,
+        token: token // Include the token in the response
+
       })
       // .send('OTP sent to email');
 
@@ -165,65 +173,73 @@ export const login = async (req, res) => {
 };
 
 
-export const verifyOtp = async (req, res) => {
-  const sessionId = req?.session?.id ?? '';
-  const { email, otp } = req.body;
-  console.log(`req.session.id : ${sessionId} ------- `)
-  const totp = new TOTPGenerator();
-  let verified = await totp.verifyOTP(sessionId, otp) 
-  if (verified) {
-    return res.status(200).json({
-      outcome: 'success',
-      token: jwt.sign({ email: email }, 'keyboard cat 4 ever', { expiresIn: 129600 })
-    })
-  } else {
-    console.log("not verified")
-    return res.status(200).json({
-      outcome: 'error'
-    })
-  }
-} 
-
-// exports.verifyOtp = async (req, res) => {
+// export const verifyOtp = async (req, res) => {
 //   const { email, otp } = req.body;
-//   try {
-//     const storedOtp = await getAsync(`otp:${email}`);
-//     if (otp === storedOtp) {
-//       // OTP is correct, generate JWT
-//       const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-//       // Clear OTP from Redis
-//       await setRedisAsync(`otp:${email}`, '', 'EX', 1);
-
-//       // return res.status(200).json({ token });
-
-//       return res.status(200).json({
-//         outcome: 'success', 
-//         token: token
-//       })
-
-//     } else {
-
-//       // return res.status(401).send('OTP verification failed');
-
-//       return res.status(201).json({
-//         outcome: 'error',
-//         error: 'OTP verification failed. Try again' 
-//       });
-
-//     }
-//   } catch (error) {
-
-//     logger.error('OTP verification error:', error);
-
-//     // return res.status(500).send('Internal server error');
-//     return res.status(201).json({
-//       outcome: 'error',
-//       error: 'OTP verification failed. Try again' 
-//     });
-
+//   const user = {id: session.uid || ""}
+//   const totp = new TOTPGenerator();
+//   let verified = await totp.verifyOTP(session.id, otp) 
+//   if (verified) {
+//     return res.status(200).json({
+//       outcome: 'success',
+//       token: jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1h' })
+//     })
+//   } else {
+//     console.log("not verified")
+//     return res.status(200).json({
+//       outcome: 'error'
+//     })
 //   }
-// }
+// } 
+
+
+export const verifyOtp = async (req, res) => {
+
+  const authHeader = req?.headers?.authorization || "";
+  const { otp } = req.body;
+
+
+  if (!otp || !authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ outcome: 'error', message: 'No token provided' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  // Verify and decode the JWT token
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Assuming the user's ID is stored in the token
+    const userId = decoded.id;
+    console.log(">>>> USER ID - ", userId);
+
+    const totp = new TOTPGenerator();
+    let verified = await totp.verifyOTP(token, otp);
+    
+    if (verified) {
+      // OTP is correct, create a new token or perform desired actions
+      return res.status(200).json({
+        outcome: 'success',
+        token: jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '12h' })
+      });
+    } else {
+      // OTP is incorrect
+      console.log("OTP verification failed");
+      return res.status(400).json({
+        outcome: 'error',
+        message: 'OTP verification failed'
+      });
+    }
+  } catch (error) {
+    // Handle errors (e.g., token invalid or expired)
+    console.error('Error verifying OTP:', error);
+    return res.status(401).json({
+      outcome: 'error',
+      message: 'Invalid token'
+    });
+  }
+};
+
+
 
 
 export const register = async (req, res) => {

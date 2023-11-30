@@ -211,7 +211,8 @@ export const saveComplainant = async (req, res) => {
 
 export const saveAccused = async (req, res) => {
   let accused = req.body;
-  let new_accused = AccusedModel.create(accused);
+  let new_accused = await AccusedModel.create(accused);
+  console.log(new_accused)
   res.status(201).json({
     outcome: 'success', 
     accused: new_accused
@@ -286,6 +287,7 @@ export const create = async (req, res) => {
   let user = await UserModel.findOne({
     where: {email: req.body.email}
   })
+  console.log("User: ", user.dataValues)
 
   let new_submission = {
     description: req.body.title,
@@ -315,7 +317,7 @@ export const create = async (req, res) => {
     console.log('Error Creating Submission In Sequelize', error)
     res.status(201).json({
       outcome: 'error', 
-      error: error.errors[0].message 
+      error: "" 
     });
   }
 
