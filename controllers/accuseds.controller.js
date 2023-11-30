@@ -37,3 +37,11 @@ exports.charges = async (req, res) => {
         charges: returned_charges
     }); 
 };
+
+exports.findOne = async (req, res) => {
+    const id = req.params.id;
+    let accused = await Accused.findByPk(id)
+    res.status(200).json({
+        accused: accused
+    });
+}

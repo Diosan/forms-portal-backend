@@ -2,7 +2,8 @@ const db = require("../models/index");
 const Submission = db.submissions;
 const Complainant = db.complainants;
 const User = db.users;
-const Accused = db.accuseds; 
+const Accused = db.accuseds;
+const Charges = db.charges; 
 const PasswordResetToken = db.password_reset_token;
 const Op = db.Sequelize.Op;
 const jwt = require('jsonwebtoken');
@@ -79,6 +80,7 @@ exports.findOne = async (req, res) => {
       submissionId: id
     }
   })
+
 
   res.status(200).json({
     submission: submission,

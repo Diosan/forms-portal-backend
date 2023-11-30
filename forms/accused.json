@@ -69,6 +69,10 @@
           "otherResident": {
               "type": "boolean",
               "title": "Resident of other country"
+          },
+          "PreviousCriminalRecord": {
+              "type": "boolean",
+              "title": "PreviousCriminalRecord"
           }
 
         }
