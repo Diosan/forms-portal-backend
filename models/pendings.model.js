@@ -7,8 +7,8 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false
         },
         dateOfOffence:{
-          type: Sequelize.DataTypes.DATEONLY, 
-          allowNull: true
+            type: Sequelize.DataTypes.DATEONLY, 
+            allowNull: true
         }
     });
 

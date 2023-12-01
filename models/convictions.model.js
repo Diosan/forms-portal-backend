@@ -1,7 +1,7 @@
 const {DataTypes} = require("sequelize");
 module.exports = (sequelize, Sequelize) => {
 
-    const Pending = sequelize.define("pendings", {
+    const Conviction = sequelize.define("convictions", {
         offence: {           
             type: Sequelize.STRING,
             allowNull: false
@@ -20,5 +20,5 @@ module.exports = (sequelize, Sequelize) => {
     //     Accused.belongsTo(models.submission);
     // };
                                          
-    return Pending;
+    return Conviction;
 }

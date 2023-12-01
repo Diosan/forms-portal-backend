@@ -43,5 +43,8 @@ db.accuseds.hasMany(db.charges)
 db.pendings.belongsTo(db.pendings, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 db.accuseds.hasMany(db.pendings)
 // Pendings ++++++++++
+db.convictions.belongsTo(db.convictions, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+db.accuseds.hasMany(db.convictions)
+// Pendings ++++++++++
 
 module.exports = db; 
