@@ -16,43 +16,43 @@ module.exports = (sequelize, Sequelize) => {
         },
         tntNational:{
           type: Sequelize.DataTypes.BOOLEAN, 
-          allowNull: false
+          allowNull: true
         },
         tntResident:{
           type: Sequelize.DataTypes.BOOLEAN, 
-          allowNull: false
+          allowNull: true
         },
         otherNational:{
           type: Sequelize.DataTypes.BOOLEAN, 
-          allowNull: false
+          allowNull: true
         },
         otherResident:{
           type: Sequelize.DataTypes.BOOLEAN, 
-          allowNull: false
+          allowNull: true
         },
         otherNationalCountry:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false
+          allowNull: true
         },
         otherResidentCountry:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false
+          allowNull: true
         },
         identification:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false
+          allowNull: true
         },
         gender:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false
+          allowNull: true
         },
         adulthood:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false
+          allowNull: true
         },
         previousCriminalRecord:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false
+          allowNull: true
         },
         dateOfBirth:{
           type: Sequelize.DataTypes.DATEONLY, 

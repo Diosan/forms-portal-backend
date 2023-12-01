@@ -81,52 +81,52 @@ const Accused = sequelize.define('accuseds',
         },
         tntNational:{
           type: Sequelize.DataTypes.BOOLEAN, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: true
         },
         tntResident:{
           type: Sequelize.DataTypes.BOOLEAN, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: true
         },
         otherNational:{
           type: Sequelize.DataTypes.BOOLEAN, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: false
         },
         otherResident:{
           type: Sequelize.DataTypes.BOOLEAN, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: false
         },
         otherNationalCountry:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: ''
         },
         otherResidentCountry:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: ''
         },
         identification:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: ''
         },
         gender:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: 'Male'
         },
         adulthood:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: 'Adult'
         },
         previousCriminalRecord:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: 'Unknown'
         },
         dateOfBirth:{
