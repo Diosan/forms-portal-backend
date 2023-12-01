@@ -271,7 +271,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
         res.status(400).json({ error: "Request body is empty" });
         return;
       }
-      console.log(req.session.otp_user)
+      // console.log(req.session.otp_user)
 
       if (req.session.otp_user == {}) {
         res.redirect('/admin/login'); // Replace '/login' with your login route
@@ -333,7 +333,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
     });
 
     customAdminRouter.post('/ttps/admin/login', async (req, res) => {
-      console.log(req.body)
+      console.log(req.headers)
       if (!req.body) {
         res.status(400).json({ error: "Request body is empty" });
         return;
@@ -389,6 +389,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
 
     // const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const dashboardComponentPath = path.join(__dirname, 'views', 'my-dashboard-component.jsx');
+    const uploadUsersComponentPath = path.join(__dirname, 'adminCustomPages', 'UploadUsers.jsx');
 
 
     //Role based access control
@@ -398,6 +399,8 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
     const canCreateAdmins = (currentAdmin) => {
       return currentAdmin && currentAdmin.role === 'superadmin';
     };//........................................................
+    const isSuperAdmin = (currentAdmin) => currentAdmin && currentAdmin.role === 'superadmin';
+    //........................................................
 
 
     AdminBro.registerAdapter(AdminBroSequelize)
@@ -472,18 +475,70 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
         logo: '/logo.png', 
         softwareBrothers: false, 
       },
+      pages: {
+        uploadUsers: {
+          label: "Upload Users",
+          component: AdminBro.bundle(dashboardComponentPath),
+          isAccessible: ({ currentAdmin }) => isSuperAdmin(currentAdmin),
+        }
+      }
       // 
     })
+
+    /**
+     * Validate JWT token and return user data if the token is valid.
+     * @param {string} token - JWT token to validate.
+     * @returns {object|null} - User data if valid, null if invalid.
+     */
+    const validateJWT = (token) => {
+      const secret = JWT_SECRET; 
+
+      try {
+        // Verify the token
+        const decoded = jwt.verify(token, secret);
+        // If the token is valid, return the user data (decoded token)
+        return decoded;
+      } catch (error) {
+        // If there's an error (e.g., token is invalid or expired), return null
+        console.error('JWT validation error:', error.message);
+        return null;
+      }
+    };
+
+
     // const router = AdminBroExpress.buildRouter(adminBro)
     const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
       authenticate: async (email, password) => {
+        console.log(req.headers)
         if (req.session.isAuthenticated && req.session.adminUser) {
-          return req.session.adminUser; // Return the user object if the session is authenticated
+          const token = jwt.sign(
+            { userId: user.id, email: user.email }, // Payload
+            process.env.JWT_SECRET, // Secret
+            { expiresIn: '1h' } // Token expiry
+          );
+          // Set the token in an HTTPOnly cookie
+          res.cookie('token', token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production', // use secure flag in production
+          maxAge: 3600000 // cookie expiry, should match token expiry
+        });
+
+         return { ...user }; // Return the user object without the token           
       }
         return null;
       },
       cookiePassword: JWT_SECRET,
-    });
+    },
+    null, {
+      resave: false,
+      saveUninitialized: true,
+      // Implement custom middleware for JWT token validation
+      cookie: { secure: false },
+      secret: JWT_SECRET,
+    }
+    
+    
+    );
     //use this by default
     app.use(customAdminRouter); // Custom login and OTP routes
     app.use(adminBro.options.rootPath, router); // AdminBro routes

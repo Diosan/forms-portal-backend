@@ -114,7 +114,7 @@ export const doNothing = async (req, res) => {
 }
 
 export const login = async (req, res) => {
-  console.log(req.body)
+  // console.log(req.body)
   const { email, password } = req.body;
   try {
     const user = await getUserByEmail(email);
@@ -136,13 +136,14 @@ export const login = async (req, res) => {
       // console.log(totp);
       //add user id to the session object
       // req.session.uid = user.id
-      const userId = user.id || "";
-      console.log(userId);
+      const userId = user?.dataValues?.id || "";
+      const name = user?.dataValues?.firstName || "";
+      console.log(name);
 
       const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '6h' })
 
 
-      totp.generateOTP(token, email)
+      totp.generateOTP(token, email, name)
       .then(() => console.log('OTP sent to user email.'))
       .catch(error => console.error('Error generating or sending OTP:', error));
 
@@ -151,7 +152,6 @@ export const login = async (req, res) => {
         message: "Successfully logged in: OTP send to " + req.body.email,
         email: req.body.email,
         token: token // Include the token in the response
-
       })
       // .send('OTP sent to email');
 
@@ -238,6 +238,59 @@ export const verifyOtp = async (req, res) => {
     });
   }
 };
+
+
+export const resendOtp = async (req, res) => {
+    const authHeader = req?.headers?.authorization || "";
+    const { email } = req.body;
+  
+    if (!email || !authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ outcome: 'error', message: 'error' });
+    }
+    try {
+    const oldToken = await authHeader.split(' ')[1];
+    console.log(oldToken)
+    
+      const decoded = jwt.verify(oldToken, process.env.JWT_SECRET);
+      // Assuming the user's ID is stored in the token
+      const userId = decoded?.id || "";
+      console.log(">>>> USER ID - ", userId);
+      // Fetch user by ID
+      const user = await UserModel.findByPk(userId);
+      // console.log(user)
+      
+      if (!user) {
+        return res.status(404).json({ outcome: 'error', message: 'User not found' });
+      }
+      console.log("User found")
+      const userAuthorisedEmail = user.dataValues.email
+      const userAuthorisedName = user.dataValues.firstName
+      // Generate a new JWT token
+      const newToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '6h' });
+
+      // Generate and send OTP
+      const totp = new TOTPGenerator();
+      totp.generateOTP(newToken, userAuthorisedEmail, userAuthorisedName)
+          .then(() => console.log('OTP sent to user email.'))
+          .catch(error => console.error('Error generating or sending OTP:', error));
+
+          return res.status(200).json({
+            outcome: 'success', 
+            message: "Successfully logged in: OTP send to your authorised email address",
+            token: newToken // refresh user token
+          })
+
+    }catch (error) {
+      logger.error('Resend OTP error:', error);
+      return res.status(201).json({
+        outcome: 'error', 
+        error: 'Sign in failed. Try again' 
+      });
+    }
+};
+
+
+
 
 
 

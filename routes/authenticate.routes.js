@@ -1,4 +1,4 @@
-import {doNothing, login, register, verifyOtp, refreshToken} from "../controllers/authenticate.controller.js";
+import {doNothing, login, register, resendOtp, verifyOtp, refreshToken} from "../controllers/authenticate.controller.js";
 import express from "express";
 
 export default function(app) {
@@ -14,6 +14,8 @@ export default function(app) {
         router.post("/register", register);
         //verify-otp
         router.post("/verify-otp", verifyOtp);
+        //resend-otp
+        router.post("/resend-otp", resendOtp);
         //Refresh Token
         router.get("/refresh-token", refreshToken);
   

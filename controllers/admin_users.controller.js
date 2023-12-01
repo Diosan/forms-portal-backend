@@ -142,14 +142,16 @@ export const adminLogin = async (req, res) => {
             return;
         }
         console.log(user);
-
+        const adminUserAuthorisedEmail = user?.dataValues?.email || "";
+        const useIdAsToken = user?.dataValues?.email || "";
+        const adminUserName = user?.dataValues?.id || "";
         const storedPassword = user?.dataValues?.password || "";
         const passwordMatch = await bcrypt.compare(plainTextPassword, storedPassword);
         if (passwordMatch) {
             // Generate OTP and handle it here
             try {
                 const totp = new TOTPGenerator();
-                await totp.generateOTP(req.session.id, user.dataValues.email);
+                await totp.generateOTP(useIdAsToken, adminUserAuthorisedEmail, adminUserName);
                 return({
                     status: 'ok',
                     message: `An OTP code has been sent to your agency email address. Please enter the code in the box below`
