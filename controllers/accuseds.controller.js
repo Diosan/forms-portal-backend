@@ -28,10 +28,11 @@ exports.saveCharge = async (req, res) => {
 };
 
 
+
 exports.savePending = async (req, res) => {
     
     let pending = req.body;
-    let new_pending = await Charge.create(pending);
+    let new_pending = await Pending.create(pending);
 
     res.status(201).json({
         outcome: 'success',
@@ -91,7 +92,7 @@ exports.convictions = async (req, res) => {
     });
     // console.log('\n\n\n returned_charges: ', returned_charges);
     res.status(201).json({
-        pendings: returned_convictions
+        convictions: returned_convictions
     }); 
 };
 

@@ -168,9 +168,13 @@ exports.authenticateUser = async (req, res) => {
 
 exports.saveComplainant = async (req, res) => {
 
+    console.log('\n\n\n attempting to save complainant \n\n\n');  
+
     let transporter = nodemailer.createTransport(mailConfig);
 
-    submission = Submission.findByPk(req.body.submissionId);
+    let submission = await Submission.findByPk(req.body.submissionId);
+
+    console.log('')
 
     let new_complainant = {
         court: req.court,
@@ -183,11 +187,7 @@ exports.saveComplainant = async (req, res) => {
         submissionId: req.body.submissionId
     }
 
-     
-
-    // let complainant_submission = Complainant.belongsTo(submission);
-
-    console.log('New Complainant: ', new_complainant);
+    // console.log('\n\n\n New Complainant: ', new_complainant);
 
     try {
         const complainant = await Complainant.create(new_complainant, {});
@@ -195,19 +195,8 @@ exports.saveComplainant = async (req, res) => {
 
         await  submission.update({status: 'complainant_saved'});
 
-        // await submission.addComplainant(complainant);
-
-        // await transporter.sendMail({
-        //     from: 'JSSWF <omm@link868.com>',
-        //     to: req.body.email,
-        //     subject: 'Complaint with Oath',
-        //     text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/${req.body.submissionId}`
-        // });
-
         res.status(201).json({
-          outcome: 'success', 
-          //   message: "Successfully registered: OTP send to " + req.body.email,
-          
+          outcome: 'success'          
         })
     } catch (error) {
     console.log('Error Creating Complainant In Sequelize', error)

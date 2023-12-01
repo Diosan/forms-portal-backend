@@ -20,13 +20,19 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: false
       },
+      summaryOfEvidence: {
+        type: Sequelize.DataTypes.TEXT,
+        allowNull: true
+      },
       status: { 
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 'started'
       },
       type: { 
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 'complaint_with_oath'
       },
       userId: {
         type: DataTypes.INTEGER,
