@@ -174,11 +174,11 @@ exports.saveComplainant = async (req, res) => {
 
     let submission = await Submission.findByPk(req.body.submissionId);
 
-    console.log('')
+    console.log('\n\n\n Body of request received by server: ', req.body)
 
     let new_complainant = {
-        court: req.court,
-        courtDistrict: req.courtDistrict,
+        court: req.body.court,
+        courtDistrict: req.body.courtDistrict,
         agency: "TTPS",
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -187,16 +187,17 @@ exports.saveComplainant = async (req, res) => {
         submissionId: req.body.submissionId
     }
 
-    // console.log('\n\n\n New Complainant: ', new_complainant);
+    console.log('\n\n\n New Complainant: ', new_complainant);
 
     try {
         const complainant = await Complainant.create(new_complainant, {});
-        console.log('New Complainant Created In Sequelize', complainant);
+        console.log('\n\n\n New Complainant Created In Sequelize', complainant);
 
         await  submission.update({status: 'complainant_saved'});
 
         res.status(201).json({
-          outcome: 'success'          
+          outcome: 'success',
+          complainant: complainant          
         })
     } catch (error) {
     console.log('Error Creating Complainant In Sequelize', error)
