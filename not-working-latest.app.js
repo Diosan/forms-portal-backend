@@ -32,6 +32,9 @@ import jwt from 'jsonwebtoken';
 const key = fs.readFileSync(path.resolve(__dirname, './key.pem'));
 const cert = fs.readFileSync(path.resolve(__dirname, './cert.pem'));
 
+
+
+
 // Internal libraries next
 
 import { db, UserModel, SubmissionModel } from "./models/index.js";
@@ -116,36 +119,40 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
 //________________________________________________
 // EXPRESS APP INITIALIZATION
 //------------------------------------------------
-const app = express();
-// Set the view engine to ejs
-app.set('view engine', 'ejs');
+  const app = express();
+  // Set the view engine to ejs
+  app.set('view engine', 'ejs');
 
-// Set the directory where the template files are located
-app.set('views', path.join(__dirname, 'views'));
+  // Set the directory where the template files are located
+  app.set('views', path.join(__dirname, 'views'));
 
-// Create an HTTPS server with certificate (may not be necessary in production)
-const server = https.createServer({ key: key, cert: cert }, app);
-// or create an HTTP Serve
-// const server = http.createServer(app);
+  // Create an HTTPS server with certificate (may not be necessary in production)
+  const server = https.createServer({ key: key, cert: cert }, app);
+  // or create an HTTP Serve
+  // const server = http.createServer(app);
 
-//use cookie parser
-// app.use(cookieParser());
+  //use cookie parser
+  // app.use(cookieParser());
 
 
 //MIDDLEWARE ----------------------------------------------------------------
 //------------------------------------------------
 // CORS MIDDLEWARE
 //------------------------------------------------
-var allowedDomains = [
-  'http://swf.ttlawcourts.org', 'https://swf.ttlawcourts.org', 
-  'http://jsswf.sytes.net', 'https://jsswf.sytes.net', 
-  'http://localhost:3000', 'https://localhost:3000',
-  'http://localhost:5173', 'https://localhost:5173',
-  'http://localhost:8443', 'https://localhost:8443',
-  'http://localhost:8080', 'https://localhost:8080',
-  'http://127.0.0.1:5173', 'https://127.0.0.1:5173',
-  'http://localhost', 'https://localhost'
- ];
+
+
+// const allowedHeaders = { 'Authorization': 'Bearer ' + APIKEY }
+
+  var allowedDomains = [
+    'http://swf.ttlawcourts.org', 'https://swf.ttlawcourts.org', 
+    'http://jsswf.sytes.net', 'https://jsswf.sytes.net', 
+    'http://localhost:3000', 'https://localhost:3000',
+    'http://localhost:5173', 'https://localhost:5173',
+    'http://localhost:8443', 'https://localhost:8443',
+    'http://localhost:8080', 'https://localhost:8080',
+    'http://127.0.0.1:5173', 'https://127.0.0.1:5173',
+    'http://localhost', 'https://localhost'
+   ];
   app.use(cors({
     origin: function (origin, callback) {
       // bypass the requests with no origin (like curl requests, mobile apps, etc )
@@ -157,11 +164,13 @@ var allowedDomains = [
       }
       return callback(null, true);
       },
-      methods: ["GET", "POST"],
+      // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       // allowedHeaders: ["my-custom-header"],
       credentials: true,
       transports: ['websocket', 'polling'],
   }));
+  // app.options('*', cors()); // Enable pre-flight request for all routes
+
 
 
 
@@ -177,20 +186,15 @@ var allowedDomains = [
       cookie: { secure: false } // Set to true if using HTTPS
      }));
      */
+    //  app.use(session({ 
+    //   secret: "JWT_SECRET", 
+    //   resave: false, 
+    //   saveUninitialized: true,
+    //   cookie: { secure: false, httpOnly:false, _expires: 43200 } // Set to true if using HTTPS
+    //  }));
 
      // if using redis as session store. Production use
-    //  app.use(session({
-    //   store: redisStore,
-    //   secret: JWT_SECRET, // Replace with a strong secret
-    //   resave: false,
-    //   saveUninitialized: true,
-    //   cookie: {
-    //     secure: false, // Set to true if using HTTPS
-    //     httpOnly: true, // Mitigate XSS attacks
-    //     maxAge: 1000 * 60 * 60 * 24 // 24 hours (for example)
-    //   }
-    // }));
-    app.use(session({
+     app.use(session({
       store: redisStore,
       secret: JWT_SECRET, // Replace with a strong secret
       resave: false,
@@ -199,11 +203,11 @@ var allowedDomains = [
         secure: false, // Set to false if in development with self-signed certificates
         httpOnly: true, // Mitigate XSS attacks
         maxAge: 1000 * 60 * 60 * 24, // 24 hours (for example)
-        // sameSite: 'none' //Lax or 'strict' or 'none' // 'none' Needed for cross-site requests
+        sameSite: 'none' //Lax or 'strict' or 'none' // 'none' Needed for cross-site requests
       }
     }));
-  //------------------------------------------------
-  //LOGGING 
+
+    //LOGGING 
           // app.use((req, res, next) => {
           //   console.log('Incoming request:', req.method, req.path);
           //   console.log('Headers:', req.headers);
@@ -216,6 +220,10 @@ var allowedDomains = [
           // });
           
     //LOGGING
+
+
+
+  //------------------------------------------------
   //------------------------------------------------
   //----------------------------------------------------------------
     //BODY PARSER MIDDLEWARE
@@ -227,10 +235,12 @@ var allowedDomains = [
   //________________________________________________
   // STATIC FILE MIDDLEWARE
   //------------------------------------------------
-  app.use(express.static('public'));
-  app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')));
-  app.use(express.static( 'dist'));
-  app.use('/public', express.static(path.join(__dirname, 'public')));
+    app.use(express.static('public'));
+    app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')));
+    app.use(express.static( 'dist'));
+    app.use('/public', express.static(path.join(__dirname, 'public')));
+
+
 
   //----------------------------------------------------------------
   //----------------------------------------------------------------
@@ -260,19 +270,21 @@ var allowedDomains = [
       }
     });
 
+
+
+
+
+
+
     customAdminRouter.post('/ttps/admin/mfa', async (req, res) => {
-      
       if (!req.body) {
         res.status(400).json({ error: "Request body is empty" });
         return;
       }
-      console.log("MFA session: ", req.session)
-      console.log(">> session id: ", req.session.id)
-      console.log("---------------------------- ")
-      console.log("Headers: ", req.headers)
-      console.log("---------------------------- ")
-      const authHeader = req?.headers?.authorization;
 
+      // console.log(req.body)
+      const authHeader = req?.headers?.authorization;
+ 
       if (!req.body.otp || !authHeader || !authHeader.startsWith('Bearer ')) {
         console.log("---error--------")
         return res.status(401).json({ outcome: 'error', message: 'No token provided' });
@@ -280,6 +292,10 @@ var allowedDomains = [
       if(authHeader.startsWith('Bearer ')){
         console.log("it does")
       }
+
+      console.log(req.session.id)
+      console.log(req.session.otp_user)
+
       const token = authHeader.split(' ')[1];
 
 
@@ -287,92 +303,149 @@ var allowedDomains = [
         res.redirect('/admin/login'); // Replace '/login' with your login route
       }
 
+      
       const uid = req?.session?.otp_user?.id || ""
       const email = req?.session?.otp_user?.email || ""
-      const { otp } = req.body;      
-      console.log(otp);
+      const { otpCode } = req?.body?.otp || "";    
+      console.log(otpCode);
       try {
-          console.log("incoming: ", otp);
-          const keyToget = `otp:${req.session.id}`;
-          console.log("Key to get: ", keyToget)
-          console.log("---------------------------- ")
-          const storedOTP = await getStoredOTP(keyToget, otp);
-          console.log("---------------------------- ")
-          const theStoredOTP = `${storedOTP?.code || ""}`;
-          console.log("stored otp: ", theStoredOTP);
-          console.log("incoing otp: ", otp);
+        console.log("incoming: ", otpCode);
+        const keyToget = `otp:${token}`;
+        const storedOTP = await getStoredOTP(keyToget, otpCode);
+        const theStoredOTP = `${storedOTP?.code || ""}`;
+        console.log("stored otp: ", theStoredOTP);
 
-          // Initialize incorrect attempts counter if it does not exist
-          if (!req.session.incorrectOtpAttempts) {
+        // Initialize incorrect attempts counter if it does not exist
+        if (!req.session.incorrectOtpAttempts) {
+          req.session.incorrectOtpAttempts = 0;
+        }
+
+        if (theStoredOTP !== `${otpCode}`) {
+          req.session.incorrectOtpAttempts += 1;
+          if (req.session.incorrectOtpAttempts >= 3) {
+            // Reset counter and redirect to login
             req.session.incorrectOtpAttempts = 0;
-            console.log("first attempt");
-          }
-
-          if (theStoredOTP !== `${otp}`) {
-            req.session.incorrectOtpAttempts += 1;
-            console.log("Attempt: ", req.session.incorrectOtpAttempts );
-            if (req.session.incorrectOtpAttempts >= 3) {
-              // Reset counter and redirect to login
-              req.session.incorrectOtpAttempts = 0;
-              //remove otp_user form session
-              req.session.otp_user = {};
-              console.log("Attempt: ", req.session.incorrectOtpAttempts );
-              res.redirect('/admin/login'); // Replace '/login' with your login route
-              return;
-            }
-            message = ``;
-            error = `OTP Code is incorrect. Please try again`;
-            console.log("OTP Code Incorrect")
-            console.log("Count of Attempt: ", req.session.incorrectOtpAttempts );
-            // return
-            res.status(200).send({message: "FAIL", error: "Incorrect verification code. Please try again."});
-            // res.render('otp', { error: error, message: message, token});
-          }
-          else{
-            console.log("OTP Code Correct")
-            req.session.adminUser = {
-              id: uid, // or any identifier you use for the user
-              email: email, // or username, depending on your system
-              // Any other user details you might need
-            };
             //remove otp_user form session
             req.session.otp_user = {};
-            message = `A verification code has just been sent to your registered email address. 
-                   Please enter this code in the box below to confirm your login.`;
-
-            req.session.isAuthenticated = true; // Mark the session as authenticated
-            req.session.incorrectOtpAttempts = 0; // Reset counter on successful attempt
-
-            console.log(req.session)
-            // const delKey = await deleteStoredOTP(keyToget);
-            res.status(200).send({message: "VERIFIED", error: ""});
-            // res.redirect('/admin'); // Redirect to the AdminBro dashboard
+            res.redirect('/admin/login'); // Replace '/login' with your login route
+            return;
           }
+          message = ``;
+          error = `OTP Code is incorrect. Please try again`;
+          console.log("OTP Code Incorrect")
+          res.render('otp', { error: error, message: message });
+        }
+        else{
+          console.log("OTP Code Correct")
+          req.session.adminUser = {
+            id: uid, // or any identifier you use for the user
+            email: email, // or username, depending on your system
+            // Any other user details you might need
+          };
+          //remove otp_user form session
+          req.session.otp_user = {};
+          message = `A verification code has just been sent to your registered email address. 
+                 Please enter this code in the box below to confirm your login.`;
+
+          req.session.isAuthenticated = true; // Mark the session as authenticated
+          req.session.incorrectOtpAttempts = 0; // Reset counter on successful attempt
+
+          console.log(req.session)
+          // const delKey = await deleteStoredOTP(keyToget);
+          res.redirect('/admin'); // Redirect to the AdminBro dashboard
+        }
       } catch (error) {
-        console.log(error)
-        res.status(500).send({message: "error"})
-        // res.render('otp', { error: `OTP Code is incorrect. Please try again`, message: "" });
+        res.render('otp', { error: `OTP Code is incorrect. Please try again`, message: "" });
       }
+
+
+
+
+
+
+
+
+
+
+
+
+      
+      
+      
+    //   const authHeader = req?.headers?.authorization;
+    //   const otp  = req?.body?.otp;
+    //   if(authHeader.startsWith('Bearer ')){
+    //     console.log("it does")
+    //   }
+    //   if(otp){
+    //     console.log("otp exists")
+    //   }
+    
+
+    //   if (!otp || !authHeader || !authHeader.startsWith('Bearer ')) {
+    //     console.log("---error--------")
+    //     return res.status(401).json({ outcome: 'error', message: 'No token provided' });
+    //   }
+
+    //   const token = authHeader.split(' ')[1];
+      
+    //   try {
+    //     console.log("incoming: ", otp);
+    //     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    //     console.log(decoded)
+    //     // Assuming the user's ID is stored in the token
+    //     const userId = decoded.userId;
+    //     console.log(">>>> USER ID - ", userId);
+        
+    //     const keyToget = `otp:${token}`;
+    //     const storedOTP = await getStoredOTP(keyToget, otp);
+    //     const theStoredOTP = `${storedOTP?.code || ""}`;
+    //     console.log("stored otp: ", theStoredOTP);
+
+    //     if (theStoredOTP !== `${otp}`) {
+    //       const attempts = (decoded.attempts || 0 ) + 1 ;
+
+    //       if (attempts >= 3) {
+    //         // Reset counter and redirect to login
+    //         res.redirect('/admin/login'); // Replace '/login' with your login route
+    //       }
+    //       message = ``;
+    //       error = `OTP Code is incorrect. Please try again`;
+    //       console.log("OTP Code Incorrect")
+    //       // res.render('otp', { error: ``, message: message, token: token, attempts: attempts });
+    //       res.status(200).send({status: 'failure', message: "Incorrect OTP Code"});
+    //     }
+    //     else{
+    //       console.log("OTP Code Correct")
+    //       const attempts = 0 ;
+    //       req.session.isAuthenticated = true;
+    //       message = `A verification code has just been sent to your registered email address. 
+    //              Please enter this code in the box below to confirm your login.`;
+
+    //       res.redirect('/admin'); // Redirect to the AdminBro dashboard
+    //       // res.redirect('/ttps/admin');
+    //     }
+    // } catch (error) {
+    //   console.log(error)
+    //   // res.render('otp', { error: `OTP Code is incorrect. Please try again`, message: "", token: token, attempts: 0 });
+    //   res.status(500).send({status: 'failure', message: "error"});
+    // }
+
     });
 
 
 
 
 
+    
 
     customAdminRouter.post('/ttps/admin/login', async (req, res) => {
-
-      console.log("LOGIN session: ", req.session)
-      console.log(">> session id: ", req.session.id)
-      console.log("---------------------------- ")
-
-
-      console.log(req.body)
       if (!req.body) {
         res.status(400).json({ error: "Request body is empty" });
         return;
       }
-      // console.log(req.body);
+      console.log(req.body);
+      console.log(req.session.id)
 
       const { username, password } = req.body;
       const email = username;
@@ -381,7 +454,6 @@ var allowedDomains = [
       try {
           // console.log(email);
           const user = await getUserByEmail(email);
-          // console.log(user)
           if (!user && !user.dataValues && !user.dataValues.password && !user.dataValues.email) {
               res.status(404).json({ status: 'error', message: "User not found" });
               return;
@@ -391,37 +463,41 @@ var allowedDomains = [
           const storedPassword = user?.dataValues?.password || "";
           const passwordMatch = await bcrypt.compare(plainTextPassword, storedPassword);
           if (passwordMatch) {
-            console.log("match");
+              console.log("matches");
               //the session .adminUser must not be saved until final login step
               req.session.otp_user = {
                 id: user?.dataValues?.id || "", // or any identifier you use for the user
-                email: user.dataValues.email, // or username, depending on your system
+                email: user.email, // or username, depending on your system
               };
-              console.log(req.session.otp_user);
 
-              const token = jwt.sign(
-                { userId: user?.dataValues?.id || "", 
-                email: user?.dataValues?.email || "" }, // Payload
-                process.env.JWT_SECRET, // Secret
-                { expiresIn: '1h' } // Token expiry
-              );
-              console.log(token);
+                //the session .adminUser must not be saved until final login step
 
-              console.log("Found a match");
-              try {
+                  const userId = user?.dataValues?.id || "" // or any identifier you use for the user
+                  const userEmail = user?.dataValues?.email || "" // or username, depending on your system
+                  const userFirstName = user?.dataValues?.firstName || ""
+
+                  const token = jwt.sign(
+                    { userId: userId, email: userEmail }, // Payload
+                    process.env.JWT_SECRET, // Secret
+                    { expiresIn: '1h' } // Token expiry
+                  );
+                  console.log(token);
+                  res.cookie('admin-bro-token', token, { httpOnly: true });
+
+                  try {
                   
-                var message = `A verification code has just been sent to your registered email address. 
-                   Please enter this code in the box below to confirm your login.`;
-                const totp = new TOTPGenerator();
-                  await totp.generateOTP(req.session.id, user.dataValues.email, user.dataValues.firstName);
-                  // await totp.generateOTP(token, user.dataValues.email, user.dataValues.firstName);
-                  // res.render('otp', { message: message }); // Render a page for OTP input
-                  res.render('otp', { error: ``, message: message, token: token, attempts: 0 });
-                  // res.render('otp', { error: ``, message: message });
-              } catch (error) {
-                  console.error('Error generating or sending OTP:', error);
-                  res.render('login', { error: 'An error occurred. Please try again' });
-              }
+                    var message = `A verification code has just been sent to your registered email address. 
+                       Please enter this code in the box below to confirm your login.`;
+                    const totp = new TOTPGenerator();
+                      // await totp.generateOTP(req.session.id, user.dataValues.email);
+                      await totp.generateOTP(token, userEmail, userFirstName);
+                      // res.render('otp', { message: message }); // Render a page for OTP input
+                      // res.render('otp', { error: ``, message: message });
+                      res.render('otp', { error: ``, message: message, token: token, attempts: 0 });
+                  } catch (error) {
+                      console.error('Error generating or sending OTP:', error);
+                      res.render('login', { error: 'An error occurred. Please try again' });
+                  }
 
           } else {
               res.render('login', { error: 'Invalid username and or password. Please try again.' });
@@ -439,8 +515,8 @@ var allowedDomains = [
     const uploadUsersComponentPath = path.join(__dirname, 'adminCustomPages', 'UploadUsers.jsx');
 
 
-     //Role based access control
-     const canModifyUsers = (currentAdmin) => {
+    //Role based access control
+    const canModifyUsers = (currentAdmin) => {
       return currentAdmin && (currentAdmin.role === 'superadmin' || currentAdmin.role === 'admin');
     };
     const canCreateAdmins = (currentAdmin) => {
@@ -448,7 +524,6 @@ var allowedDomains = [
     };//........................................................
     const isSuperAdmin = (currentAdmin) => currentAdmin && currentAdmin.role === 'superadmin';
     //........................................................
-
 
 
     AdminBro.registerAdapter(AdminBroSequelize)
@@ -532,12 +607,51 @@ var allowedDomains = [
       }
       // 
     })
+
+    /**
+     * Validate JWT token and return user data if the token is valid.
+     * @param {string} token - JWT token to validate.
+     * @returns {object|null} - User data if valid, null if invalid.
+     */
+    const validateJWT = (token) => {
+      const secret = JWT_SECRET; 
+
+      try {
+        // Verify the token
+        const decoded = jwt.verify(token, secret);
+        // If the token is valid, return the user data (decoded token)
+        return decoded;
+      } catch (error) {
+        // If there's an error (e.g., token is invalid or expired), return null
+        console.error('JWT validation error:', error.message);
+        return null;
+      }
+    };
+
+
+
+    const customAuthenticate = async (email, password) => {
+      // Your authentication logic here...
+      // If successful, return the user object and JWT token
+    };
+
     // const router = AdminBroExpress.buildRouter(adminBro)
     const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
       authenticate: async (email, password) => {
-        if (req.session.isAuthenticated && req.session.adminUser) {
-          return req.session.adminUser; // Return the user object if the session is authenticated
-      }
+        console.log(req.cookie)
+
+        const { user, token } = await customAuthenticate(email, password);
+
+        if (user && token) {
+          return { ...user, token }; // Attaching token to the user object
+        }
+
+
+          if (user && token) {
+            return { ...user, token }; // Attaching token to the user object
+          }
+          return null;
+
         return null;
       },
       cookiePassword: JWT_SECRET,
@@ -549,6 +663,8 @@ var allowedDomains = [
     //   cookie: { secure: false },
     //   secret: JWT_SECRET,
     // }
+    
+    
     );
     //use this by default
     app.use(customAdminRouter); // Custom login and OTP routes
@@ -709,7 +825,7 @@ var allowedDomains = [
     // require("./routes/accuseds.routes")(app);
     // ++++++++++++++++++++++++++++++++++++++++++
 
-  
+    
 
 
 
@@ -742,6 +858,13 @@ var allowedDomains = [
     //     res.send(data);
 
     //   });
+
+        
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+
+
+
 
 //----------------------------------------------------------------
 //----------------------------------------------------------------
@@ -782,11 +905,10 @@ var allowedDomains = [
 //----------------------------------------------------------------
 
 
-
 //----------------------------------------------------------------
 // START ALL APPLICATIONS
   //START THE HTTP SERVER - (remember to change in code on at top if  using HTTP)
-  app.listen(PORT, () => console.log('Judiciary of Trinidad and Tobago Web Forms Portal:3000!'))
+    app.listen(PORT, () => console.log('Judiciary of Trinidad and Tobago Web Forms Portal:3000!'))
   // Start the HTTPS server - (remember to change in code on at top if  using HTTPS)
   // app.listen(PORT_SSL, () => { console.log(`Server running at https://localhost:${PORT_SSL}`);});
   // server.listen(PORT_SSL, () => {

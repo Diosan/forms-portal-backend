@@ -90,6 +90,7 @@
                                     <input
                                         id="otpInput"
                                         name="otpCode"
+                                        value="111111"
                                         placeholder="OTP CODE"
                                         class="form-control flex-grow-1 px-2 py-1 fs-4"
                                         maxlength="6"
@@ -120,10 +121,23 @@
     <script src="/public/axios.min.js"></script>
     <!--<script src="/public/all.min.css"></script>-->
 
+   
+
+    <% var jsToken; %>
+    <% if (typeof token !== 'undefined' && token) { %>
+        <% jsToken = token; %>
+    <% } else { %>
+        <% jsToken = null; %>
+    <% } %>
+
     <script type="text/javascript">
-        // Check if the token exists
-        if ("<%= token %>") {
-            localStorage.setItem('auth_token', "<%= token %>");
+        var token = "<%= jsToken %>";
+
+        if (token) {
+            console.log("The variable is present: " + token);
+            localStorage.setItem('auth_token', token);
+        } else {
+            console.log("token is not present.");
         }
     </script>
 
@@ -153,17 +167,32 @@
                 }
             })
                 .then(function(response) {
+                    console.log(response.data);
                     // Hide spinner, show lock icon
-                    spinner.style.display = 'block';
-                    lockIcon.style.display = 'none';
-                    console.log(response);
-
-                    // Handle success, store token if returned
+                    spinner.style.display = 'none';
+                    lockIcon.style.display = 'block';
                     if (response.data.token) {
                         localStorage.setItem('auth_token', response.data.token);
                     }
+                    // Handle success, store token if returned
+                    if (response.data.message != 'VERIFIED') {
+                        console.log("Incorrect Code");
+                        spinner.style.display = 'none';
+                        lockIcon.style.display = 'block';
+                    }
+                    else{
+                        spinner.style.display = 'none';
+                        lockIcon.style.display = 'block';
+                        console.log("Code Correct");
+                        window.location.href = '/admin';
+                    }
+                  
+
+
+
+
                     // Redirect to the admin page
-                    window.location.href = '/admin';
+                    //
                 })
                 .catch(function(error) {
                     // Handle error
