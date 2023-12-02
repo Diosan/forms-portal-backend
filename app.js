@@ -45,6 +45,7 @@ import authenticateRoutes from './routes/authenticate.routes.js';
 // import configRoutes from './routes/config.routes.js';
 // import accountRoutes from './routes/account.routes.js';
 import adminUserRoutes from './routes/admin_users.routes.js';
+import ttpsAdminRoutes from './routes/ttps_admin.routes.js';
 import userRoutes from './routes/users.routes.js';
 // import notificationsRoutes from './routes/notifications.routes.js';
 import errorLogsRoutes from './routes/errorlogs.routes.js';
@@ -354,11 +355,6 @@ var allowedDomains = [
         // res.render('otp', { error: `OTP Code is incorrect. Please try again`, message: "" });
       }
     });
-
-
-
-
-
 
     customAdminRouter.post('/ttps/admin/login', async (req, res) => {
 
@@ -688,6 +684,7 @@ var allowedDomains = [
     // configRoutes(app);
     // accountRoutes(app);
     adminUserRoutes(app);
+    ttpsAdminRoutes(app);
     // notificationsRoutes(app);
     errorLogsRoutes(app);
     errortypesRoutes(app);

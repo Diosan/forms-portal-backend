@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import { Box, Button, Label, DropZone, DropZoneItem, DropZoneProps, BasePropertyProps } from '@admin-bro/design-system'
 
+
+
+const API_URL = process.env.REACT_APP_API_URL
+
 const UploadUsers = () => {
   const [file, setFile] = useState(null)
 
@@ -19,7 +23,7 @@ const UploadUsers = () => {
     formData.append('file', file)
 
     try {
-      const response = await fetch('/your-upload-endpoint', {
+      const response = await fetch('http://localhost:3000/api/ttps/admin/upload/bulk', {
         method: 'POST',
         body: formData,
       })
@@ -36,13 +40,13 @@ const UploadUsers = () => {
   }
 
   return (
-    <Box>
+    <Box className="form-container" style={{padding:"40px", width:"100%", maxWidth:"600px", margin:"20px auto"}}>
       <form onSubmit={handleSubmit}>
-        <Label htmlFor="file">Upload CSV File</Label>
+        <Label htmlFor="file" style={{ width:"100%", maxWidth:"600px", fontSize:"20px", padding:"10px 0"}}>Upload CSV File</Label>
         <DropZone onChange={handleDrop}>
           <DropZoneItem src={file && URL.createObjectURL(file)} />
         </DropZone>
-        <Button variant="primary" type="submit">
+        <Button variant="primary" type="submit" style={{cursor:"pointer"}}>
           Upload
         </Button>
       </form>

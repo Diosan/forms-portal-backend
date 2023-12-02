@@ -17,11 +17,15 @@ import mysql from 'mysql2'
 import bcrypt from 'bcrypt'
 import { TOTPGenerator } from '../utilities/TOTPGenerator.class.js' 
 import { redisClient, } from '../redis/redisConfig.js';
+import { mailConfig } from '../config/mail.config.js';
+
 
 const saltRounds = 10; 
 const JWT_SECRET = process.env.JWT_SECRET;
-
-
+const APP_DOMAIN = process.env.APP_DOMAIN;
+const SWF_LOGO = process.env.SWF_LOGO;
+const SWF_EMAIL = process.env.SWF_EMAIL;
+const transporter = nodemailer.createTransport(mailConfig);
 
 //**************** */
 export const findAll = (req, res) => {
@@ -491,41 +495,138 @@ export const resetPassword = async (req, res) => {
   });
 };
 
+
+
 //handle Request to reset password from email
 export const forgotPasswordRequest = async (req, res) => {
+  console.log(req.body)
   const { username } = req.body;
-
-  // Generate a unique password reset token
-  const token = uuidv4();
-
-  // Store the password reset token in the database along with the user's email and a timestamp
+  const token = uuidv4(); // Generate a unique password reset token
   const expiresAt = moment().add(1, 'hour').toDate(); // Token expires after 1 hour
-  await PasswordResetToken.create({ username, token, expiresAt });
-
-  // Send an email to the user containing a link to the password reset page
-  const transporter = nodemailer.createTransport({
-    host: 'mail.link868.com',
-    port: 465,
-    secure: true,
-    auth: {
-      user: 'emailer@jsswf.sytes.net',
-      pass: ''
+  
+  try {
+    // Update the user's record with the reset token
+    const updateResult = await UserModel.update({ resetToken: token }, {
+      where: { email: username }
+    });
+    if (updateResult[0] === 0) {
+      // Handle case where no user was updated, perhaps because the username was not found
+      throw new Error('User not found');
     }
-  });
+    const updatedUser = await UserModel.findOne({
+      where: { email: username },
+      attributes: ['firstName', 'id'], // Specify the fields you want to retrieve
+    });
+    if (!updatedUser) {
+      // Handle case where the user cannot be retrieved after update
+      throw new Error('Error retrieving updated user data');
+    }
+    // console.log(updatedUser)
+    const theUserFirstName = updatedUser?.dataValues?.firstName || ""
+    // Create a record for the password reset token  
+    
 
-  const resetUrl = `http://localhost:4001/api/users/password/new?token=${token}`;
-  const mailOptions = {
-    from: 'emailer@jsswf.sytes.net',
-    to: username,
-    subject: 'Password Reset',
-    text: `Click the following link to reset your password: ${resetUrl}`
-  };
-  await transporter.sendMail(mailOptions);
+    // Send an email to the user containing a link to the password reset page
+    const resetUrl = `${APP_DOMAIN}/password/new?token=${token}`;
 
-  // Return a success response to the user
-  res.send('An email with instructions for resetting your password has been sent to your email address.');
+    const resetEmailString = `<!DOCTYPE html>
+      <html>
+      <head>
+          <title>Verification Code</title>
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  line-height: 1.6;
+                  font-size:14px;
+              }
+              .container {
+                  width: 80%;
+                  margin: auto;
+                  overflow: hidden;
+              }
+              .logo {
+                  width: 100px;
+                  height: 75px;
+              }
+              .code {
+                  font-size: 30px;
+                  color: #333;
+                  letter-spacing:5px;
+                  font-weight: bold;
+              }
+              .footer {
+                  font-size: 12px;
+                  color: #999;
+              }
+              .security-tip {
+                  color: #ff0000;
+              }
 
+              .small-text {
+                font-size: 10px;
+            }
+
+            .swf-text{
+              font-size: 14px;
+            }
+
+            .swf-grey-bg{
+              background-color:#eee;
+              padding:20px;
+              color:#222;
+            }
+
+            .swf-grey-red{
+              background-color:#f8e6e0;
+              padding:20px;
+              color:#222;
+              margin-top:10px; 
+            }
+            .swf-time{
+              margin-top:10px; margin-bottom:30px
+            }
+
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <img src="${SWF_LOGO}" alt="SWF Logo" class="logo"/>
+
+              <p class="swf-text">Hi <b>${theUserFirstName}</b>,</p>
+              <p class="swf-text">It looks like you’re trying to change your password.</p>
+
+              <p class="swf-time"><a href="${resetUrl}">Click this link to begin the password reset process:  ${resetUrl}</a></p>
+
+              <div class="swf-grey-bg">
+                <p>Do not share this link with a third party or other employee.</p>              
+              </div>
+              
+              <p class="footer">Please do not reply to this e-mail as it is sent from a notification only address and cannot accept incoming emails.</p>
+
+              <p class="security-tip swf-grey-red "><b>Security Tip</b><br/>
+              SWF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
+              We will never ask you to validate or restore your account access through email or pop-up windows.</p>
+          </div>
+      </body>`
+
+    await transporter.sendMail({
+      from: `SWF <${SWF_EMAIL}>`,
+      to: username,
+      subject: 'SWF Alerts - Password Reset',
+      html: resetEmailString,
+    });
+
+    // Return a success response to the user
+    res.send('An email with instructions for resetting your password has been sent to your email address.');
+
+  } catch (error) {
+    // Handle any errors here
+    console.error('Error updating user with reset token:', error);
+    // You might want to send a response or throw an error depending on your application's needs
+  }
 }
+
+
 
 // password forget page
 export const handlePasswordForgotPage = async (req, res) => {

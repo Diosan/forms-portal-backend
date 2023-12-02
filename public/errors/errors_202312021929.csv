@@ -1,0 +1,21 @@
+Username,Error
+user8@invalid.com,Invalid domain
+user9@invalid.com,Invalid domain
+user10@invalid.com,Invalid domain
+user0@ttps.gov.tt,SequelizeValidationError: notNull Violation: users.password cannot be null,
+Validation error: Validation is on phone failed
+user1@ttps.gov.tt,SequelizeValidationError: notNull Violation: users.password cannot be null,
+Validation error: Validation is on phone failed
+user2@ttps.gov.tt,SequelizeValidationError: notNull Violation: users.password cannot be null,
+Validation error: Validation is on phone failed
+user3@ttps.gov.tt,SequelizeValidationError: notNull Violation: users.password cannot be null,
+Validation error: Validation is on phone failed
+user4@ttps.gov.tt,SequelizeValidationError: notNull Violation: users.password cannot be null,
+Validation error: Validation is on phone failed
+user5@ttps.gov.tt,SequelizeValidationError: notNull Violation: users.password cannot be null,
+Validation error: Validation is on phone failed
+user6@ttps.gov.tt,SequelizeValidationError: notNull Violation: users.password cannot be null,
+Validation error: Validation is on phone failed
+user7@ttps.gov.tt,SequelizeValidationError: notNull Violation: users.password cannot be null,
+Validation error: Validation is on phone failed
+user11@invalid.com,Invalid domain

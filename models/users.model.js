@@ -61,13 +61,17 @@ export default (sequelize) => {
         type: DataTypes.STRING(20),
         unique: true,
         validate: {
-          is: /^\+(?:[0-9] ?){6,14}[0-9]$/
-        },
+          is: /^(868[0-9]{7}|[0-9]{7})$/
+        }
       },
       role: {
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'user'
+      },
+      resetToken: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
       },
       createdAt: {
         type: DataTypes.DATE
