@@ -213,7 +213,7 @@ exports.saveComplainant = async (req, res) => {
 
 exports.saveAccused = async (req, res) => {
   let accused = req.body;
-  let new_accused = Accused.create(accused);
+  let new_accused = await Accused.create(accused);
   res.status(201).json({
     outcome: 'success', 
     accused: new_accused
@@ -266,6 +266,28 @@ exports.updateComplainant = async (req, res) => {
     outcome: 'success',
     complainant: updated_complainant
   });
+
+}
+
+exports.createIndictable = async (req, res) => {
+
+  let user = await User.findOne({
+    where: {email: req.body.email}
+  });
+
+  let submission = req.body.submission;
+  submission['userId'] = user.id;
+
+  console.log('\n\n\n Submission to be created: ', submission)
+
+  let new_submission = await Submission.create(submission)
+
+  console.log('Submission created: ', new_submission);
+
+  res.status(201).json({
+    outcome: 'success', 
+    submission: new_submission
+  })
 
 }
 

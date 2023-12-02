@@ -1,21 +1,22 @@
 const {DataTypes} = require("sequelize");
 module.exports = (sequelize, Sequelize) => {
     const Submission = sequelize.define("submissions", {
-    //   id: {
-    //     type: DataTypes.UUID,
-    //     defaultValue: DataTypes.UUIDV4 ,
-    //     primaryKey: true
-    //   },
+      // id: {
+      //   type: DataTypes.UUID,
+      //   defaultValue: DataTypes.UUIDV4 ,
+      //   primaryKey: true
+      // },
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        unique: true
+        unique: true,
+        autoIncrement: true
       },
-    //   id: {
-    //     type: DataTypes.UUID,
-    //     primaryKey: true,
-    //     unique: true
-    //   },
+      //   id: {
+      //     type: DataTypes.UUID,
+      //     primaryKey: true,
+      //     unique: true
+      //   },
       description: {           
         type: Sequelize.STRING,
         allowNull: false

@@ -2,6 +2,12 @@ const {DataTypes} = require("sequelize");
 module.exports = (sequelize, Sequelize) => {
 
     const Accused = sequelize.define("accuseds", {
+        id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          unique: true,
+          autoIncrement: true
+        },
         firstName: {           
             type: Sequelize.STRING,
             allowNull: false

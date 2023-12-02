@@ -8,8 +8,10 @@ module.exports = app => {
     router.get("/:id", submissions.findOne);
     // Authenticate User
     router.post("/auth/verify", submissions.authenticateUser);
-    // Create a new user
+    // Create a new submission
     router.post("/", submissions.create);
+    // Create a new submission
+    router.post("/indictable", submissions.createIndictable);
     // Update a new user
     router.post("/update", submissions.update);
     // Reset Password
