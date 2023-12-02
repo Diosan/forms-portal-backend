@@ -65,8 +65,9 @@ export class TOTPGenerator {
       EX: 180, // Expires in 180 seconds (3 minutes)
       NX: true
     }); 
-    // const savedKey = await redisClient.get(key);
-    // console.log("Saved Key:",savedKey);
+    const storedOTP = await redisClient.get(key);
+    const savedKey = await redisClient.get(key);
+    console.log("Saved Key:",savedKey);
   }
 
 

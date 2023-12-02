@@ -7,6 +7,19 @@
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/style.css">
     <!-- Add any additional head content here -->
+    <style type="text/css">
+        #spinner-container {
+            margin-right: 8px; /* Adjust spacing between spinner and input */
+        }
+        .lock-icon{display:block}
+        #swf-spinner{display:none}
+        #swf-otp{border:1px solid #eee; padding:0 0 0 7px}
+        #otpInput:focus {
+            outline: none;
+            box-shadow: none;
+            border-color: inherit; /* Reset to default or set a specific color */
+        }
+    </style>
   </head>
   <body>
 
@@ -38,8 +51,7 @@
                 </div>  
                 <div class="col-md-6" style="padding: 40px;">
                     <form
-                    action="/ttps/admin/mfa"
-                    method="POST"
+                    id="otpForm" 
                     class="swf-form"
                     >
                         
@@ -55,14 +67,38 @@
                                         <%= error %>
                                     </p>
                                 <% } %>
-                            <input
-                                name="otpCode"
-                                placeholder="OTP CODE"
-                                class="px-2 py-1 fs-3 stretched-text-input"
-                                maxlength="6"
-                                minlength="6"
-                                pattern="\d{6}"
-                                />
+                                <div id="spinner" style="display: none;">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                  
+                                <div class="d-flex  mb-2" id="swf-otp">
+                                    <!--
+                                        <div id="spinner-container" class="d-flex justify-content-center align-items-center" style="width: 40px; display: none;">
+                                        <div class="spinner-border" role="status" style="width: 1rem; height: 1rem;">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div> -->
+                                    <div id="spinner-container" class="d-flex justify-content-center align-items-center " style="width: 40px;">
+                                        <i id="lock-icon" class="fas fa-lock" style="font-size: 1.5rem;"></i>
+                                        <image style="width:20px;" src="/public/lock.svg" alt="lock"/>
+                                        <div id="swf-spinner" class="spinner-border text-primary" role="status" style="width: 1rem; height: 1rem; display: none;">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                    <input
+                                        id="otpInput"
+                                        name="otpCode"
+                                        placeholder="OTP CODE"
+                                        class="form-control flex-grow-1 px-2 py-1 fs-4"
+                                        maxlength="6"
+                                        minlength="6"
+                                        pattern="\d{6}"
+                                        style="border:none; text-align:center; letter-spacing:3px"
+                                    />
+                                </div>
+                                
                         </div>
                        
                         <div class="">
@@ -81,6 +117,65 @@
 
 
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/public/axios.min.js"></script>
+    <!--<script src="/public/all.min.css"></script>-->
+
+    <script type="text/javascript">
+        // Check if the token exists
+        if ("<%= token %>") {
+            localStorage.setItem('auth_token', "<%= token %>");
+        }
+    </script>
+
+    <script type="text/javascript">
+        document.getElementById('otpForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const lockIcon = document.getElementById('lock-icon');
+            const spinner = document.querySelector('#spinner-container .spinner-border');
+            
+            // Show spinner, hide lock icon
+            lockIcon.style.display = 'none';
+            spinner.style.display = 'block';
+    
+            const otpCode = document.getElementsByName('otpCode')[0].value;
+            const token = localStorage.getItem('auth_token'); // Retrieve the token from local storage
+
+            
+            axios({
+                method: 'post',
+                url: '/ttps/admin/mfa',
+                data: {
+                    otp: otpCode
+                },
+                headers: {
+                    'Authorization': `Bearer ${token}`  // Set the token in the header
+                }
+            })
+                .then(function(response) {
+                    // Hide spinner, show lock icon
+                    spinner.style.display = 'block';
+                    lockIcon.style.display = 'none';
+                    console.log(response);
+
+                    // Handle success, store token if returned
+                    if (response.data.token) {
+                        localStorage.setItem('auth_token', response.data.token);
+                    }
+                    // Redirect to the admin page
+                    window.location.href = '/admin';
+                })
+                .catch(function(error) {
+                    // Handle error
+                    spinner.style.display = 'none';
+                    lockIcon.style.display = 'block';
+
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+
+
   </body>
 </html>
 

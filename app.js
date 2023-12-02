@@ -26,6 +26,7 @@ import Redis from 'redis';
 import { Server as SocketIO } from 'socket.io';
 import { getUserByEmail, getStoredOTP, deleteStoredOTP } from './controllers/admin_users.controller.js';
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken';
 
 // Read the SSL certificate files
 const key = fs.readFileSync(path.resolve(__dirname, './key.pem'));
@@ -130,6 +131,8 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
   // or create an HTTP Serve
   // const server = http.createServer(app);
 
+  //use cookie parser
+  // app.use(cookieParser());
 
 
 //MIDDLEWARE ----------------------------------------------------------------
@@ -235,6 +238,8 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
     app.use(express.static('public'));
     app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')));
     app.use(express.static( 'dist'));
+    app.use('/public', express.static(path.join(__dirname, 'public')));
+
 
 
   //----------------------------------------------------------------
@@ -265,75 +270,120 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
       }
     });
 
+
+
+
     customAdminRouter.post('/ttps/admin/mfa', async (req, res) => {
+      console.log(req.cookies);
+      // console.log(req?.body?.otpCode )
+      const authHeader = req?.headers?.authorization;
+      const otp  = req?.body?.otp;
+      if(authHeader.startsWith('Bearer ')){
+        console.log("it does")
+      }
+      if(otp){
+        console.log("otp exists")
+      }
       
-      if (!req.body) {
-        res.status(400).json({ error: "Request body is empty" });
-        return;
-      }
-      // console.log(req.session.otp_user)
 
-      if (req.session.otp_user == {}) {
-        res.redirect('/admin/login'); // Replace '/login' with your login route
+
+      if (!otp || !authHeader || !authHeader.startsWith('Bearer ')) {
+        console.log("---error--------")
+        return res.status(401).json({ outcome: 'error', message: 'No token provided' });
       }
 
-      const uid = req?.session?.otp_user?.id || ""
-      const email = req?.session?.otp_user?.email || ""
-      const { otpCode } = req.body;      
-      console.log(otpCode);
+      const token = authHeader.split(' ')[1];
+
+      // Verify and decode the JWT token
+      // try {
+      //   const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      //   // Assuming the user's ID is stored in the token
+      //   const userId = decoded.id;
+      //   console.log(">>>> USER ID - ", userId);
+
+      //   const totp = new TOTPGenerator();
+      //   let verified = await totp.verifyOTP(token, otp);
+      //   const attempts = (decoded.attempts || 0 ) + 1 ;
+
+        
+      //   if (verified) {
+      //     // OTP is correct, create a new token or perform desired actions
+      //     res.render('otp', { error: ``, message: message, token: token, attempts: 0 });
+      //     return res.status(200).json({
+      //       outcome: 'success',
+      //       token: jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '12h' })
+      //     });
+      //   } else {
+      //     // OTP is incorrect
+      //     console.log("OTP verification failed");
+      //     res.render('otp', { error: ``, message: message, token: token, attempts: 0 });
+      //   }
+      // } catch (error) {
+      //   // Handle errors (e.g., token invalid or expired)
+      //   console.error('Error verifying OTP:', error);
+      //   return res.status(401).json({
+      //     outcome: 'error',
+      //     message: 'Invalid token'
+      //   });
+      // }
+
+      //.....................
+
+
+      
       try {
-          console.log("incoming: ", otpCode);
-          const keyToget = `otp:${req.session.id}`;
-          const storedOTP = await getStoredOTP(keyToget, otpCode);
-          const theStoredOTP = `${storedOTP?.code || ""}`;
-          console.log("stored otp: ", theStoredOTP);
+        console.log("incoming: ", otp);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log(decoded)
+        // Assuming the user's ID is stored in the token
+        const userId = decoded.userId;
+        console.log(">>>> USER ID - ", userId);
+        
+        const keyToget = `otp:${token}`;
+        const storedOTP = await getStoredOTP(keyToget, otp);
+        const theStoredOTP = `${storedOTP?.code || ""}`;
+        console.log("stored otp: ", theStoredOTP);
 
-          // Initialize incorrect attempts counter if it does not exist
-          if (!req.session.incorrectOtpAttempts) {
-            req.session.incorrectOtpAttempts = 0;
+        if (theStoredOTP !== `${otp}`) {
+          const attempts = (decoded.attempts || 0 ) + 1 ;
+
+          if (attempts >= 3) {
+            // Reset counter and redirect to login
+            res.redirect('/admin/login'); // Replace '/login' with your login route
           }
+          message = ``;
+          error = `OTP Code is incorrect. Please try again`;
+          console.log("OTP Code Incorrect")
+          // res.render('otp', { error: ``, message: message, token: token, attempts: attempts });
+          res.status(200).send({status: 'failure', message: "Incorrect OTP Code"});
+        }
+        else{
+          console.log("OTP Code Correct")
+          const attempts = 0 ;
+          req.session.isAuthenticated = true;
+          message = `A verification code has just been sent to your registered email address. 
+                 Please enter this code in the box below to confirm your login.`;
 
-          if (theStoredOTP !== `${otpCode}`) {
-            req.session.incorrectOtpAttempts += 1;
-            if (req.session.incorrectOtpAttempts >= 3) {
-              // Reset counter and redirect to login
-              req.session.incorrectOtpAttempts = 0;
-              //remove otp_user form session
-              req.session.otp_user = {};
-              res.redirect('/admin/login'); // Replace '/login' with your login route
-              return;
-            }
-            message = ``;
-            error = `OTP Code is incorrect. Please try again`;
-            console.log("OTP Code Incorrect")
-            res.render('otp', { error: error, message: message });
-          }
-          else{
-            console.log("OTP Code Correct")
-            req.session.adminUser = {
-              id: uid, // or any identifier you use for the user
-              email: email, // or username, depending on your system
-              // Any other user details you might need
-            };
-            //remove otp_user form session
-            req.session.otp_user = {};
-            message = `A verification code has just been sent to your registered email address. 
-                   Please enter this code in the box below to confirm your login.`;
+          res.redirect('/admin'); // Redirect to the AdminBro dashboard
+          // res.redirect('/ttps/admin');
+        }
+    } catch (error) {
+      console.log(error)
+      // res.render('otp', { error: `OTP Code is incorrect. Please try again`, message: "", token: token, attempts: 0 });
+      res.status(500).send({status: 'failure', message: "error"});
+    }
 
-            req.session.isAuthenticated = true; // Mark the session as authenticated
-            req.session.incorrectOtpAttempts = 0; // Reset counter on successful attempt
 
-            console.log(req.session)
-            // const delKey = await deleteStoredOTP(keyToget);
-            res.redirect('/admin'); // Redirect to the AdminBro dashboard
-          }
-      } catch (error) {
-        res.render('otp', { error: `OTP Code is incorrect. Please try again`, message: "" });
-      }
     });
 
+
+
+
+
+    
+
     customAdminRouter.post('/ttps/admin/login', async (req, res) => {
-      console.log(req.headers)
       if (!req.body) {
         res.status(400).json({ error: "Request body is empty" });
         return;
@@ -356,21 +406,32 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
           const storedPassword = user?.dataValues?.password || "";
           const passwordMatch = await bcrypt.compare(plainTextPassword, storedPassword);
           if (passwordMatch) {
-              //the session .adminUser must not be saved until final login step
-              req.session.otp_user = {
-                id: user?.dataValues?.id || "", // or any identifier you use for the user
-                email: user.email, // or username, depending on your system
-              };
+            console.log("matches");
 
-              console.log("Found a match");
               try {
-                  
+                //the session .adminUser must not be saved until final login step
+
+                  const userId = user?.dataValues?.id || "" // or any identifier you use for the user
+                  const userEmail = user?.dataValues?.email || "" // or username, depending on your system
+                  const userFirstName = user?.dataValues?.firstName || 
+
+                console.log("Found a match");
+
+                  const token = jwt.sign(
+                    { userId: userId, email: userEmail }, // Payload
+                    process.env.JWT_SECRET, // Secret
+                    { expiresIn: '1h' } // Token expiry
+                  );
+                  console.log(token);
+                  res.cookie('admin-bro-token', token, { httpOnly: true });
+
+
                 var message = `A verification code has just been sent to your registered email address. 
                    Please enter this code in the box below to confirm your login.`;
                 const totp = new TOTPGenerator();
-                  await totp.generateOTP(req.session.id, user.dataValues.email);
+                  await totp.generateOTP(token, userEmail, userFirstName);
                   // res.render('otp', { message: message }); // Render a page for OTP input
-                  res.render('otp', { error: ``, message: message });
+                  res.render('otp', { error: ``, message: message, token: token, attempts: 0 });
               } catch (error) {
                   console.error('Error generating or sending OTP:', error);
                   res.render('login', { error: 'An error occurred. Please try again' });
@@ -478,7 +539,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
       pages: {
         uploadUsers: {
           label: "Upload Users",
-          component: AdminBro.bundle(dashboardComponentPath),
+          component: AdminBro.bundle(uploadUsersComponentPath),
           isAccessible: ({ currentAdmin }) => isSuperAdmin(currentAdmin),
         }
       }
@@ -506,36 +567,64 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
     };
 
 
+
+    const customAuthenticate = async (email, password) => {
+      // Your authentication logic here...
+      // If successful, return the user object and JWT token
+    };
+
     // const router = AdminBroExpress.buildRouter(adminBro)
     const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
       authenticate: async (email, password) => {
-        console.log(req.headers)
-        if (req.session.isAuthenticated && req.session.adminUser) {
-          const token = jwt.sign(
-            { userId: user.id, email: user.email }, // Payload
-            process.env.JWT_SECRET, // Secret
-            { expiresIn: '1h' } // Token expiry
-          );
-          // Set the token in an HTTPOnly cookie
-          res.cookie('token', token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production', // use secure flag in production
-          maxAge: 3600000 // cookie expiry, should match token expiry
-        });
+        console.log(req.cookie)
 
-         return { ...user }; // Return the user object without the token           
-      }
+        const { user, token } = await customAuthenticate(email, password);
+
+        if (user && token) {
+          return { ...user, token }; // Attaching token to the user object
+        }
+
+
+        // if (req.session.isAuthenticated && req.session.adminUser) {
+        //   const token = jwt.sign(
+        //     { userId: user.id, email: user.email }, // Payload
+        //     process.env.JWT_SECRET, // Secret
+        //     { expiresIn: '1h' } // Token expiry
+        //   );
+          // if (req.session.isAuthenticated ) {
+          //   const token = jwt.sign(
+          //     { userId: user.id, email: user.email }, // Payload
+          //     process.env.JWT_SECRET, // Secret
+          //     { expiresIn: '1h' } // Token expiry
+              
+          //   );
+          //   // return { email: req.session.userId }; // Return a user object
+          //   return { ...user }; // Return the user object without the token           
+
+
+          //   // Set the token in an HTTPOnly cookie
+          //   //   res.cookie('token', token, {
+          //   //   httpOnly: true,
+          //   //   secure: process.env.NODE_ENV === 'production', // use secure flag in production
+          //   //   maxAge: 3600 // cookie expiry, should match token expiry
+          //   // });
+          // }
+          if (user && token) {
+            return { ...user, token }; // Attaching token to the user object
+          }
+          return null;
+
         return null;
       },
       cookiePassword: JWT_SECRET,
     },
-    null, {
-      resave: false,
-      saveUninitialized: true,
-      // Implement custom middleware for JWT token validation
-      cookie: { secure: false },
-      secret: JWT_SECRET,
-    }
+    // null, {
+    //   resave: false,
+    //   saveUninitialized: true,
+    //   // Implement custom middleware for JWT token validation
+    //   cookie: { secure: false },
+    //   secret: JWT_SECRET,
+    // }
     
     
     );
