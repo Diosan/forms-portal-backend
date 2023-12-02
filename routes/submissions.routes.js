@@ -11,9 +11,9 @@ module.exports = app => {
     // Create a new user
     router.post("/", submissions.create);
     // Update a new user
-    router.put("/:id", submissions.update);
+    router.post("/update", submissions.update);
     // Reset Password
-    router.put("/password/reset", submissions.resetPassword);
+    router.post("/password/reset", submissions.resetPassword);
     // Update Message
     router.put("/message/add", submissions.updateMessage);
     // User forgot Password

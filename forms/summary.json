@@ -1,0 +1,19 @@
+{
+    "schema": {
+        "type": "object",
+        "required": [
+            "summaryOfEvidence"
+        ],
+        "properties": {
+            "summaryOfEvidence": {
+                "type": "string",
+                "title": "Summary Of Evidence"
+            }
+        }
+    },
+    "UI": {
+        "summaryOfEvidence": {
+            "ui:widget": "textarea"
+        }
+    }
+}

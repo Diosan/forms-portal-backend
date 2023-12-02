@@ -17,6 +17,7 @@ const {format} = require('date-fns')
 const { v4: uuidv4 } = require('uuid');
 const TOTPGenerator = require('../utilities/TOTPGenerator.class');
 const mailConfig = require('../config/mail.config');
+const { default: axios } = require("axios");
 // const nodemailer = require('nodemailer');
 
 exports.findAll = (req, res) => {
@@ -379,65 +380,75 @@ async function getPass(newPass, id){
 };
 
 exports.update = async (req, res) => {
-  //console.log(req.body)
-  // Validate request
-  if (!req.body.username
-    && !req.body.email
-    && !req.body.password
-    && !req.body.role
-    && !req.body.id
-    )
-  {
-    res.status(400).send({
-      message: "Content can not be empty!"
-    });
-    return;
-  }
-  const id = req.params.id;
-  //console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
-  console.log(id)
-  //console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
-  //console.log("Pass = "+req.body.password+ "   --- Updated Password = "+updatedPass)
+  let submission = await Submission.findByPk(req.body.id)
+  let submission_update = req.body
+  let updated_submission = await submission.update(submission_update)
+  res.status(201).json({
+    outcome: 'success',
+    submission: updated_submission
+  })
+}
 
-  bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
-        const user ={
-          id: req.body.id,
-          password: hash,
-          username: req.body.username,
-          first_name: req.body.first_name?req.body.first_name:"",
-          last_name: req.body.last_name?req.body.last_name:"",
-          email: req.body.email?req.body.email:"",
-          address: req.body.address?req.body.address:"",
-          phone: req.body.phone?req.body.phone:"",
-          role: req.body.role?req.body.role:"",
-        }
+// exports.update = async (req, res) => {
+//   //console.log(req.body)
+//   // Validate request
+//   if (!req.body.username
+//     && !req.body.email
+//     && !req.body.password
+//     && !req.body.role
+//     && !req.body.id
+//     )
+//   {
+//     res.status(400).send({
+//       message: "Content can not be empty!"
+//     });
+//     return;
+//   }
+//   const id = req.params.id;
+//   //console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+//   console.log(id)
+//   //console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+//   //console.log("Pass = "+req.body.password+ "   --- Updated Password = "+updatedPass)
+
+//   bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
+//         const user ={
+//           id: req.body.id,
+//           password: hash,
+//           username: req.body.username,
+//           first_name: req.body.first_name?req.body.first_name:"",
+//           last_name: req.body.last_name?req.body.last_name:"",
+//           email: req.body.email?req.body.email:"",
+//           address: req.body.address?req.body.address:"",
+//           phone: req.body.phone?req.body.phone:"",
+//           role: req.body.role?req.body.role:"",
+//         }
         
-        const address = req.body.address?req.body.address:"";
+//         const address = req.body.address?req.body.address:"";
 
-        //return
-        User.update(user,
-          {
-          where: { id: id }
-        })
-          .then(num => {
-            if (num == 1) {
-              res.send({
-                message: "User was updated successfully."
-              });
-            } else {
-              res.send({
-                message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`
-              });
-            }
-          })
-          .catch(err => {
-            res.status(500).send({
-              message: "Error updating User with id=" + id
-            });
-          });
+//         //return
+//         User.update(user,
+//           {
+//           where: { id: id }
+//         })
+//           .then(num => {
+//             if (num == 1) {
+//               res.send({
+//                 message: "User was updated successfully."
+//               });
+//             } else {
+//               res.send({
+//                 message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`
+//               });
+//             }
+//           })
+//           .catch(err => {
+//             res.status(500).send({
+//               message: "Error updating User with id=" + id
+//             });
+//           });
 
-  });
-};
+//   });
+// };
 
 exports.updateMessage = async (req, res) => {
   //console.log(req.body)
