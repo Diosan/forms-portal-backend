@@ -19,7 +19,7 @@
     // Update a new user
     router.put("/:id", update);
     // Reset Password
-    router.put("/password/reset", resetPassword);
+    // router.put("/password/reset", resetPassword);
     // Update Message
     router.put("/message/add", updateMessage);
     // User forgot Password

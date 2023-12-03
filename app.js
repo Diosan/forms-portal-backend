@@ -47,6 +47,7 @@ import authenticateRoutes from './routes/authenticate.routes.js';
 import adminUserRoutes from './routes/admin_users.routes.js';
 import ttpsAdminRoutes from './routes/ttps_admin.routes.js';
 import userRoutes from './routes/users.routes.js';
+import passwordRoutes from './routes/password.routes.js';
 // import notificationsRoutes from './routes/notifications.routes.js';
 import errorLogsRoutes from './routes/errorlogs.routes.js';
 import errortypesRoutes from './routes/errortypes.routes.js';
@@ -158,7 +159,7 @@ var allowedDomains = [
       }
       return callback(null, true);
       },
-      methods: ["GET", "POST"],
+      methods: ["GET", "POST", "PUT"],
       // allowedHeaders: ["my-custom-header"],
       credentials: true,
       transports: ['websocket', 'polling'],
@@ -235,6 +236,14 @@ var allowedDomains = [
 
   //----------------------------------------------------------------
   //----------------------------------------------------------------
+
+
+  //----------------------------------------------------------------
+    //PASSWORD ROUTES
+    //----------------------------------------------------------------
+    passwordRoutes(app);
+
+
 
   //________________________________________________
   //ADMINBRO MIDDLEWARE
@@ -592,7 +601,7 @@ var allowedDomains = [
         }
         return callback(null, true);
       },
-      methods: ["GET", "POST"],
+      methods: ["GET", "POST", "PUT"],
     //   allowedHeaders: ["my-custom-header"],
       credentials: true,
       transports: ['websocket', 'polling'],
@@ -669,7 +678,6 @@ var allowedDomains = [
 
 
 
-  
 
 
 

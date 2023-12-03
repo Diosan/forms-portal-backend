@@ -26,6 +26,8 @@ import createErrorTypeModel from "./errorlogs.model.js";
 import createAccusedModel from "./accuseds.model.js";
 import createChargesModel from "./charges.model.js";
 import createPermissionsModel from "./permissions.model.js";
+import createPasswordResetModel from "./password_reset.model.js";
+
 
 export const UserModel = createUserModel(sequelize);
 export const AdminUserModel = createAdminUserModel(sequelize);
@@ -37,6 +39,9 @@ export const ErrorTypeModel = createErrorTypeModel(sequelize);
 export const AccusedModel = createAccusedModel(sequelize);
 export const ChargesModel = createChargesModel(sequelize);
 export const PermissionModel = createChargesModel(sequelize);
+export const PasswordResetModel = createPasswordResetModel(sequelize);
+
+
 
 // ---------------------
 // ASSOCIATIONS
@@ -53,3 +58,7 @@ SubmissionModel.hasMany(UserModel)
 ChargesModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 AccusedModel.hasMany(ChargesModel)
 // Charges ++++++++++
+
+// Passwords ++++++++++
+// UserModel.hasMany(PasswordResetModel, { foreignKey: 'userId' });
+// PasswordResetModel.belongsTo(UserModel, { foreignKey: 'userId' });

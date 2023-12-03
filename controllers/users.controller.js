@@ -18,6 +18,7 @@ import bcrypt from 'bcrypt'
 import { TOTPGenerator } from '../utilities/TOTPGenerator.class.js' 
 import { redisClient, } from '../redis/redisConfig.js';
 import { mailConfig } from '../config/mail.config.js';
+import { generatePasswordResetToken } from './password.controller.js';
 
 
 const saltRounds = 10; 
@@ -499,35 +500,15 @@ export const resetPassword = async (req, res) => {
 
 //handle Request to reset password from email
 export const forgotPasswordRequest = async (req, res) => {
-  console.log(req.body)
+  console.log("email: ", req.body)
   const { username } = req.body;
-  const token = uuidv4(); // Generate a unique password reset token
-  const expiresAt = moment().add(1, 'hour').toDate(); // Token expires after 1 hour
+  const genToken = await generatePasswordResetToken(username)
   
   try {
-    // Update the user's record with the reset token
-    const updateResult = await UserModel.update({ resetToken: token }, {
-      where: { email: username }
-    });
-    if (updateResult[0] === 0) {
-      // Handle case where no user was updated, perhaps because the username was not found
-      throw new Error('User not found');
-    }
-    const updatedUser = await UserModel.findOne({
-      where: { email: username },
-      attributes: ['firstName', 'id'], // Specify the fields you want to retrieve
-    });
-    if (!updatedUser) {
-      // Handle case where the user cannot be retrieved after update
-      throw new Error('Error retrieving updated user data');
-    }
-    // console.log(updatedUser)
-    const theUserFirstName = updatedUser?.dataValues?.firstName || ""
-    // Create a record for the password reset token  
     
 
     // Send an email to the user containing a link to the password reset page
-    const resetUrl = `${APP_DOMAIN}/password/new?token=${token}`;
+    const resetUrl = `${APP_DOMAIN}/password/reset/${genToken.token}`;
 
     const resetEmailString = `<!DOCTYPE html>
       <html>
@@ -592,7 +573,7 @@ export const forgotPasswordRequest = async (req, res) => {
           <div class="container">
               <img src="${SWF_LOGO}" alt="SWF Logo" class="logo"/>
 
-              <p class="swf-text">Hi <b>${theUserFirstName}</b>,</p>
+              <p class="swf-text">Hi <b>${genToken.userFirstName}</b>,</p>
               <p class="swf-text">It looks like you’re trying to change your password.</p>
 
               <p class="swf-time"><a href="${resetUrl}">Click this link to begin the password reset process:  ${resetUrl}</a></p>
@@ -617,12 +598,17 @@ export const forgotPasswordRequest = async (req, res) => {
     });
 
     // Return a success response to the user
-    res.send('An email with instructions for resetting your password has been sent to your email address.');
-
+    res.json({
+      outcome: 'success',
+      message: "An email with instructions for resetting your password has been sent to your email address.'",
+    });
   } catch (error) {
     // Handle any errors here
     console.error('Error updating user with reset token:', error);
-    // You might want to send a response or throw an error depending on your application's needs
+    res.json({
+      outcome: 'fail',
+      message: "error",
+    });
   }
 }
 
