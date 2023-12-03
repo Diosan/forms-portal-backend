@@ -54,7 +54,7 @@ export const findOne = async (req, res) => {
   //   // console.log('Error fetching Submission with Id : ' + id, err)
   // });
 
-  // let complainants = await ComplainantModel.findAll({
+  // let complainants = await Complainant.findAll({
   //   where: {
   //     submissionId: id
   //   }
@@ -70,7 +70,13 @@ export const findOne = async (req, res) => {
 
   let submission = await SubmissionModel.findByPk(id)
 
-  let complainants = await ComplainantModel.findAll({
+  let complainants = await ComplainantModel.findOne({
+    where: {
+      submissionId: id
+    }
+  })
+
+  let accuseds = await AccusedModel.findAll({
     where: {
       submissionId: id
     }
@@ -78,7 +84,8 @@ export const findOne = async (req, res) => {
 
   res.status(200).json({
     submission: submission,
-    complainant: complainants[0]
+    complainant: complainants,
+    accuseds: accuseds
   })
 
 };
@@ -107,7 +114,7 @@ export const authenticateUser = async (req, res) => {
   }
   //check if user exist
   //if user doesn't exists create new user
-    UserModel.findOrCreate({
+    User.findOrCreate({
       where: {
         firebaseId: data.firebaseId
       },
@@ -163,9 +170,14 @@ export const saveComplainant = async (req, res) => {
 
     let transporter = nodemailer.createTransport(mailConfig);
 
+<<<<<<< HEAD
     const submission = SubmissionModel.findByPk(req.body.submissionId);
     console.log(req.body);
     // return
+=======
+    submission = SubmissionModel.findByPk(req.body.submissionId);
+    console.log(req.body.submissionId);
+>>>>>>> master
 
     let new_complainant = {
         agency: "TTPS",
@@ -178,7 +190,7 @@ export const saveComplainant = async (req, res) => {
 
      
 
-    // let complainant_submission = ComplainantModel.belongsTo(submission);
+    // let complainant_submission = Complainant.belongsTo(submission);
 
     console.log('New Complainant: ', new_complainant);
 
@@ -225,7 +237,7 @@ export const accuseds = async (req, res) => {
   let returned_accuseds = await AccusedModel.findAll({
     where: {submissionId: id}
   });
-  // let returned_accuseds = await AccusedModel.findAll();
+  // let returned_accuseds = await Accused.findAll();
   // console.log('All accuseds returned: ', returned_accuseds);
   res.status(200).json({
     outcome: 'success',
@@ -243,7 +255,11 @@ export const updateTitle = async (req, res) => {
   const title = req.body.title
   console.log('updateTitle posted to for ID ' + id, req.body);
   let submission = await SubmissionModel.findByPk(id)
+<<<<<<< HEAD
   let updated_submission = await submission.update({ description: title })
+=======
+  updated_submission = await SubmissionModel.update({ description: title })
+>>>>>>> master
   // console.log('')
   res.status(201).json({
     outcome: 'success',
@@ -263,7 +279,7 @@ export const updateComplainant = async (req, res) => {
       submissionId: complainant.submissionId
     }
   });
-  let updated_complainant = await returned_complainant.update(complainant);
+  let updated_complainant = await ComplainantModel.update(complainant);
   
   res.status(200).json({
     outcome: 'success',
@@ -325,9 +341,46 @@ export const create = async (req, res) => {
   
 }
 
+<<<<<<< HEAD
+=======
+// export const create = async (req, res) => {
+//   const form = new formidable.IncomingForm();
+//     form.parse(req, async (err, fields, files) => {
+//         if (err) {
+//             res.status(500).json({ message: err });
+//             return;
+//         }
+//         console.log(fields)
+//         const { firebase_id, password, username, fullname, first_name, last_name, email, address, phone, role } = fields;
+//         if (!firebase_id || !password || !username || !fullname) {
+//             res.status(400).json({ message: "Please provide firebase_id, password, username, fullname" });
+//             return;
+//         }
+
+//         try {
+//             const user = await User.create({
+//                 firebase_id,
+//                 password: bcrypt.hashSync(password, 8),
+//                 username,
+//                 fullname,
+//                 first_name,
+//                 last_name,
+//                 email,
+//                 address,
+//                 phone,
+//                 role,
+//             });
+//             res.status(201).json({ message: "User created successfully", user });
+//         } catch (error) {
+//             res.status(500).json({ message: error.message });
+//         }
+//     });
+// };
+
+>>>>>>> master
 async function getPass(newPass, id){
   //check to see if the password has been changed
-  UserModel.findByPk(id)
+  User.findByPk(id)
     .then(async data => {
       var oldpass = data.password
       console.log("+++++++++++++++++++++++++++++++++++++++++++" + oldpass + "+++++++++++++++++++++++++++++++++++++++++++")
@@ -387,7 +440,7 @@ export const update = async (req, res) => {
         const address = req.body.address?req.body.address:"";
 
         //return
-        UserModel.update(user,
+        User.update(user,
           {
           where: { id: id }
         })
@@ -432,7 +485,7 @@ export const updateMessage = async (req, res) => {
   console.log(user)
   
   //return
-  UserModel.update(user,
+  User.update(user,
     {
     where: { firebaseId: req.body.firebaseId }
   })
@@ -462,7 +515,7 @@ export const del = (req, res) => {
   console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   const id = req.params.id;
 
-  UserModel.destroy({
+  User.destroy({
     where: { id: id }
   })
     .then(num => {
@@ -484,7 +537,7 @@ export const del = (req, res) => {
 };
 
 export const findAllPublished = (req, res) => {
-  UserModel.findAll({ where: { published: true } })
+  User.findAll({ where: { published: true } })
     .then(data => {
       res.send(data);
     })
@@ -520,7 +573,7 @@ export const resetPassword = async (req, res) => {
       password: hash
     };
     
-    UserModel.update(user, {
+    User.update(user, {
       where: { firebaseId: req.body.firebaseId,  username: req.body.email}
     })
     .then(num => {
@@ -632,7 +685,7 @@ export const resetPasswordFromEmail = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Update the user's password in the database
-  await UserModel.update({ password: hashedPassword }, { where: { username: resetToken.username } });
+  await User.update({ password: hashedPassword }, { where: { username: resetToken.username } });
 
   // Delete the password reset token from the database
   await resetToken.destroy();
