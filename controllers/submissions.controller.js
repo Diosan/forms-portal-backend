@@ -170,14 +170,9 @@ export const saveComplainant = async (req, res) => {
 
     let transporter = nodemailer.createTransport(mailConfig);
 
-<<<<<<< HEAD
     const submission = SubmissionModel.findByPk(req.body.submissionId);
     console.log(req.body);
     // return
-=======
-    submission = SubmissionModel.findByPk(req.body.submissionId);
-    console.log(req.body.submissionId);
->>>>>>> master
 
     let new_complainant = {
         agency: "TTPS",
@@ -255,11 +250,7 @@ export const updateTitle = async (req, res) => {
   const title = req.body.title
   console.log('updateTitle posted to for ID ' + id, req.body);
   let submission = await SubmissionModel.findByPk(id)
-<<<<<<< HEAD
   let updated_submission = await submission.update({ description: title })
-=======
-  updated_submission = await SubmissionModel.update({ description: title })
->>>>>>> master
   // console.log('')
   res.status(201).json({
     outcome: 'success',
@@ -341,43 +332,6 @@ export const create = async (req, res) => {
   
 }
 
-<<<<<<< HEAD
-=======
-// export const create = async (req, res) => {
-//   const form = new formidable.IncomingForm();
-//     form.parse(req, async (err, fields, files) => {
-//         if (err) {
-//             res.status(500).json({ message: err });
-//             return;
-//         }
-//         console.log(fields)
-//         const { firebase_id, password, username, fullname, first_name, last_name, email, address, phone, role } = fields;
-//         if (!firebase_id || !password || !username || !fullname) {
-//             res.status(400).json({ message: "Please provide firebase_id, password, username, fullname" });
-//             return;
-//         }
-
-//         try {
-//             const user = await User.create({
-//                 firebase_id,
-//                 password: bcrypt.hashSync(password, 8),
-//                 username,
-//                 fullname,
-//                 first_name,
-//                 last_name,
-//                 email,
-//                 address,
-//                 phone,
-//                 role,
-//             });
-//             res.status(201).json({ message: "User created successfully", user });
-//         } catch (error) {
-//             res.status(500).json({ message: error.message });
-//         }
-//     });
-// };
-
->>>>>>> master
 async function getPass(newPass, id){
   //check to see if the password has been changed
   User.findByPk(id)
