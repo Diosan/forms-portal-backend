@@ -39,5 +39,7 @@ module.exports = app => {
 
     router.post('/request_signature', submissions.requestSignature);
 
+    router.post('/sign_indictable/:id', submissions.signIndictable);
+
     app.use('/api/submissions', router);
   };

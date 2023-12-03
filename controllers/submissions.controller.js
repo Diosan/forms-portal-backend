@@ -717,4 +717,8 @@ exports.requestSignature = async (req, res) => {
   })
 }
 
+exports.signIndictable = async (req, res) => {
+
+}
+
 
