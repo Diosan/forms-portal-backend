@@ -114,7 +114,7 @@ export const doNothing = async (req, res) => {
 }
 
 export const login = async (req, res) => {
-  // console.log(req.body)
+  console.log(req.body)
   const { email, password } = req.body;
   try {
     const user = await getUserByEmail(email);
@@ -141,7 +141,7 @@ export const login = async (req, res) => {
       console.log(name);
 
       const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '6h' })
-
+      console.log(token)
 
       totp.generateOTP(token, email, name)
       .then(() => console.log('OTP sent to user email.'))
@@ -156,15 +156,23 @@ export const login = async (req, res) => {
       // .send('OTP sent to email');
 
     } else {
-      // console.log('Password does not match');
-      return res.status(201).json({
-        outcome: 'error',
-        // error: 'Email "' + email + '" & Password "' + password + '" does not match. Try again'
-        error: 'Sign in failed. Try again' 
-      });
+      console.log('Password does not match');
+      // console.log(token)
+      return res.status(200).json({
+        outcome: 'error', 
+        message: "error" + req.body.email,
+        email: req.body.email,
+        // token: token // Include the token in the response
+      })
+      // return res.status(201).json({
+      //   outcome: 'error',
+      //   // error: 'Email "' + email + '" & Password "' + password + '" does not match. Try again'
+      //   error: 'Sign in failed. Try again' 
+      // });
     }
   } catch (error) {
-    logger.error('Login error:', error);
+    // logger.error('Login error:', error);
+    console.log(error)
     return res.status(201).json({
       outcome: 'error', 
       error: 'Sign in failed. Try again' 

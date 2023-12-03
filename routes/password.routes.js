@@ -26,5 +26,5 @@
   
   
    
-    app.use('/api/password', router);
+    app.use('/password', router);
   };
