@@ -200,6 +200,8 @@ export const login = async (req, res) => {
 // } 
 
 
+
+
 export const verifyOtp = async (req, res) => {
 
   const authHeader = req?.headers?.authorization || "";
@@ -227,7 +229,7 @@ export const verifyOtp = async (req, res) => {
       // OTP is correct, create a new token or perform desired actions
       return res.status(200).json({
         outcome: 'success',
-        token: jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '12h' })
+        token: jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: 129600 })
       });
     } else {
       // OTP is incorrect
