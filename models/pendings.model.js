@@ -1,7 +1,8 @@
-const {DataTypes} = require("sequelize");
-module.exports = (sequelize, Sequelize) => {
+// password_reset.model.js
+import { DataTypes } from 'sequelize';
 
-    const Pending = sequelize.define("pendings", {
+const createPendingModel = (sequelize) => {
+  const Pending = sequelize.define('pendings', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -23,4 +24,5 @@ module.exports = (sequelize, Sequelize) => {
     // };
                                          
     return Pending;
-}
+};
+export default createPendingModel;

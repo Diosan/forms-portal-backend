@@ -6,22 +6,22 @@ export default (sequelize) => {
 
 
       id:{
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
       },
       user_agent: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       referer: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       socket_ip: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       host: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       }
     });
 

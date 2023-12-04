@@ -1,7 +1,14 @@
-<<<<<<< HEAD
 
-import { db, ErrorLogModel, SubmissionModel, ComplainantModel, UserModel, AccusedModel } from "../models/index.js";
-// import { PasswordResetToken} from "../models/index.js";
+import { db, ErrorLogModel, 
+  SubmissionModel, 
+  ComplainantModel, 
+  UserModel, 
+  AccusedModel,
+  ChargeModel,
+  
+
+ } from "../models/index.js";
+import { PasswordResetToken} from "../models/index.js";
 
 import fs from "fs";
 import formidable from 'formidable'
@@ -20,29 +27,8 @@ import {format} from 'date-fns'
 import { v4 as uuidv4 } from 'uuid';
 import {TOTPGenerator} from '../utilities/TOTPGenerator.class.js';
 import {mailConfig} from '../config/mail.config.js';
-=======
-const db = require("../models/index");
-const Submission = db.submissions;
-const Complainant = db.complainants;
-const User = db.users;
-const Accused = db.accuseds;
-const Charges = db.charges; 
-const PasswordResetToken = db.password_reset_token;
-const Op = db.Sequelize.Op;
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
-const JWT_SECRET = process.env.JWT_SECRET;
-const formidable = require('formidable')
-const nodemailer = require('nodemailer');
-const moment = require('moment');
-const {format} = require('date-fns')
-const { v4: uuidv4 } = require('uuid');
-const TOTPGenerator = require('../utilities/TOTPGenerator.class');
-const mailConfig = require('../config/mail.config');
 const { default: axios } = require("axios");
-// const nodemailer = require('nodemailer');
->>>>>>> origin/Dion2
+
 
 
 const ErrorLog = ErrorLogModel;
@@ -94,24 +80,13 @@ export const findOne = async (req, res) => {
 
   let submission = await SubmissionModel.findByPk(id)
 
-<<<<<<< HEAD
-  let complainants = await ComplainantModel.findOne({
-=======
-  let complainant = await Complainant.findOne({
->>>>>>> origin/Dion2
+  let complainant = await ComplainantModel.findOne({
     where: {
       submissionId: id
     }
   })
 
-<<<<<<< HEAD
   let accuseds = await AccusedModel.findAll({
-=======
-  console.log('\n\n\n\n Submission complainant: ', complainant);
-  console.log('\n\n\n\n');
-
-  let accuseds = await Accused.findAll({
->>>>>>> origin/Dion2
     where: {
       submissionId: id
     }
@@ -208,15 +183,9 @@ export const saveComplainant = async (req, res) => {
 
     let transporter = nodemailer.createTransport(mailConfig);
 
-<<<<<<< HEAD
     const submission = SubmissionModel.findByPk(req.body.submissionId);
     console.log(req.body);
     // return
-=======
-    let submission = await Submission.findByPk(req.body.submissionId);
-
-    console.log('\n\n\n Body of request received by server: ', req.body)
->>>>>>> origin/Dion2
 
     let new_complainant = {
         court: req.body.court,
@@ -232,13 +201,8 @@ export const saveComplainant = async (req, res) => {
     console.log('\n\n\n New Complainant: ', new_complainant);
 
     try {
-<<<<<<< HEAD
         const complainant = await ComplainantModel.create(new_complainant, {});
         console.log('New Complainant Created In Sequelize', complainant);
-=======
-        const complainant = await Complainant.create(new_complainant, {});
-        console.log('\n\n\n New Complainant Created In Sequelize', complainant);
->>>>>>> origin/Dion2
 
         await  complainant.update({status: 'complainant_saved'});
         // await SubmissionModel.update(
@@ -246,10 +210,6 @@ export const saveComplainant = async (req, res) => {
         //   { where: { id: req.body.submissionId } }
         // );
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/Dion2
         res.status(201).json({
           outcome: 'success',
           complainant: complainant          
@@ -267,12 +227,8 @@ export const saveComplainant = async (req, res) => {
 
 export const saveAccused = async (req, res) => {
   let accused = req.body;
-<<<<<<< HEAD
   let new_accused = await AccusedModel.create(accused);
   console.log(new_accused)
-=======
-  let new_accused = await Accused.create(accused);
->>>>>>> origin/Dion2
   res.status(201).json({
     outcome: 'success', 
     accused: new_accused
@@ -332,12 +288,9 @@ export const updateComplainant = async (req, res) => {
 
 }
 
-<<<<<<< HEAD
-export const create = async (req, res) => {
-=======
-exports.createIndictable = async (req, res) => {
+export const createIndictable = async (req, res) => {
 
-  let user = await User.findOne({
+  let user = await UserModel.findOne({
     where: {email: req.body.email}
   });
 
@@ -357,8 +310,7 @@ exports.createIndictable = async (req, res) => {
 
 }
 
-exports.create = async (req, res) => {
->>>>>>> origin/Dion2
+export const create = async (req, res) => {
 
   //   let new_user = {
   //       agencyMemberUniqueId: req.body.reg_number,
@@ -436,30 +388,8 @@ async function getPass(newPass, id){
     });
 };
 
-<<<<<<< HEAD
 export const update = async (req, res) => {
-  //console.log(req.body)
-  // Validate request
-  if (!req.body.username
-    && !req.body.email
-    && !req.body.password
-    && !req.body.role
-    && !req.body.id
-    )
-  {
-    res.status(400).send({
-      message: "Content can not be empty!"
-    });
-    return;
-  }
-  const id = req.params.id;
-  //console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
-  console.log(id)
-  //console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
-  //console.log("Pass = "+req.body.password+ "   --- Updated Password = "+updatedPass)
-=======
-exports.update = async (req, res) => {
-  let submission = await Submission.findByPk(req.body.id)
+  let submission = await SubmissionModel.findByPk(req.body.id)
   let submission_update = req.body
   let updated_submission = await submission.update(submission_update)
   res.status(201).json({
@@ -467,7 +397,6 @@ exports.update = async (req, res) => {
     submission: updated_submission
   })
 }
->>>>>>> origin/Dion2
 
 // exports.update = async (req, res) => {
 //   //console.log(req.body)

@@ -1,7 +1,9 @@
-const {DataTypes} = require("sequelize");
-module.exports = (sequelize, Sequelize) => {
 
+import { DataTypes } from "sequelize";
+
+export default (sequelize) => {
     const Conviction = sequelize.define("convictions", {
+
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -9,22 +11,20 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true
         },
         offence: {           
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         },
         dateOfOffence:{
-          type: Sequelize.DataTypes.DATEONLY, 
+          type: DataTypes.DATEONLY, 
           allowNull: false
         },
         sentence: {           
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
             allowNull: false
         }
     });
 
-    // Accused.associate = function (models) {
-    //     Accused.belongsTo(models.submission);
-    // };
                                          
     return Conviction;
-}
+};
+

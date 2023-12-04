@@ -5,24 +5,24 @@ export default (sequelize) => {
 
 
     id:{
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
     roleLabel: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     roleDescription: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     createdAt: {
-      type: Sequelize.DATE,
+      type: DataTypes.DATE,
     },
     updatedAt: {
-      type: Sequelize.DATE
+      type: DataTypes.DATE
     },
   });
 

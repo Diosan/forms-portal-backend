@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import  {DataTypes} from "sequelize";
 export default sequelize => {
   const Submission = sequelize.define("submissions", {
@@ -7,25 +6,11 @@ export default sequelize => {
     //     defaultValue: DataTypes.UUIDV4 ,
     //     primaryKey: true
     //   },
-=======
-const {DataTypes} = require("sequelize");
-module.exports = (sequelize, Sequelize) => {
-    const Submission = sequelize.define("submissions", {
-      // id: {
-      //   type: DataTypes.UUID,
-      //   defaultValue: DataTypes.UUIDV4 ,
-      //   primaryKey: true
-      // },
->>>>>>> origin/Dion2
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         unique: true,
-<<<<<<< HEAD
         autoIncrement: true,
-=======
-        autoIncrement: true
->>>>>>> origin/Dion2
       },
       //   id: {
       //     type: DataTypes.UUID,
@@ -37,23 +22,18 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false
       },
       summaryOfEvidence: {
-        type: Sequelize.DataTypes.TEXT,
+        type: DataTypes.TEXT,
         allowNull: true
       },
       status: { 
-<<<<<<< HEAD
         type: DataTypes.STRING,
-        allowNull: false
-=======
-        type: Sequelize.STRING,
         allowNull: false,
         defaultValue: 'started'
       },
       type: { 
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'complaint_with_oath'
->>>>>>> origin/Dion2
       },
       userId: {
         type: DataTypes.UUID,
