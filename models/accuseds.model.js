@@ -21,31 +21,38 @@ export default sequelize => {
     },
     tntNational:{
       type: DataTypes.BOOLEAN, 
-      allowNull: false
+      allowNull: false,
+      defaultValue: 1
     },
     tntResident:{
       type: DataTypes.BOOLEAN, 
-      allowNull: false
+      allowNull: false,
+      defaultValue: 1
     },
     otherNational:{
       type: DataTypes.BOOLEAN, 
-      allowNull: false
+      allowNull: false,
+      defaultValue: 0
     },
     otherResident:{
       type: DataTypes.BOOLEAN, 
-      allowNull: false
+      allowNull: false,
+      defaultValue: 0
     },
     otherNationalCountry:{
       type: DataTypes.STRING, 
-      allowNull: false
+      allowNull: false,
+      defaultValue: '_'
     },
     otherResidentCountry:{
       type: DataTypes.STRING, 
-      allowNull: false
+      allowNull: false,
+      defaultValue: "_"
     },
     identification:{
       type: DataTypes.STRING, 
-      allowNull: false
+      allowNull: false,
+      defaultValue: '_'
     },
     gender:{
       type: DataTypes.STRING, 
@@ -57,7 +64,8 @@ export default sequelize => {
     },
     previousCriminalRecord:{
       type: DataTypes.STRING, 
-      allowNull: false
+      allowNull: false,
+      defaultValue: 'Unknown'
     },
     dateOfBirth:{
       type: DataTypes.DATEONLY, 

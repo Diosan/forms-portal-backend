@@ -4,11 +4,11 @@ import { db, ErrorLogModel,
   ComplainantModel, 
   UserModel, 
   AccusedModel,
-  ChargeModel,
+  ChargesModel,
   
 
  } from "../models/index.js";
-import { PasswordResetToken} from "../models/index.js";
+import { PasswordResetModel} from "../models/index.js";
 
 import fs from "fs";
 import formidable from 'formidable'
@@ -27,7 +27,7 @@ import {format} from 'date-fns'
 import { v4 as uuidv4 } from 'uuid';
 import {TOTPGenerator} from '../utilities/TOTPGenerator.class.js';
 import {mailConfig} from '../config/mail.config.js';
-const { default: axios } = require("axios");
+import axios  from "axios";
 
 
 
@@ -322,14 +322,17 @@ export const create = async (req, res) => {
   //       email: req.body.email
   //   }
 
-  let user = await UserModel.findOne({
-    where: {email: req.body.email}
-  })
-  console.log("User: ", user.dataValues)
+  console.log(req.body)
+
+  // let user = await UserModel.findOne({
+  //   where: {email: req.body.email}
+  // })
+  let user = await UserModel.findByPk(req?.body?.uid || 0)
+  console.log("User: ", user)
 
   let new_submission = {
     description: req.body.title,
-    userId: user.id,
+    userId: user.uid,
     status: 'pending'
   }
 
@@ -615,7 +618,7 @@ export const forgotPasswordRequest = async (req, res) => {
 
   // Store the password reset token in the database along with the user's email and a timestamp
   const expiresAt = moment().add(1, 'hour').toDate(); // Token expires after 1 hour
-  await PasswordResetToken.create({ username, token, expiresAt });
+  await PasswordResetModel.create({ username, token, expiresAt });
 
   // Send an email to the user containing a link to the password reset page
   const transporter = nodemailer.createTransport({
@@ -704,7 +707,7 @@ export const requestSignature = async (req, res) => {
   })
 }
 
-exports.signIndictable = async (req, res) => {
+export const signIndictable = async (req, res) => {
 
 }
 

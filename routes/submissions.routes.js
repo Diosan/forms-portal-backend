@@ -1,7 +1,7 @@
   import {findAll, findOne, authenticateUser, create, update, del, resetPassword,
     updateMessage, forgotPasswordRequest, handlePasswordForgotPage, resetPasswordFromEmail,
-    saveComplainant, updateTitle, updateComplainant, saveAccused, accuseds, requestSignature
-  } from "../controllers/ submissions.controller.js";
+    saveComplainant, updateTitle, updateComplainant, saveAccused, accuseds, requestSignature, createIndictable, signIndictable
+  } from "../controllers/submissions.controller.js";
   import express from "express";
   
   export default function(app) {
