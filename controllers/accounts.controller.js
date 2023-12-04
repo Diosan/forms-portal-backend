@@ -1,5 +1,5 @@
-const db = require("../models/index");
-const Account = db.accounts;
+import { AccountModel } from "../models/index.js";
+
 const { Op } = require("sequelize");
 
 
@@ -28,7 +28,7 @@ export const create = (req, res) => {
   };
 
   // Save Account in the database
-  Account.create(account)
+  AccountModel.create(account)
     .then((data) => {
       res.send(data);
     })
@@ -45,7 +45,7 @@ export const findAll = (req, res) => {
   const userId = req.query.userId;
   var condition = userId ? { userId: { [Op.like]: `%${userId}%` } } : null;
 
-  Account.findAll({ where: condition })
+  AccountModel.findAll({ where: condition })
     .then((data) => {
       res.send(data);
     })
@@ -61,7 +61,7 @@ export const findAll = (req, res) => {
 export const findOne = (req, res) => {
   const id = req.params.id;
 
-  Account.findByPk(id)
+  AccountModel.findByPk(id)
     .then((data) => {
       res.send(data);
     })
@@ -76,7 +76,7 @@ export const findOne = (req, res) => {
 export const update = (req, res) => {
     const id = req.params.id;
 
-    Account.update(req.body, {
+    AccountModel.update(req.body, {
         where: { id: id }
     })
         .then(num => {
@@ -100,7 +100,7 @@ export const update = (req, res) => {
 export const del = (req, res) => {
     const id = req.params.id;
   
-    Account.destroy({
+    AccountModel.destroy({
         where: { id: id }
     })
     .then(num => {

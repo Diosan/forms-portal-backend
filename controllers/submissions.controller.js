@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 import { db, ErrorLogModel, SubmissionModel, ComplainantModel, UserModel, AccusedModel } from "../models/index.js";
 // import { PasswordResetToken} from "../models/index.js";
@@ -19,6 +20,29 @@ import {format} from 'date-fns'
 import { v4 as uuidv4 } from 'uuid';
 import {TOTPGenerator} from '../utilities/TOTPGenerator.class.js';
 import {mailConfig} from '../config/mail.config.js';
+=======
+const db = require("../models/index");
+const Submission = db.submissions;
+const Complainant = db.complainants;
+const User = db.users;
+const Accused = db.accuseds;
+const Charges = db.charges; 
+const PasswordResetToken = db.password_reset_token;
+const Op = db.Sequelize.Op;
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const JWT_SECRET = process.env.JWT_SECRET;
+const formidable = require('formidable')
+const nodemailer = require('nodemailer');
+const moment = require('moment');
+const {format} = require('date-fns')
+const { v4: uuidv4 } = require('uuid');
+const TOTPGenerator = require('../utilities/TOTPGenerator.class');
+const mailConfig = require('../config/mail.config');
+const { default: axios } = require("axios");
+// const nodemailer = require('nodemailer');
+>>>>>>> origin/Dion2
 
 
 const ErrorLog = ErrorLogModel;
@@ -70,21 +94,33 @@ export const findOne = async (req, res) => {
 
   let submission = await SubmissionModel.findByPk(id)
 
+<<<<<<< HEAD
   let complainants = await ComplainantModel.findOne({
+=======
+  let complainant = await Complainant.findOne({
+>>>>>>> origin/Dion2
     where: {
       submissionId: id
     }
   })
 
+<<<<<<< HEAD
   let accuseds = await AccusedModel.findAll({
+=======
+  console.log('\n\n\n\n Submission complainant: ', complainant);
+  console.log('\n\n\n\n');
+
+  let accuseds = await Accused.findAll({
+>>>>>>> origin/Dion2
     where: {
       submissionId: id
     }
   })
+
 
   res.status(200).json({
     submission: submission,
-    complainant: complainants,
+    complainant: complainant,
     accuseds: accuseds
   })
 
@@ -168,13 +204,23 @@ export const authenticateUser = async (req, res) => {
 
 export const saveComplainant = async (req, res) => {
 
+    console.log('\n\n\n attempting to save complainant \n\n\n');  
+
     let transporter = nodemailer.createTransport(mailConfig);
 
+<<<<<<< HEAD
     const submission = SubmissionModel.findByPk(req.body.submissionId);
     console.log(req.body);
     // return
+=======
+    let submission = await Submission.findByPk(req.body.submissionId);
+
+    console.log('\n\n\n Body of request received by server: ', req.body)
+>>>>>>> origin/Dion2
 
     let new_complainant = {
+        court: req.body.court,
+        courtDistrict: req.body.courtDistrict,
         agency: "TTPS",
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -183,15 +229,16 @@ export const saveComplainant = async (req, res) => {
         submissionId: req.body.submissionId
     };
 
-     
-
-    // let complainant_submission = Complainant.belongsTo(submission);
-
-    console.log('New Complainant: ', new_complainant);
+    console.log('\n\n\n New Complainant: ', new_complainant);
 
     try {
+<<<<<<< HEAD
         const complainant = await ComplainantModel.create(new_complainant, {});
         console.log('New Complainant Created In Sequelize', complainant);
+=======
+        const complainant = await Complainant.create(new_complainant, {});
+        console.log('\n\n\n New Complainant Created In Sequelize', complainant);
+>>>>>>> origin/Dion2
 
         await  complainant.update({status: 'complainant_saved'});
         // await SubmissionModel.update(
@@ -199,11 +246,13 @@ export const saveComplainant = async (req, res) => {
         //   { where: { id: req.body.submissionId } }
         // );
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/Dion2
         res.status(201).json({
-          outcome: 'success', 
-          //   message: "Successfully registered: OTP send to " + req.body.email,
-          
+          outcome: 'success',
+          complainant: complainant          
         })
     } catch (error) {
     console.log('Error Creating Complainant In Sequelize', error)
@@ -218,8 +267,12 @@ export const saveComplainant = async (req, res) => {
 
 export const saveAccused = async (req, res) => {
   let accused = req.body;
+<<<<<<< HEAD
   let new_accused = await AccusedModel.create(accused);
   console.log(new_accused)
+=======
+  let new_accused = await Accused.create(accused);
+>>>>>>> origin/Dion2
   res.status(201).json({
     outcome: 'success', 
     accused: new_accused
@@ -279,7 +332,33 @@ export const updateComplainant = async (req, res) => {
 
 }
 
+<<<<<<< HEAD
 export const create = async (req, res) => {
+=======
+exports.createIndictable = async (req, res) => {
+
+  let user = await User.findOne({
+    where: {email: req.body.email}
+  });
+
+  let submission = req.body.submission;
+  submission['userId'] = user.id;
+
+  console.log('\n\n\n Submission to be created: ', submission)
+
+  let new_submission = await Submission.create(submission)
+
+  console.log('Submission created: ', new_submission);
+
+  res.status(201).json({
+    outcome: 'success', 
+    submission: new_submission
+  })
+
+}
+
+exports.create = async (req, res) => {
+>>>>>>> origin/Dion2
 
   //   let new_user = {
   //       agencyMemberUniqueId: req.body.reg_number,
@@ -357,6 +436,7 @@ async function getPass(newPass, id){
     });
 };
 
+<<<<<<< HEAD
 export const update = async (req, res) => {
   //console.log(req.body)
   // Validate request
@@ -377,46 +457,78 @@ export const update = async (req, res) => {
   console.log(id)
   //console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
   //console.log("Pass = "+req.body.password+ "   --- Updated Password = "+updatedPass)
+=======
+exports.update = async (req, res) => {
+  let submission = await Submission.findByPk(req.body.id)
+  let submission_update = req.body
+  let updated_submission = await submission.update(submission_update)
+  res.status(201).json({
+    outcome: 'success',
+    submission: updated_submission
+  })
+}
+>>>>>>> origin/Dion2
 
-  bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
-        const user ={
-          id: req.body.id,
-          password: hash,
-          username: req.body.username,
-          first_name: req.body.first_name?req.body.first_name:"",
-          last_name: req.body.last_name?req.body.last_name:"",
-          email: req.body.email?req.body.email:"",
-          address: req.body.address?req.body.address:"",
-          phone: req.body.phone?req.body.phone:"",
-          role: req.body.role?req.body.role:"",
-        }
+// exports.update = async (req, res) => {
+//   //console.log(req.body)
+//   // Validate request
+//   if (!req.body.username
+//     && !req.body.email
+//     && !req.body.password
+//     && !req.body.role
+//     && !req.body.id
+//     )
+//   {
+//     res.status(400).send({
+//       message: "Content can not be empty!"
+//     });
+//     return;
+//   }
+//   const id = req.params.id;
+//   //console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+//   console.log(id)
+//   //console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+//   //console.log("Pass = "+req.body.password+ "   --- Updated Password = "+updatedPass)
+
+//   bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
+//         const user ={
+//           id: req.body.id,
+//           password: hash,
+//           username: req.body.username,
+//           first_name: req.body.first_name?req.body.first_name:"",
+//           last_name: req.body.last_name?req.body.last_name:"",
+//           email: req.body.email?req.body.email:"",
+//           address: req.body.address?req.body.address:"",
+//           phone: req.body.phone?req.body.phone:"",
+//           role: req.body.role?req.body.role:"",
+//         }
         
-        const address = req.body.address?req.body.address:"";
+//         const address = req.body.address?req.body.address:"";
 
-        //return
-        User.update(user,
-          {
-          where: { id: id }
-        })
-          .then(num => {
-            if (num == 1) {
-              res.send({
-                message: "User was updated successfully."
-              });
-            } else {
-              res.send({
-                message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`
-              });
-            }
-          })
-          .catch(err => {
-            res.status(500).send({
-              message: "Error updating User with id=" + id
-            });
-          });
+//         //return
+//         User.update(user,
+//           {
+//           where: { id: id }
+//         })
+//           .then(num => {
+//             if (num == 1) {
+//               res.send({
+//                 message: "User was updated successfully."
+//               });
+//             } else {
+//               res.send({
+//                 message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`
+//               });
+//             }
+//           })
+//           .catch(err => {
+//             res.status(500).send({
+//               message: "Error updating User with id=" + id
+//             });
+//           });
 
-  });
-};
+//   });
+// };
 
 export const updateMessage = async (req, res) => {
   //console.log(req.body)
@@ -661,6 +773,10 @@ export const requestSignature = async (req, res) => {
   res.status(201).json({
     outcome: 'success'
   })
+}
+
+exports.signIndictable = async (req, res) => {
+
 }
 
 

@@ -18,6 +18,15 @@ const Submission = sequelize.define('submissions',
             type: Sequelize.DataTypes.STRING,
             allowNull: false,
             defaultValue: 'started'
+        },
+        type: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false,
+            defaultValue: 'complaint_with_oath'
+        },
+        summaryOfEvidence: {
+          type: Sequelize.DataTypes.TEXT,
+          allowNull: true
         }
     }
 );
@@ -44,7 +53,16 @@ const Complainant = sequelize.define('complainants',
         regNum: {
             type: Sequelize.DataTypes.STRING,
             allowNull: false
+        },
+        courtDistrict: {
+          type: Sequelize.DataTypes.STRING,
+          allowNull: true
+        },
+        court: {
+          type: Sequelize.DataTypes.STRING,
+          allowNull: true
         }
+
     }
 );
 
@@ -64,60 +82,100 @@ const Accused = sequelize.define('accuseds',
         },
         tntNational:{
           type: Sequelize.DataTypes.BOOLEAN, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: true
         },
         tntResident:{
           type: Sequelize.DataTypes.BOOLEAN, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: true
         },
         otherNational:{
           type: Sequelize.DataTypes.BOOLEAN, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: false
         },
         otherResident:{
           type: Sequelize.DataTypes.BOOLEAN, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: false
         },
         otherNationalCountry:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: ''
         },
         otherResidentCountry:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: ''
         },
         identification:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: ''
         },
         gender:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: 'Male'
         },
         adulthood:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: 'Adult'
         },
         previousCriminalRecord:{
           type: Sequelize.DataTypes.STRING, 
-          allowNull: false, 
+          allowNull: true, 
           defaultValue: 'Unknown'
         },
         dateOfBirth:{
           type: Sequelize.DataTypes.DATEONLY, 
           allowNull: true,
           defaultValue: Sequelize.NOW
+        },
+        relatedMatters:{
+          type: Sequelize.DataTypes.BOOLEAN, 
+          allowNull: true, 
+          defaultValue: false
         }
+        
     }
+);
+
+const Pending = sequelize.define('pendings',
+    {
+      offence: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
+      },
+      dateOfOffence:{
+        type: Sequelize.DataTypes.DATEONLY, 
+        allowNull: true,
+        defaultValue: Sequelize.NOW
+      }
+    }
+);
+
+
+const Conviction = sequelize.define('convictions',
+    {
+      offence: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
+      },
+      dateOfOffence:{
+        type: Sequelize.DataTypes.DATEONLY, 
+        allowNull: true,
+        defaultValue: Sequelize.NOW
+      },
+      sentence: {
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
+      }
+    }
+
 );
 
 
@@ -242,6 +300,14 @@ Accused.belongsTo(Submission);
 Accused.hasMany(Charge);
 
 Charge.belongsTo(Accused);
+
+Accused.hasMany(Pending);
+
+Pending.belongsTo(Accused);
+
+Accused.hasMany(Conviction);
+
+Conviction.belongsTo(Accused);
 
 sequelize.sync({alter: true})
 .then((data) => {

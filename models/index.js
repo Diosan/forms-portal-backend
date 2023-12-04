@@ -42,6 +42,16 @@ export const PermissionModel = createChargesModel(sequelize);
 export const PasswordResetModel = createPasswordResetModel(sequelize);
 
 
+<<<<<<< HEAD
+=======
+db.users = require("./users.model.js")(sequelize, Sequelize);
+db.submissions = require("./submissions.model.js")(sequelize, Sequelize);
+db.complainants = require("./complainants.model.js")(sequelize, Sequelize);
+db.accuseds = require("./accuseds.model.js")(sequelize, Sequelize);
+db.charges = require("./charges.model.js")(sequelize, Sequelize);
+db.pendings = require("./pendings.model.js")(sequelize, Sequelize);
+db.convictions = require("./convictions.model.js")(sequelize, Sequelize);
+>>>>>>> origin/Dion2
 
 // ---------------------
 // ASSOCIATIONS
@@ -58,6 +68,12 @@ SubmissionModel.hasMany(UserModel)
 ChargesModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 AccusedModel.hasMany(ChargesModel)
 // Charges ++++++++++
+db.pendings.belongsTo(db.pendings, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+db.accuseds.hasMany(db.pendings)
+// Pendings ++++++++++
+db.convictions.belongsTo(db.convictions, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+db.accuseds.hasMany(db.convictions)
+// Pendings ++++++++++
 
 // Passwords ++++++++++
 // UserModel.hasMany(PasswordResetModel, { foreignKey: 'userId' });

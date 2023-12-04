@@ -1,7 +1,7 @@
   import {findAll, findOne, authenticateUser, create, update, del, resetPassword,
     updateMessage, forgotPasswordRequest, handlePasswordForgotPage, resetPasswordFromEmail,
     saveComplainant, updateTitle, updateComplainant, saveAccused, accuseds, requestSignature
-  } from "../controllers/submissions.controller.js";
+  } from "../controllers/ submissions.controller.js";
   import express from "express";
   
   export default function(app) {
@@ -13,12 +13,14 @@
     router.get("/:id", findOne);
     // Authenticate User
     router.post("/auth/verify", authenticateUser);
-    // Create a new user
-    router.post("/", create);
+    // Create a new submission
+    router.post("/",  create);
+    // Create a new submission
+    router.post("/indictable",  createIndictable);
     // Update a new user
-    router.put("/:id", update);
+    router.post("/update",  update);
     // Reset Password
-    router.put("/password/reset", resetPassword);
+    router.post("/password/reset",  resetPassword);
     // Update Message
     router.put("/message/add", updateMessage);
     // User forgot Password
@@ -41,6 +43,8 @@
     router.get('/accuseds/:id', accuseds);
 
     router.post('/request_signature', requestSignature);
+
+    router.post('/sign_indictable/:id',  signIndictable);
 
     app.use('/api/submissions', router);
   };

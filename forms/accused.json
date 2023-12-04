@@ -1,6 +1,6 @@
 {
     "schema": {
-        "title": "Accused & Charges",
+        "title": "Accuseds & Charges",
         "description": "Persons being charged and charges being laid",
         "type": "object",
         "required": [
@@ -51,6 +51,42 @@
               "Adult",
               "Child"
             ]
+          },
+          "previousCriminalRecord": {
+              "type": "string",
+              "title": "Previous Criminal Record ?",
+              "enum": [
+                "Unknown",
+                "Yes",
+                "No"
+              ],
+              "enumNames": [
+                "Unknown",
+                "Yes",
+                "No"
+              ]
+          },
+          "relatedMatters": {
+              "type": "boolean",
+              "title": "Any Related Matters ?"
+          },
+          "tntNational": {
+              "type": "boolean",
+              "title": "National of Trinidad and Tobago",
+              "default": true
+          },
+          "tntResident": {
+              "type": "boolean",
+              "title": "Resident of Trinidad and Tobago",
+              "default": true
+          },
+          "otherNational": {
+              "type": "boolean",
+              "title": "National of other country"
+          },
+          "otherResident": {
+              "type": "boolean",
+              "title": "Resident of other country"
           }
 
         }
@@ -58,6 +94,9 @@
     "UI": {
         "address": {
             "ui:widget": "textarea"
-        }
+        },
+        "relatedMatters": {
+          "ui:widget": "select"
+      }
     }
 }
