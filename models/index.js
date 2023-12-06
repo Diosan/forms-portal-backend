@@ -29,6 +29,7 @@ import createPermissionsModel from "./permissions.model.js";
 import createPendingModel from "./pendings.model.js";
 import createPasswordResetModel from "./password_reset.model.js";
 import createConvictionModel from "./convictions.model.js";
+import createSigntureModel from "./signatures.model.js";
 
 
 export const UserModel = createUserModel(sequelize);
@@ -44,6 +45,7 @@ export const PermissionModel = createPermissionsModel(sequelize);
 export const PasswordResetModel = createPasswordResetModel(sequelize);
 export const PendingModel = createPendingModel(sequelize);
 export const ConvictionModel = createConvictionModel(sequelize);
+export const SignatureModel = createSigntureModel(sequelize);
 
 // ---------------------
 // ASSOCIATIONS
@@ -66,6 +68,9 @@ AccusedModel.hasMany(PendingModel)
 ConvictionModel.belongsTo(ConvictionModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 AccusedModel.hasMany(ConvictionModel)
 // Pendings ++++++++++
+SignatureModel.belongsTo(UserModel, { foreignKey: 'userId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+UserModel.hasMany(SignatureModel)
+// Signatures ++++++++++
 
 // Passwords ++++++++++
 // UserModel.hasMany(PasswordResetModel, { foreignKey: 'userId' });
