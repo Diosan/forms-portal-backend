@@ -36,7 +36,12 @@ const ErrorLog = ErrorLogModel;
 
 export const complainantSign = async (req, res) => {
 
-  let submissionHash = await Signatures.complainantSubmissionSign(req.body.email, req.body.submission_id);
+  let signatures = new Signatures;
+
+  let submissionHash = await signatures.complainantSubmissionSign(
+    req.body.email,
+    req.body.submission_id
+  );
 
   res.status(201).json({
     submission_hash: submissionHash
