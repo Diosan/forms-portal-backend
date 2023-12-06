@@ -3,7 +3,6 @@ import {dbConfig} from "../config/db.config.js";
 import mysql from 'mysql2';
 
 
-
 export class Signatures {
 
     async complainantSubmissionSign(email, submission_id) {
