@@ -38,14 +38,25 @@ export const complainantSign = async (req, res) => {
 
   let signatures = new Signatures;
 
+  console.log('\n\n\n Request body: ', req.body);
+
+  let email = req.body.email;
+  let submission_id = req.body.submission_id;
+
+  console.log('Email: ', email);
+
   let submissionHash = await signatures.complainantSubmissionSign(
-    req.body.email,
-    req.body.submission_id
+    email=email,
+    submission_id=submission_id
   );
 
   res.status(201).json({
     submission_hash: submissionHash
   });
+
+  // res.status(201).json({ submission_hash: submissionHash});
+
+  // res.status(201).json({ submission_hash: 'abcdefghijklmnopqrstuvwyz'});
 
 }
 
