@@ -26,12 +26,23 @@ import moment from 'moment';
 import {format} from 'date-fns'
 import { v4 as uuidv4 } from 'uuid';
 import {TOTPGenerator} from '../utilities/TOTPGenerator.class.js';
+import { Signatures } from "../utilities/Signatures.class.js";
 import {mailConfig} from '../config/mail.config.js';
 import axios  from "axios";
 
 
 
 const ErrorLog = ErrorLogModel;
+
+export const complainantSign = async (req, res) => {
+
+  let submissionHash = await Signatures.complainantSubmissionSign(req.body.email, req.body.submission_id);
+
+  res.status(201).json({
+    submission_hash: submissionHash
+  });
+
+}
 
 export const findAll = (req, res) => {
 
