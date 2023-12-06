@@ -26,7 +26,7 @@ import moment from 'moment';
 import {format} from 'date-fns'
 import { v4 as uuidv4 } from 'uuid';
 import {TOTPGenerator} from '../utilities/TOTPGenerator.class.js';
-import { Signatures } from "../utilities/SIgnatures.class.js";
+import { Signatures } from "../utilities/Signatures.class.js";
 import {mailConfig} from '../config/mail.config.js';
 import axios  from "axios";
 
