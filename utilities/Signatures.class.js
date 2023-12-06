@@ -1,6 +1,7 @@
 import { db, SubmissionModel, AccusedModel, ChargesModel, PendingModel, ConvictionModel } from "../models/index.js";
 import {dbConfig} from "../config/db.config.js";
 import mysql from 'mysql2';
+import { createHash } from 'node:crypto';
 
 
 
