@@ -25,7 +25,7 @@ export class Signatures {
         let signature = await SignatureModel.create({
             type: 'submission',
             email: email,
-            record: JSON.parse(submission),
+            record: JSON.parse(submission.toJSON()),
             hash: createHash('sha3-256').update(content).digest('hex'),
             userId: user.id
         });
