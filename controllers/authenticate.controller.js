@@ -217,7 +217,7 @@ export const verifyOtp = async (req, res) => {
   // Verify and decode the JWT token
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
+    console.log(">>>> Decoded - ", decoded);
     // Assuming the user's ID is stored in the token
     const userId = decoded.id;
     console.log(">>>> USER ID - ", userId);

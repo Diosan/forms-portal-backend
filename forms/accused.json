@@ -1,6 +1,6 @@
 {
     "schema": {
-        "title": "Accuseds & Charges",
+        "title": "Accuseds and Charges",
         "description": "Persons being charged and charges being laid",
         "type": "object",
         "required": [

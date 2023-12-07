@@ -279,7 +279,14 @@ export const updateComplainant = async (req, res) => {
       submissionId: complainant.submissionId
     }
   });
-  let updated_complainant = await ComplainantModel.update(complainant);
+  console.log("Returned Complainant", returned_complainant)
+  const whereCondition = {
+    submissionId: returned_complainant.dataValues.submissionId,
+  };
+  // let updated_complainant = await ComplainantModel.update(complainant);
+  let updated_complainant = await ComplainantModel.update(complainant, {
+    where: whereCondition,
+  });
   
   res.status(200).json({
     outcome: 'success',
@@ -513,23 +520,24 @@ export const del = (req, res) => {
   console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   const id = req.params.id;
 
-  User.destroy({
+  SubmissionModel.destroy({
     where: { id: id }
   })
     .then(num => {
       if (num == 1) {
         res.send({
-          status: 200, message: "User was deleted successfully!"
+          status: 200, message: "Submission was deleted successfully!"
         });
       } else {
         res.send({
-          status: 200, message: `Cannot delete User with id=${id}. Maybe User was not found!`
+          status: 200, message: `Cannot delete Submission with id=${id}. Maybe it was not found!`
         });
       }
     })
     .catch(err => {
+      console.log(err)
       res.status(500).send({
-        message: "Could not delete User with id=" + id
+        message: "Could not delete Submission with id=" + id
       });
     });
 };
