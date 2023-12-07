@@ -335,16 +335,22 @@ export const updateComplainant = async (req, res) => {
 
 export const createIndictable = async (req, res) => {
 
-  let user = await UserModel.findOne({
-    where: {email: req.body.email}
-  });
+  console.log('Body passed to controller: ', req.body);
+
+  // let user = await UserModel.findOne({
+  //   where: {email: req.body.email}
+  // });
 
   let submission = req.body.submission;
+
+  let user = await UserModel.findByPk(submission.userId);
+
+
   submission['userId'] = user.id;
 
   console.log('\n\n\n Submission to be created: ', submission)
 
-  let new_submission = await Submission.create(submission)
+  let new_submission = await SubmissionModel.create(submission)
 
   console.log('Submission created: ', new_submission);
 
