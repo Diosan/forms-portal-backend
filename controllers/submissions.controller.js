@@ -34,6 +34,15 @@ import axios  from "axios";
 
 const ErrorLog = ErrorLogModel;
 
+export const sendOTP = async (req, res) => {
+
+  const totp = new TOTPGenerator();
+
+  res.status(201).json({
+    outcome: 'success'
+  });
+}
+
 export const complainantSign = async (req, res) => {
 
   let signatures = new Signatures;
