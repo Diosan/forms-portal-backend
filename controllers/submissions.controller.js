@@ -26,6 +26,7 @@ import moment from 'moment';
 import {format} from 'date-fns'
 import { v4 as uuidv4 } from 'uuid';
 import {TOTPGenerator} from '../utilities/TOTPGenerator.class.js';
+import SignOTPGenerator from "../utilities/SignOTPGenerator.class.js";
 import { Signatures } from "../utilities/Signatures.class.js";
 import {mailConfig} from '../config/mail.config.js';
 import axios  from "axios";
@@ -36,11 +37,19 @@ const ErrorLog = ErrorLogModel;
 
 export const sendOTP = async (req, res) => {
 
-  const totp = new TOTPGenerator();
+  const totp = new SignOTPGenerator();
 
-  res.status(201).json({
-    outcome: 'success'
-  });
+  totp.generateOTP(req.body.email, req.body.name)
+  .then(() => console.log('OTP sent to user email.'))
+  .catch(error => console.error('Error generating or sending OTP:', error));
+
+  return res.status(201).json({
+    outcome: 'success', 
+    message: "Successfully logged in: OTP send to " + req.body.email,
+    email: req.body.email,
+    token: token // Include the token in the response
+  })
+
 }
 
 export const complainantSign = async (req, res) => {
