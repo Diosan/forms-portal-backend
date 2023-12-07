@@ -5,7 +5,7 @@ import { db, ErrorLogModel,
   UserModel, 
   AccusedModel,
   ChargesModel,
-  
+  SignatureModel
 
  } from "../models/index.js";
 import { PasswordResetModel} from "../models/index.js";
@@ -26,12 +26,39 @@ import moment from 'moment';
 import {format} from 'date-fns'
 import { v4 as uuidv4 } from 'uuid';
 import {TOTPGenerator} from '../utilities/TOTPGenerator.class.js';
+import { Signatures } from "../utilities/Signatures.class.js";
 import {mailConfig} from '../config/mail.config.js';
 import axios  from "axios";
 
 
 
 const ErrorLog = ErrorLogModel;
+
+export const complainantSign = async (req, res) => {
+
+  let signatures = new Signatures;
+
+  console.log('\n\n\n Request body: ', req.body);
+
+  let email = req.body.email;
+  let submission_id = req.body.submission_id;
+
+  console.log('Email: ', email);
+
+  let submissionHash = await signatures.complainantSubmissionSign(
+    email=email,
+    submission_id=submission_id
+  );
+
+  res.status(201).json({
+    submission_hash: submissionHash
+  });
+
+  // res.status(201).json({ submission_hash: submissionHash});
+
+  // res.status(201).json({ submission_hash: 'abcdefghijklmnopqrstuvwyz'});
+
+}
 
 export const findAll = (req, res) => {
 
