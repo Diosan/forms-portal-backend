@@ -27,8 +27,13 @@ export default sequelize => {
         },
         userId: {
             type: DataTypes.UUID,
-            allowNull: true,
+            allowNull: true
+        },
+        content_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true
         }
+
 
     });
 
