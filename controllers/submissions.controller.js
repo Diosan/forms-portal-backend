@@ -378,13 +378,15 @@ export const create = async (req, res) => {
   // let user = await UserModel.findOne({
   //   where: {email: req.body.email}
   // })
-  let user = await UserModel.findByPk(req?.body?.uid || 0)
+  // let user = await UserModel.findByPk(req?.body?.uid || 0)
+  let user = await UserModel.findByPk(req.body.userId);
   console.log("User: ", user)
 
   let new_submission = {
     description: req.body.title,
-    userId: user.uid,
-    status: 'pending'
+    userId: req.body.userId,
+    status: 'pending',
+    type: req.body.type
   }
 
   try {
