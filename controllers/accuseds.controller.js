@@ -5,7 +5,7 @@
 // const Pending = db.pendings;
 // const Conviction = db.convictions;
 
-import { db, SubmissionModel, AccusedModel, ChargesModel, PendingModel, ConvictionModel } from "../models/index.js";
+import { db, SubmissionModel, AccusedModel, ChargesModel, PendingModel, ConvictionModel, RelatedMatterModel } from "../models/index.js";
 import fs from "fs";
 import formidable from 'formidable'
 import {dbConfig} from "../config/db.config.js"
@@ -43,6 +43,19 @@ export const savePending = async (req, res) => {
     res.status(201).json({
         outcome: 'success',
         pending: new_pending
+    });
+
+};
+
+
+export const saveRelatedMatter = async (req, res) => {
+    
+    let related = req.body;
+    let new_related = await RelatedMatterModel.create(related);
+
+    res.status(201).json({
+        outcome: 'success',
+        pending: new_related
     });
 
 };
@@ -86,6 +99,19 @@ export const pendings = async (req, res) => {
     // console.log('\n\n\n returned_charges: ', returned_charges);
     res.status(201).json({
         pendings: returned_pendings
+    }); 
+};
+
+export const relateds = async (req, res) => {
+    const id = req.params.id;
+    let returned_relateds = await RelatedMatterModel.findAll({
+        where: {
+            accusedId: id
+        }
+    });
+    // console.log('\n\n\n returned_charges: ', returned_charges);
+    res.status(201).json({
+        relateds: returned_relateds
     }); 
 };
 
