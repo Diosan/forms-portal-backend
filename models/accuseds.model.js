@@ -51,8 +51,13 @@ export default sequelize => {
     },
     identification:{
       type: DataTypes.STRING, 
-      allowNull: false,
+      allowNull: true,
       defaultValue: '_'
+    },
+    identificationType:{
+      type: DataTypes.STRING, 
+      allowNull: true,
+      defaultValue: 'National ID Card'
     },
     gender:{
       type: DataTypes.STRING, 
