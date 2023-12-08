@@ -28,6 +28,25 @@
             "format": "date",
             "title": "Date of Birth"
           },
+          "identificaionType": {
+            "type": "string",
+            "title": "Identificaion Type",
+            "enum": [
+              "National ID Card",
+              "Passport",
+              "Drivers Permit"
+            ],
+            "enumNames": [
+              "National ID Card",
+              "Passport",
+              "Drivers Permit"
+            ]
+          },
+
+          "identificaion": {
+            "type": "string",
+            "title": "Identification"
+          },
           "gender": {
             "type": "string",
             "title": "Gender",
