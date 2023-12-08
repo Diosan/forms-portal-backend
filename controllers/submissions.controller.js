@@ -373,7 +373,8 @@ export const create = async (req, res) => {
   //       email: req.body.email
   //   }
 
-  console.log(req.body)
+  console.log('\n\n\n request body with matterType', req.body)
+  console.log('\n\n\n');
 
   // let user = await UserModel.findOne({
   //   where: {email: req.body.email}
@@ -386,7 +387,8 @@ export const create = async (req, res) => {
     description: req.body.title,
     userId: req.body.userId,
     status: 'pending',
-    type: req.body.type
+    type: req.body.type,
+    matterType: req.body.matterType
   }
 
   try {
