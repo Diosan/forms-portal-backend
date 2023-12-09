@@ -15,10 +15,15 @@ export const errorHandler = (err, req, res, next) => {
     // Logger.error(err.message);
     Logger.error(`Error: ${JSON.stringify(errorDetails)}`);
 
-    // Send error response
-    res.status(err.status || 500).send({
-        error: {
-            message: err.message || 'An unexpected error occurred'
-        }
-    });
+     // Check if the error object has a specific format to return
+     if (err.customResponse) {
+        // If customResponse is true, use the custom status and json structure
+        return res.status(err.status || 500).json({
+            outcome: err.outcome || 'error',
+            error: err.publicMessage || 'An error occurred'
+        });
+    } else {
+        // If no customResponse, return a standard error message
+        res.status(err.status || 500).send(err.publicMessage || 'An unexpected error occurred');
+    }
 };

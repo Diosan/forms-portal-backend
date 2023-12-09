@@ -48,24 +48,36 @@ const format = winston.format.combine(
 )
 // Define which transports the logger must use to print out messages.
 // In this example, we are using three different transports
-const transports = [
-  // Allow the use the console to print the messages
-  new winston.transports.Console(),
-  // Allow to print all the error level messages inside the error.log file
-  new winston.transports.File({
-    filename: 'logs/error.log',
-    level: 'error',
-  }),
-  // Allow to print all the error message inside the all.log file
-  // (also the error log that are also printed inside the error.log(
-  new winston.transports.File({ filename: 'logs/http.log' }),
-]
+const transports = {
+    console: new winston.transports.Console(),
+    errorFile: new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+    httpFile: new winston.transports.File({ filename: 'logs/http.log', level: 'http' }),
+    authFile: new winston.transports.File({ filename: 'logs/auth.log', level: 'auth' }),
+    otherFile: new winston.transports.File({ filename: 'logs/other.log', level: 'info' }),
+}
+
 // Create the logger instance that has to be exported
 // and used to log messages.
 export const Logger = winston.createLogger({
   level: level(),
   levels,
   format,
-  transports,
+  transports: [
+    transports.console,
+    transports.errorFile,
+    transports.httpFile,
+    transports.authFile,
+    transports.otherFile,
+  ],
 })
+
+export const logAuthenticationEvent = (event, userDetails, additionalInfo = '') => {
+    const logMessage = `Authentication event: ${event} for user: ${userDetails.email || 'unknown'} - Details: ${additionalInfo}`;
+    Logger.log({
+      level: 'auth',
+      message: logMessage
+    });
+  };
+
+
 
