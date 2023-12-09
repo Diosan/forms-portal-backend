@@ -12,35 +12,45 @@ import { redisClient, } from '../redis/redisConfig.js';
 
 
 // create a new user
-export const create = async (req, res) => {
+export const create = async (req, res, next) => {
+
+    // console.log(req.gh)
+    // return
+
     console.log(req.body)
     if (!req.body) {
         res.status(500).json({ error: err.message });
         return;
     }
-    //return
-    const { username, agency, password, fullname, firstName, middleName, lastName, email, address, phone, role } = req.body;
-    const hash = await bcrypt.hash(password, saltRounds);
-    AdminUserModel.create({
-        username: email,
-        password: hash,
-        fullname: fullname,
-        firstName: firstName,
-        middleName: middleName,
-        lastName: lastName,
-        email: email,
-        address: address,
-        phone: phone, 
-        role: role,
-        agency: agency
-    })
-    .then(user => {
-        res.status(200).send({ message: "User created successfully!" });
-    })
-    .catch(err => {
+    try {
+        //return
+        const { username, agency, password, fullname, firstName, middleName, lastName, email, address, phone, role } = req.body;
+        const hash = await bcrypt.hash(password, saltRounds);
+        AdminUserModel.create({
+            username: email,
+            password: hash,
+            fullname: fullname,
+            firstName: firstName,
+            middleName: middleName,
+            lastName: lastName,
+            email: email,
+            address: address,
+            phone: phone, 
+            role: role,
+            agency: agency
+        })
+        .then(user => {
+            res.status(200).send({ message: "User created successfully!" });
+        })
+        .catch(err => {
+            console.error(err);
+            next(err);
+        });
+    } catch (err) {
+        // Pass any error to the error handler
         console.error(err);
-        res.status(500).send({ message: err.message });
-    });
+        next(err);
+    }
 };
 
 // retrieve all users

@@ -61,7 +61,7 @@ export const complainantSign = async (req, res) => {
 }
 
 export const findAll = (req, res) => {
-
+  try {
     SubmissionModel.findAndCountAll()
     .then(data => {
         console.log('Submission. Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
@@ -76,6 +76,10 @@ export const findAll = (req, res) => {
             error: error
           });
     });
+} catch (error) {
+    next(error); // Pass the error to the errorHandler middleware
+}
+    
 
 }
 
@@ -83,25 +87,6 @@ export const findAll = (req, res) => {
 
 export const findOne = async (req, res) => {
 
-
-  // .then(data => {
-  //   // console.log('Fetched Submission Record: ', data)      
-  // })
-  // .catch(err => {
-  //   // console.log('Error fetching Submission with Id : ' + id, err)
-  // });
-
-  // let complainants = await Complainant.findAll({
-  //   where: {
-  //     submissionId: id
-  //   }
-  // })
-  // .then(data => {        
-  //   console.log('Fetched Submission Record: ', data)
-  // });
-  // .catch(complaint_err => {
-  //     console.log('Error fetching Complainant records with submissionId : ' + id, err)
-  // });
 
   const id = req.params.id;
 
@@ -140,58 +125,63 @@ export const authenticateUser = async (req, res) => {
     });
     return;
   }
-
-  const data ={
-    firebaseId: req.body.firebase_user_id,
-    username: req.body.email?req.body.email:"",
-    fullname: req.body.fullname?req.body.fullname:"",
-    email: req.body.email?req.body.email:"", 
-    active: 0,
-    status: 0,
-    role: 0,
-  }
-  //check if user exist
-  //if user doesn't exists create new user
-    User.findOrCreate({
-      where: {
-        firebaseId: data.firebaseId
-      },
-      defaults: {
-        // firebaseId: user.firebase_id,
-        // password: "0nMym@rk!@",
-        username: data.email,
-        email: data.email,
-        fullname: data.fullname,
-        // active: user.active,
-        // status: user.status,
-        // role: user.role,
-      }
-    }).then(([user, created]) => {
-      if (created) {
-        res.status(201).json({
-          message: 'User created',
-          user: user
-        });
-      } else {
-          //if user does exist, update logged in status
-          user.update(data).then(() => {
-            res.status(200).json({
-              message: 'User updated',
-              user: user
-            });
-          })
-          .catch(err => {
-            res.status(500).send({
-              message: "Error updating User with id=" + user.firebaseId
-            });
+  try {
+    const data ={
+      firebaseId: req.body.firebase_user_id,
+      username: req.body.email?req.body.email:"",
+      fullname: req.body.fullname?req.body.fullname:"",
+      email: req.body.email?req.body.email:"", 
+      active: 0,
+      status: 0,
+      role: 0,
+    }
+    //check if user exist
+    //if user doesn't exists create new user
+      User.findOrCreate({
+        where: {
+          firebaseId: data.firebaseId
+        },
+        defaults: {
+          // firebaseId: user.firebase_id,
+          // password: "0nMym@rk!@",
+          username: data.email,
+          email: data.email,
+          fullname: data.fullname,
+          // active: user.active,
+          // status: user.status,
+          // role: user.role,
+        }
+      }).then(([user, created]) => {
+        if (created) {
+          res.status(201).json({
+            message: 'User created',
+            user: user
           });
-        // res.status(200).json({
-        //   message: 'User found',
-        //   user: user
-        // });
-      }
-    });
+        } else {
+            //if user does exist, update logged in status
+            user.update(data).then(() => {
+              res.status(200).json({
+                message: 'User updated',
+                user: user
+              });
+            })
+            .catch(err => {
+              res.status(500).send({
+                message: "Error updating User with id=" + user.firebaseId
+              });
+            });
+          // res.status(200).json({
+          //   message: 'User found',
+          //   user: user
+          // });
+        }
+      });
+    
   
+    
+} catch (error) {
+    next(error); // Pass the error to the errorHandler middleware
+}
 
   
 

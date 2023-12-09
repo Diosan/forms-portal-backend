@@ -27,6 +27,13 @@ import { Server as SocketIO } from 'socket.io';
 import { getUserByEmail, getStoredOTP, deleteStoredOTP } from './controllers/admin_users.controller.js';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
+import {MorganMiddleware} from "./middlewares/morgan.middleware.js"
+
+// The morgan middleware does not need this.
+// This is for a manual log
+import {Logger} from "./utilities/logger.js";
+
+
 
 // Read the SSL certificate files
 const key = fs.readFileSync(path.resolve(__dirname, './key.pem'));
@@ -40,24 +47,11 @@ import { TOTPGenerator } from './utilities/TOTPGenerator.class.js';
 import { mailConfig } from './config/mail.config.js';
 // import { adminUser } from './controllers/admin_users.controller.js';
 import { redisClient, redisStore, userChannel } from './redis/redisConfig.js'
-import accessLogsRoutes from './routes/accesslogs.routes.js';
-import authenticateRoutes from './routes/authenticate.routes.js';
-// import configRoutes from './routes/config.routes.js';
-// import accountRoutes from './routes/account.routes.js';
-import adminUserRoutes from './routes/admin_users.routes.js';
-import ttpsAdminRoutes from './routes/ttps_admin.routes.js';
-import userRoutes from './routes/users.routes.js';
-import passwordRoutes from './routes/password.routes.js';
-// import notificationsRoutes from './routes/notifications.routes.js';
-import errorLogsRoutes from './routes/errorlogs.routes.js';
-import errortypesRoutes from './routes/errortypes.routes.js';
-// import permissionsRoutes from './routes/permissions.routes.js';
-import submissionsRoutes from './routes/submissions.routes.js';
-import accusedRoutes from './routes/accuseds.routes.js';
-// import rolesRoutes from './routes/roles.routes.js';
-import pdfRoutes from './routes/pdf.routes.js';
-import efilingRoutes from './routes/efiling.routes.js';
 
+import passwordRoutes from './routes/password.routes.js';
+import {setupRoutes} from './routes/index.routes.js';
+
+import {errorHandler} from './utilities/errorHandler.js';
 
 
 
@@ -70,9 +64,6 @@ const PORT_SSL = process.env.PORT_SSL || 443
 const ADMIN_PORT = process.env.ADMIN_PORT || 8080
 
 //console.log("secret",JWT_SECRET);
-
-
-
 
 //JSSWF
 //USED TO GENERATE A NEW SECRET (uncomment when needed)
@@ -119,7 +110,22 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
 // EXPRESS APP INITIALIZATION
 //------------------------------------------------
 const app = express();
-// Set the view engine to ejs
+//setup HTTP request logging immediately
+// Add the morgan middleware
+app.use(MorganMiddleware);
+// *** Strictly for testing purposes - don't leave it running ***
+// ***************************************************************
+// app.get("/api/status", (req, res) => {
+//   Logger.info("Checking the API status: Everything is OK");
+//   res.status(200).send({
+//       status: "UP",
+//       message: "The API is up and running!"
+//   });
+// });
+// ***************************************************************
+//----------------------------------------------------------------
+
+// Set the view engine to ejs (presenting OTP and Log in forms...)
 app.set('view engine', 'ejs');
 
 // Set the directory where the template files are located
@@ -684,42 +690,7 @@ var allowedDomains = [
 //----------------------------------------------------------------
 //ROUTES
 //----------------------------------------------------------------
-    // ++++++++++++++++++++++++++++++++++++++++++
-    accessLogsRoutes(app);
-    authenticateRoutes(app);
-    pdfRoutes(app);
-    efilingRoutes(app);
-    // configRoutes(app);
-    // accountRoutes(app);
-    adminUserRoutes(app);
-    ttpsAdminRoutes(app);
-    // notificationsRoutes(app);
-    errorLogsRoutes(app);
-    errortypesRoutes(app);
-    // permissionsRoutes(app);
-    // rolesRoutes(app);
-    submissionsRoutes(app);
-    accusedRoutes(app);
-    userRoutes(app);
-
-
-    // require("./routes/config.routes")(app);
-    // require("./routes/account.routes")(app);
-    // require("./routes/admin_users.routes")(app);
-    // require("./routes/notifications.routes")(app);
-    // require("./routes/permissions.routes")(app);
-    // require("./routes/roles.routes")(app);
-    // require("./routes/users.routes")(app);
-    // require("./routes/submissions.routes")(app);
-    // require("./routes/accuseds.routes")(app);
-    // ++++++++++++++++++++++++++++++++++++++++++
-
-  
-
-
-
-
-
+    setupRoutes(app);
 //----------------------------------------------------------------
 // ***** TO BE CONFIRMED ACTIVE **** 
 // CHECK THESE WIHH DEVELOPERS
@@ -790,6 +761,14 @@ var allowedDomains = [
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //----------------------------------------------------------------
+
+
+//ERROR HANDLING
+//................................................................
+app.use(errorHandler);
+//................................................................
+
+
 
 
 

@@ -193,7 +193,8 @@ export const authenticateUser = async (req, res) => {
 
 };
 
-export const create = async (req, res) => {
+export const create = async (req, res, next) => {
+
 
   let new_user = {
       agencyMemberUniqueId: req.body.reg_number,

@@ -181,25 +181,6 @@ export const login = async (req, res) => {
 };
 
 
-// export const verifyOtp = async (req, res) => {
-//   const { email, otp } = req.body;
-//   const user = {id: session.uid || ""}
-//   const totp = new TOTPGenerator();
-//   let verified = await totp.verifyOTP(session.id, otp) 
-//   if (verified) {
-//     return res.status(200).json({
-//       outcome: 'success',
-//       token: jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1h' })
-//     })
-//   } else {
-//     console.log("not verified")
-//     return res.status(200).json({
-//       outcome: 'error'
-//     })
-//   }
-// } 
-
-
 
 
 export const verifyOtp = async (req, res) => {
