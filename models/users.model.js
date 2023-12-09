@@ -73,6 +73,10 @@ export default (sequelize) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
+      verifierId: {
+        type: DataTypes.UUID,
+        allowNull: true
+      },
       createdAt: {
         type: DataTypes.DATE
       },
