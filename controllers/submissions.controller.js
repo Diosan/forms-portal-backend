@@ -61,22 +61,56 @@ export const complainantSign = async (req, res) => {
   let email = req.body.email;
   let submission_id = req.body.submission_id;
 
-  console.log('Email: ', email);
+  // console.log('Email: ', email);
 
-  let submissionHash = await signatures.complainantSubmissionSign(
+  let signature = await signatures.complainantSubmissionSign(
     email=email,
     submission_id=submission_id
   );
 
-  res.status(201).json({
-    submission_hash: submissionHash
-  });
+  console.log('\n\n\n Signature from Signature Class: ', signature);
+  
+  res.status(201).json(signature);
 
   // res.status(201).json({ submission_hash: submissionHash});
 
   // res.status(201).json({ submission_hash: 'abcdefghijklmnopqrstuvwyz'});
 
 }
+
+
+export const submissionSignature = async (req, res) => {
+
+
+  console.log('\n\n\n Request body: ', req.body)
+
+  let user = await UserModel.findByPk(
+    req.body.userId,
+    { raw: true }
+  );
+
+  console.log('\n\n\n user: ', user);  
+
+  let signature = await SignatureModel.findOne({
+    where: {
+      content_id: req.body.submission_id,
+      userId: req.body.userId
+    },
+    raw: true
+  });
+
+  console.log('\n\n\n signature: ', signature);
+
+  res.status(201).json({
+    signature: signature,
+    user: user
+  });
+
+  // res.status(201).json({});
+
+}
+
+
 
 export const findAll = (req, res) => {
 
