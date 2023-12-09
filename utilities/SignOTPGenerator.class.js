@@ -50,7 +50,7 @@ export default class SignOTPGenerator {
   async verifyOTP(email, otp) {
     const key = `otp:${email}`;
     let stored_OTP = await this.redisClient.get(key);
-    console.log('Redis OTP Key: ' + key);
+    // console.log('Redis OTP Key: ' + key);
     console.log('OTP Values: ', { stored_OTP: stored_OTP, otp: otp })
     return stored_OTP == otp;
   }

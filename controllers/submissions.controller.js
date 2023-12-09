@@ -52,6 +52,25 @@ export const sendOTP = async (req, res) => {
 
 }
 
+
+export const verifyOTP = async (req, res) => {
+  // console.log('\n\n Request body: ', req.body);
+  // console.log('\n\n');
+
+  const totp = new SignOTPGenerator();
+  let verified = await totp.verifyOTP(req.body.email, req.body.otp);
+  
+  // console.log('\n\n\n verification result: ', verified);
+
+  if(verified) {
+    return res.status(201).json({outcome: 'success'});
+  } else {
+    return res.status(201).json({outcome: 'failure'});
+  }
+
+}
+
+
 export const complainantSign = async (req, res) => {
 
   let signatures = new Signatures;
