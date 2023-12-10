@@ -57,7 +57,7 @@ export const sendSignRequest = async (req, res) => {
   let verifierUser = await UserModel.findByPk(
     complainantUser.verifierId,
     {raw: true}
-  )
+  );
   let email = verifierUser.email;
   let name = verifierUser.firstName;
   mailer.signatureRequestEmail(
@@ -82,6 +82,49 @@ export const sendOTP = async (req, res) => {
     outcome: 'success', 
     message: "Successfully logged in: OTP send to " + req.body.email,
     email: req.body.email
+  })
+
+  // return res.status.json(201)({
+  //   outcome: 'failure'
+  // })
+
+}
+
+
+export const sendVerifyOTP = async (req, res) => {
+
+  let complainant = await ComplainantModel.findOne(
+    {
+      where: {submissionId: req.body.submission_id},
+      raw: true
+    }
+  );
+
+  console.log('\n\n\n\n Complainant: ', complainant);
+
+  let complainantUser = await UserModel.findOne(
+    {
+      where: {email: complainant.email},
+      raw: true
+    }
+  );
+  let verifierUser = await UserModel.findByPk(
+    complainantUser.verifierId,
+    {raw: true}
+  )
+  let email = verifierUser.email;
+  let name = verifierUser.firstName;
+
+  const totp = new SignOTPGenerator();
+
+  totp.generateOTP(req.body.submission_id, email, name)
+  .then(() => console.log('OTP sent to user email.'))
+  .catch(error => console.error('Error generating or sending OTP:', error));
+
+  return res.status(201).json({
+    outcome: 'success', 
+    message: "Successfully logged in: OTP send to " + email,
+    email: email
   })
 
   // return res.status.json(201)({
@@ -121,6 +164,47 @@ export const complainantSign = async (req, res) => {
   // console.log('Email: ', email);
 
   let signature = await signatures.complainantSubmissionSign(
+    email=email,
+    submission_id=submission_id
+  );
+
+  console.log('\n\n\n Signature from Signature Class: ', signature);
+  
+  res.status(201).json(signature);
+
+  // res.status(201).json({ submission_hash: submissionHash});
+
+  // res.status(201).json({ submission_hash: 'abcdefghijklmnopqrstuvwyz'});
+
+}
+
+
+
+export const verifierSign = async (req, res) => {
+
+  let signatures = new Signatures;
+
+  console.log('\n\n\n Request body: ', req.body);
+
+  let complainant_email = req.body.email;
+  let submission_id = req.body.submission_id;
+
+  let complainantUser = await UserModel.findOne(
+    {
+      where: {email: complainant_email},
+      raw: true
+    }
+  );
+  let verifierUser = await UserModel.findByPk(
+    complainantUser.verifierId,
+    {raw: true}
+  );
+
+  let email = verifierUser.email;
+
+  // console.log('Email: ', email);
+
+  let signature = await signatures.verifierSubmissionSign(
     email=email,
     submission_id=submission_id
   );
