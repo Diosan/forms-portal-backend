@@ -179,6 +179,8 @@ export const login = async (req, res, next) => {
 
       // .send('OTP sent to email');
     } else {
+      logAuthenticationEvent('Password does not match', loggedUser, 'Incorrect Passord');
+
       console.log("Password does not match");
       // console.log(token)
       const customError = new Error("Incorrect Passord");
