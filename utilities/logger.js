@@ -2,13 +2,16 @@ import winston from 'winston';
 // Define your severity levels.
 // With them, You can create log files,
 // see or hide levels based on the running ENV.
+
 const levels = {
-  error: 0,
-  warn: 1,
-  info: 2,
-  http: 3,
-  debug: 4,
-}
+    error: 0,
+    warn: 1,
+    info: 2,
+    http: 3,
+    debug: 4,
+    auth: 5,
+  };
+
 
 // This method set the current severity based on
 // the current NODE_ENV: show all the log levels
@@ -24,12 +27,13 @@ const level = () => {
 // Colors make the log message more visible,
 // adding the ability to focus or ignore messages.
 const colors = {
-  error: 'red',
-  warn: 'yellow',
-  info: 'green',
-  http: 'magenta',
-  debug: 'white',
-}
+    error: 'red',
+    warn: 'yellow',
+    info: 'green',
+    http: 'magenta',
+    debug: 'white',
+    auth: 'blue',
+  };
 
 // Tell winston that you want to link the colors
 // defined above to the severity levels.
@@ -48,6 +52,7 @@ const format = winston.format.combine(
 )
 // Define which transports the logger must use to print out messages.
 // In this example, we are using three different transports
+console.log("..........................................................................")
 const transports = {
     console: new winston.transports.Console(),
     errorFile: new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
@@ -55,6 +60,8 @@ const transports = {
     authFile: new winston.transports.File({ filename: 'logs/auth.log', level: 'auth' }),
     otherFile: new winston.transports.File({ filename: 'logs/other.log', level: 'info' }),
 }
+console.log("..........................................................................")
+
 
 // Create the logger instance that has to be exported
 // and used to log messages.
