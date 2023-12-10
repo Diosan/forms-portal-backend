@@ -30,10 +30,45 @@ import SignOTPGenerator from "../utilities/SignOTPGenerator.class.js";
 import { Signatures } from "../utilities/Signatures.class.js";
 import {mailConfig} from '../config/mail.config.js';
 import axios  from "axios";
+import { SubmissionMailer } from "../utilities/SubmissionMailer.class.js";
+
 
 
 
 const ErrorLog = ErrorLogModel;
+
+export const sendSignRequest = async (req, res) => {
+  const mailer = new SubmissionMailer();
+  let complainant = await ComplainantModel.findOne(
+    {
+      where: {submissionId: req.body.submission_id},
+      raw: true
+    }
+  );
+
+  console.log('\n\n\n\n Complainant: ', complainant);
+
+  let complainantUser = await UserModel.findOne(
+    {
+      where: {email: complainant.email},
+      raw: true
+    }
+  );
+  let verifierUser = await UserModel.findByPk(
+    complainantUser.verifierId,
+    {raw: true}
+  )
+  let email = verifierUser.email;
+  let name = verifierUser.firstName;
+  mailer.signatureRequestEmail(
+    req.body.submission_id, 
+    email,
+    name
+  );
+  res.status(201).json({
+    outcome: 'success'
+  })
+}
 
 export const sendOTP = async (req, res) => {
 

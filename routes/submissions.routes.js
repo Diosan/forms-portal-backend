@@ -1,6 +1,6 @@
   import {findAll, findOne, authenticateUser, create, update, del, resetPassword,
     updateMessage, forgotPasswordRequest, handlePasswordForgotPage, resetPasswordFromEmail,
-    saveComplainant, updateTitle, updateComplainant, saveAccused, accuseds, requestSignature, createIndictable, signIndictable, complainantSign, sendOTP, submissionSignature, verifyOTP
+    saveComplainant, updateTitle, updateComplainant, saveAccused, accuseds, requestSignature, createIndictable, signIndictable, complainantSign, sendOTP, submissionSignature, verifyOTP, sendSignRequest
   } from "../controllers/submissions.controller.js";
   import express from "express";
   
@@ -53,6 +53,8 @@
     router.post('/send_otp', sendOTP);
 
     router.post('/verify_otp', verifyOTP);
+
+    router.post('/sign_request', sendSignRequest);
 
     app.use('/api/submissions', router);
   };
