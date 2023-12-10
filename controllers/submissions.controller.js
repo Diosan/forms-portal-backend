@@ -39,16 +39,19 @@ export const sendOTP = async (req, res) => {
 
   const totp = new SignOTPGenerator();
 
-  totp.generateOTP(req.body.email, req.body.name)
+  totp.generateOTP(req.body.submission_id, req.body.email, req.body.name)
   .then(() => console.log('OTP sent to user email.'))
   .catch(error => console.error('Error generating or sending OTP:', error));
 
   return res.status(201).json({
     outcome: 'success', 
     message: "Successfully logged in: OTP send to " + req.body.email,
-    email: req.body.email,
-    token: token // Include the token in the response
+    email: req.body.email
   })
+
+  // return res.status.json(201)({
+  //   outcome: 'failure'
+  // })
 
 }
 
