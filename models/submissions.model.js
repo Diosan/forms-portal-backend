@@ -21,6 +21,11 @@ export default sequelize => {
         type: DataTypes.STRING,
         allowNull: false
       },
+      matterType: {           
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: 'Indictable'
+      },
       summaryOfEvidence: {
         type: DataTypes.TEXT,
         allowNull: true

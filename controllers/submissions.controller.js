@@ -20,16 +20,165 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 const saltRounds = 10;
 const JWT_SECRET = process.env.JWT_SECRET;
-import nodemailer from "nodemailer";
-import moment from "moment";
-import { format } from "date-fns";
-import { v4 as uuidv4 } from "uuid";
-import { TOTPGenerator } from "../utilities/TOTPGenerator.class.js";
+import nodemailer from 'nodemailer';
+import moment from 'moment';
+import {format} from 'date-fns'
+import { v4 as uuidv4 } from 'uuid';
+import {TOTPGenerator} from '../utilities/TOTPGenerator.class.js';
+import SignOTPGenerator from "../utilities/SignOTPGenerator.class.js";
 import { Signatures } from "../utilities/Signatures.class.js";
-import { mailConfig } from "../config/mail.config.js";
-import axios from "axios";
+import {mailConfig} from '../config/mail.config.js';
+import axios  from "axios";
+import { SubmissionMailer } from "../utilities/SubmissionMailer.class.js";
+
+
+
 
 const ErrorLog = ErrorLogModel;
+
+export const sendSignRequest = async (req, res) => {
+  const mailer = new SubmissionMailer();
+  let complainant = await ComplainantModel.findOne(
+    {
+      where: {submissionId: req.body.submission_id},
+      raw: true
+    }
+  );
+
+  console.log('\n\n\n\n Complainant: ', complainant);
+
+  let complainantUser = await UserModel.findOne(
+    {
+      where: {email: complainant.email},
+      raw: true
+    }
+  );
+  let verifierUser = await UserModel.findByPk(
+    complainantUser.verifierId,
+    {raw: true}
+  )
+  let email = verifierUser.email;
+  let name = verifierUser.firstName;
+  mailer.signatureRequestEmail(
+    req.body.submission_id, 
+    email,
+    name
+  );
+  res.status(201).json({
+    outcome: 'success'
+  })
+}
+
+export const sendOTP = async (req, res) => {
+
+  const totp = new SignOTPGenerator();
+
+  totp.generateOTP(req.body.submission_id, req.body.email, req.body.name)
+  .then(() => console.log('OTP sent to user email.'))
+  .catch(error => console.error('Error generating or sending OTP:', error));
+
+  return res.status(201).json({
+    outcome: 'success', 
+    message: "Successfully logged in: OTP send to " + req.body.email,
+    email: req.body.email
+  })
+
+  // return res.status.json(201)({
+  //   outcome: 'failure'
+  // })
+
+}
+
+
+export const verifyOTP = async (req, res) => {
+  // console.log('\n\n Request body: ', req.body);
+  // console.log('\n\n');
+
+  const totp = new SignOTPGenerator();
+  let verified = await totp.verifyOTP(req.body.email, req.body.otp);
+  
+  // console.log('\n\n\n verification result: ', verified);
+
+  if(verified) {
+    return res.status(201).json({outcome: 'success'});
+  } else {
+    return res.status(201).json({outcome: 'failure'});
+  }
+
+}
+
+
+export const sendSignRequest = async (req, res) => {
+  const mailer = new SubmissionMailer();
+  let complainant = await ComplainantModel.findOne(
+    {
+      where: {submissionId: req.body.submission_id},
+      raw: true
+    }
+  );
+
+  console.log('\n\n\n\n Complainant: ', complainant);
+
+  let complainantUser = await UserModel.findOne(
+    {
+      where: {email: complainant.email},
+      raw: true
+    }
+  );
+  let verifierUser = await UserModel.findByPk(
+    complainantUser.verifierId,
+    {raw: true}
+  )
+  let email = verifierUser.email;
+  let name = verifierUser.firstName;
+  mailer.signatureRequestEmail(
+    req.body.submission_id, 
+    email,
+    name
+  );
+  res.status(201).json({
+    outcome: 'success'
+  })
+}
+
+export const sendOTP = async (req, res) => {
+
+  const totp = new SignOTPGenerator();
+
+  totp.generateOTP(req.body.submission_id, req.body.email, req.body.name)
+  .then(() => console.log('OTP sent to user email.'))
+  .catch(error => console.error('Error generating or sending OTP:', error));
+
+  return res.status(201).json({
+    outcome: 'success', 
+    message: "Successfully logged in: OTP send to " + req.body.email,
+    email: req.body.email
+  })
+
+  // return res.status.json(201)({
+  //   outcome: 'failure'
+  // })
+
+}
+
+
+export const verifyOTP = async (req, res) => {
+  // console.log('\n\n Request body: ', req.body);
+  // console.log('\n\n');
+
+  const totp = new SignOTPGenerator();
+  let verified = await totp.verifyOTP(req.body.email, req.body.otp);
+  
+  // console.log('\n\n\n verification result: ', verified);
+
+  if(verified) {
+    return res.status(201).json({outcome: 'success'});
+  } else {
+    return res.status(201).json({outcome: 'failure'});
+  }
+
+}
+
 
 export const complainantSign = async (req, res, next) => {
   try {
@@ -40,18 +189,59 @@ export const complainantSign = async (req, res, next) => {
     let email = req.body.email;
     let submission_id = req.body.submission_id;
 
+  // console.log('Email: ', email);
     console.log("Email: ", email);
 
-    let submissionHash = await signatures.complainantSubmissionSign(
+    let signature = await signatures.complainantSubmissionSign(
       (email = email),
       (submission_id = submission_id)
     );
 
+  console.log('\n\n\n Signature from Signature Class: ', signature);
+  
+  res.status(201).json(signature);
     res.status(201).json({
       submission_hash: submissionHash,
     });
 
     // res.status(201).json({ submission_hash: submissionHash});
+
+  // res.status(201).json({ submission_hash: 'abcdefghijklmnopqrstuvwyz'});
+
+}
+
+
+export const submissionSignature = async (req, res) => {
+
+
+  console.log('\n\n\n Request body: ', req.body)
+
+  let user = await UserModel.findByPk(
+    req.body.userId,
+    { raw: true }
+  );
+
+  console.log('\n\n\n user: ', user);  
+
+  let signature = await SignatureModel.findOne({
+    where: {
+      content_id: req.body.submission_id,
+      userId: req.body.userId
+    },
+    raw: true
+  });
+
+  console.log('\n\n\n signature: ', signature);
+
+  res.status(201).json({
+    signature: signature,
+    user: user
+  });
+
+  // res.status(201).json({});
+
+}
+
 
     // res.status(201).json({ submission_hash: 'abcdefghijklmnopqrstuvwyz'});
   } catch (error) {
@@ -310,45 +500,63 @@ export const updateComplainant = async (req, res, next) => {
   }
 };
 
-export const createIndictable = async (req, res, next) => {
-  try {
-    let user = await UserModel.findOne({
-      where: { email: req.body.email },
-    });
+export const createIndictable = async (req, res) => {
 
-    let submission = req.body.submission;
-    submission["userId"] = user.id;
+  console.log('Body passed to controller: ', req.body);
+
+  // let user = await UserModel.findOne({
+  //   where: {email: req.body.email}
+  // });
+
+  let submission = req.body.submission;
+
+  let user = await UserModel.findByPk(submission.userId);
+
+
+  submission['userId'] = user.id;
 
     console.log("\n\n\n Submission to be created: ", submission);
 
-    let new_submission = await Submission.create(submission);
+  let new_submission = await SubmissionModel.create(submission)
 
     console.log("Submission created: ", new_submission);
 
-    res.status(201).json({
-      outcome: "success",
-      submission: new_submission,
-    });
-  } catch (error) {
-    next(error);
+  res.status(201).json({
+    outcome: 'success', 
+    submission: new_submission
+  })
+
+}
+
+export const create = async (req, res) => {
+
+  //   let new_user = {
+  //       agencyMemberUniqueId: req.body.reg_number,
+  //       agencyName: req.body.agency,
+  //       password: bcrypt.hashSync(req.body.password, 8),
+  //       username: req.body.email,
+  //       firstName: req.body.first_name,
+  //       lastName: req.body.last_name,
+  //       email: req.body.email
+  //   }
+
+  console.log('\n\n\n request body with matterType', req.body)
+  console.log('\n\n\n');
+
+  // let user = await UserModel.findOne({
+  //   where: {email: req.body.email}
+  // })
+  // let user = await UserModel.findByPk(req?.body?.uid || 0)
+  let user = await UserModel.findByPk(req.body.userId);
+  console.log("User: ", user)
+
+  let new_submission = {
+    description: req.body.title,
+    userId: req.body.userId,
+    status: 'pending',
+    type: req.body.type,
+    matterType: req.body.matterType
   }
-};
-
-export const create = async (req, res, next) => {
-  try {
-    console.log(req.body);
-
-    // let user = await UserModel.findOne({
-    //   where: {email: req.body.email}
-    // })
-    let user = await UserModel.findByPk(req?.body?.uid || 0);
-    console.log("User: ", user);
-
-    let new_submission = {
-      description: req.body.title,
-      userId: user.uid,
-      status: "pending",
-    };
 
     try {
       const submission = await SubmissionModel.create(new_submission);

@@ -1,4 +1,4 @@
-import {saveCharge, charges, saveConviction, convictions, savePending, pendings, findOne
+import {saveCharge, charges, saveConviction, convictions, savePending, pendings, findOne, saveRelatedMatter, relateds
 
 } from "../controllers/accuseds.controller.js";
 import express from "express";
@@ -20,6 +20,10 @@ export default function(app) {
     router.get('/convictions/:id', convictions);
 
     router.post('/convictions', saveConviction);
+
+    router.post('/relateds', saveRelatedMatter);
+
+    router.get('/relateds/:id', relateds);
 
     app.use('/api/accuseds', router);
 

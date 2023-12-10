@@ -30,6 +30,7 @@ import createPendingModel from "./pendings.model.js";
 import createPasswordResetModel from "./password_reset.model.js";
 import createConvictionModel from "./convictions.model.js";
 import createSigntureModel from "./signatures.model.js";
+import createRelatedMatterModel from "./related_matters.model.js";
 
 
 export const UserModel = createUserModel(sequelize);
@@ -46,6 +47,7 @@ export const PasswordResetModel = createPasswordResetModel(sequelize);
 export const PendingModel = createPendingModel(sequelize);
 export const ConvictionModel = createConvictionModel(sequelize);
 export const SignatureModel = createSigntureModel(sequelize);
+export const RelatedMatterModel = createRelatedMatterModel(sequelize);
 
 // ---------------------
 // ASSOCIATIONS
@@ -62,15 +64,18 @@ SubmissionModel.hasMany(UserModel)
 ChargesModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 AccusedModel.hasMany(ChargesModel)
 // Charges ++++++++++
-PendingModel.belongsTo(PendingModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+PendingModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 AccusedModel.hasMany(PendingModel)
 // Pendings ++++++++++
-ConvictionModel.belongsTo(ConvictionModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+ConvictionModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 AccusedModel.hasMany(ConvictionModel)
 // Pendings ++++++++++
 SignatureModel.belongsTo(UserModel, { foreignKey: 'userId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 UserModel.hasMany(SignatureModel)
 // Signatures ++++++++++
+RelatedMatterModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+AccusedModel.hasMany(RelatedMatterModel)
+// Related Matters ++++++++++
 
 // Passwords ++++++++++
 // UserModel.hasMany(PasswordResetModel, { foreignKey: 'userId' });
