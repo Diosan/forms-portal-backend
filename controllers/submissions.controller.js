@@ -57,6 +57,7 @@ export const sendSignRequest = async (req, res) => {
     complainantUser.verifierId,
     {raw: true}
   )
+  console.log(verifierUser);
   let email = verifierUser.email;
   let name = verifierUser.firstName;
   mailer.signatureRequestEmail(
