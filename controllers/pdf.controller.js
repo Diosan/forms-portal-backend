@@ -12,13 +12,90 @@ import { redisClient, } from '../redis/redisConfig.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import puppeteer from 'puppeteer';
-import { db, SubmissionModel } from "../models/index.js";
+import { db, SubmissionModel, ComplainantModel, ConvictionModel, UserModel, ChargesModel, PendingModel, AccusedModel, SignatureModel, RelatedMatterModel } from "../models/index.js";
 import FormData from 'form-data';
 import dotenv from 'dotenv';
 
 
 const externalApiUrl = process.env.EFILING_APP_URL || "https://eservices.ttlawcourts.org/filing/dev/api/swfapi.php"
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+
+
+// const submissionWithDetails = await SubmissionModel.findOne({
+//     where: {
+//       id: yourSubmissionId // replace with the ID of the submission you want to fetch
+//     },
+//     include: [
+//       {
+//         model: ComplainantModel,
+//         required: false // Change to true if a complainant must exist for a submission
+//       },
+//       {
+//         model: AccusedModel,
+//         required: false,
+//         include: [
+//           { model: ChargesModel, required: false },
+//           { model: PendingModel, required: false },
+//           { model: ConvictionModel, required: false },
+//           { model: RelatedMatterModel, required: false }
+//         ]
+//       },
+//       {
+//         model: UserModel, // Assuming you want to fetch user data for the submission
+//         required: false,
+//         include: [
+//           { model: SignatureModel, required: false }
+//           // Include other models associated with UserModel as needed
+//         ]
+//       }
+//       // Include other models as needed
+//     ]
+//   });
+
+async function getSubmissionWithDetails(submissionId) {
+    console.log("ID: ",submissionId)
+    try {
+      const submissionWithDetails = await SubmissionModel.findOne({
+        where: {
+          id: submissionId
+        },
+        include: [
+          {
+            model: ComplainantModel,
+            required: false
+          },
+          {
+            model: AccusedModel,
+            required: false,
+            include: [
+              { model: ChargesModel, required: false },
+              { model: PendingModel, required: false },
+              { model: ConvictionModel, required: false },
+              { model: RelatedMatterModel, required: false }
+            ]
+          },
+          {
+            model: UserModel,
+            required: false,
+            include: [{ model: SignatureModel, required: false }]
+          }
+          // ... other models as needed
+        ]
+      });
+  
+      return submissionWithDetails;
+    } catch (error) {
+      // Handle or throw the error based on your error handling policy
+      console.error('Error fetching submission details:', error);
+      throw error;
+    }
+  }
+  
+  
+
+
+
 
 
 // Create 'documents' directory if it doesn't exist
@@ -130,6 +207,17 @@ export const incomingPDF = async (req, res) => {
 
 
 export const convertWithPuppeteer = async (req, res) => {
+
+    if (!req.body || Object.keys(req.body).length === 0 || !req.body.submissionId) {
+        return res.status(500).send('An error occurred');
+    }
+    
+    console.log("Submission ID:  ", req.body.submissionId)
+    // return res.send()
+    const submissionDetails = await getSubmissionWithDetails(req.body.submissionId);
+    console.log(submissionDetails)
+    // return res.send()
+
     console.log("Efiling: ",externalApiUrl)
     try {
         const { html, submissionId, jsondata } = req.body;

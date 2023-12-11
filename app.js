@@ -38,8 +38,8 @@ import {Logger} from "./utilities/logger.js";
 
 
 // Read the SSL certificate files
-const key = fs.readFileSync(path.resolve(__dirname, './key.pem'));
-const cert = fs.readFileSync(path.resolve(__dirname, './cert.pem'));
+// const key = fs.readFileSync(path.resolve(__dirname, './key.pem'));
+// const cert = fs.readFileSync(path.resolve(__dirname, './cert.pem'));
 
 // Internal libraries next
 
@@ -52,7 +52,6 @@ import { redisClient, redisStore, userChannel } from './redis/redisConfig.js'
 
 import passwordRoutes from './routes/password.routes.js';
 import {setupRoutes} from './routes/index.routes.js';
-
 import {errorHandler} from './utilities/errorHandler.js';
 
 
@@ -104,7 +103,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
   //________________________________________________
   // SYNC Database -  USE WHEN NECESSARY
   //---------------------------------------------
-  db.sequelize.sync();
+  // db.sequelize.sync();
   //----------------------------------------------------------------
 
 
@@ -134,9 +133,9 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Create an HTTPS server with certificate (may not be necessary in production)
-const server = https.createServer({ key: key, cert: cert }, app);
+// const server = https.createServer({ key: key, cert: cert }, app);
 // or create an HTTP Serve
-// const server = http.createServer(app);
+const server = http.createServer(app);
 
 //use cookie parser
 // app.use(cookieParser());
@@ -148,6 +147,7 @@ const server = https.createServer({ key: key, cert: cert }, app);
 //------------------------------------------------
 var allowedDomains = [
   'http://swf.ttlawcourts.org', 'https://swf.ttlawcourts.org', 
+  'http://swif.ttlawcourts.org', 'https://swif.ttlawcourts.org', 
   'http://jsswf.sytes.net', 'https://jsswf.sytes.net', 
   'http://localhost:3000', 'https://localhost:3000',
   'http://localhost:5173', 'https://localhost:5173',

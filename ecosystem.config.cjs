@@ -24,15 +24,16 @@ module.exports = {
     ],
     deploy: {
       production: {
-        user : "",
-        host : "",
-        //key: "/home/judadm/.ssh/id_rsa.pub",
+        user : "judadm",
+        host : "10.0.1.197",
+        key: "/home/judadm/.ssh/id_rsa.pub",
         repo : "git@bitbucket.org:dion_santana/forms-portal-backend.git",
         ref  : "origin/master",
-        path : "/var/www/html/jsswf-server",
+        path : "/var/www/html/forms-portal-backend",
         // "pre-deploy": "git reset --hard",
         // "post-deploy" : "npm install && sudo nginx -s reload && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
-        "post-deploy": "cd /var/www/html/jsswf-server/current && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
+        // "post-deploy": "cd /var/www/html/jsswf-server/current && pm2 startOrRestart ecosystem.config.js --env production && pm2 save",
+        "post-deploy": "git reset --hard && git pull origin master && cd /var/www/html/jsswf-server/current && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
       },
       staging: { 
         user : "root",

@@ -59,7 +59,8 @@ ComplainantModel.belongsTo(SubmissionModel, { foreignKey: 'submissionId', onDele
 SubmissionModel.hasOne(ComplainantModel)
 // Complainants ++++++++++
 AccusedModel.belongsTo(SubmissionModel, { foreignKey: 'submissionId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
-SubmissionModel.hasMany(UserModel)
+SubmissionModel.hasMany(AccusedModel, { foreignKey: 'submissionId' });
+
 // Accuseds ++++++++++
 ChargesModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 AccusedModel.hasMany(ChargesModel)
