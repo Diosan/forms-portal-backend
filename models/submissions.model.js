@@ -48,6 +48,10 @@ export default sequelize => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      efilingResponse: {
+        type: DataTypes.JSON,
+        allowNull: true
+    }
     });
 
     // Submission.associate = function (models) {

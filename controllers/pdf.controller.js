@@ -175,15 +175,16 @@ export const convertWithPuppeteer = async (req, res) => {
             headers: formData.getHeaders()
         });
 
-        // Handle the external API's response
-        if (response.data.response === 'success') {
-            // Update the submission in the database
-            await SubmissionModel.update({ status: 'final' }, { where: { id: submissionId } });
-            res.json(response.data);
-        } else {
-            // Handle cases where the submission was not successful
-            res.status(400).json({ error: 'Submission to external API failed', details: response.data });
-        }
+        // Update the submission in the database
+        await SubmissionModel.update(
+            { 
+                status: 'final',
+                efilingId: response.data.efilingappcode, // Save the efilingappcode
+                efilingResponse: JSON.stringify(response.data) // Save the entire response
+            }, 
+            { where: { id: submissionId } }
+        );
+        res.json(response.data);
     } catch (error) {
         console.log(error);
         res.status(500).send('Error in processing: ' + error.message);
