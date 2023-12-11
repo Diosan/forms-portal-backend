@@ -28,6 +28,8 @@ import { getUserByEmail, getStoredOTP, deleteStoredOTP } from './controllers/adm
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import {MorganMiddleware} from "./middlewares/morgan.middleware.js"
+import fileUpload from 'express-fileupload';
+
 
 // The morgan middleware does not need this.
 // This is for a manual log
@@ -242,6 +244,9 @@ var allowedDomains = [
 
   //----------------------------------------------------------------
   //----------------------------------------------------------------
+  // FILE UPLOAD
+  app.use(express.json({ limit: '50mb' })); 
+  app.use(fileUpload());
 
 
   //----------------------------------------------------------------

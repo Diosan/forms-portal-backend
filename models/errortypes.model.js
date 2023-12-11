@@ -14,7 +14,7 @@ export default (sequelize) => {
       allowNull: false,
     },
     error_desc: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     createdAt: {

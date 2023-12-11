@@ -43,7 +43,11 @@ export default sequelize => {
       userId: {
         type: DataTypes.UUID,
         allowNull: true,
-      }
+      },
+      efilingId: { 
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     });
 
     // Submission.associate = function (models) {

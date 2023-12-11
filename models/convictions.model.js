@@ -11,7 +11,7 @@ export default (sequelize) => {
             autoIncrement: true
         },
         offence: {           
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             allowNull: false
         },
         dateOfOffence:{
@@ -19,7 +19,7 @@ export default (sequelize) => {
           allowNull: false
         },
         sentence: {           
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             allowNull: false
         }
     });

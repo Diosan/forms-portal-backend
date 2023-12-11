@@ -9,10 +9,10 @@ export default (sequelize) => {
       autoIncrement: true
     },
     user_agent: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
     },
     referer: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
     },
     socket_ip: {
       type: DataTypes.STRING,
@@ -25,11 +25,11 @@ export default (sequelize) => {
       allowNull: false,
     },
     err_message: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     error_desc: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
     },
     userId: {
       type: DataTypes.UUID,

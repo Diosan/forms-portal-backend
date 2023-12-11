@@ -68,7 +68,7 @@ export default sequelize => {
       allowNull: false
     },
     previousCriminalRecord:{
-      type: DataTypes.STRING, 
+      type: DataTypes.TEXT, 
       allowNull: false,
       defaultValue: 'Unknown'
     },

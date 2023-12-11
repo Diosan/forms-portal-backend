@@ -10,7 +10,7 @@ const createPendingModel = (sequelize) => {
             autoIncrement: true
         },
         offence: {           
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             allowNull: false
         },
         dateOfOffence:{
