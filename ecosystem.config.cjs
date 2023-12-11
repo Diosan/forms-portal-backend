@@ -26,7 +26,7 @@ module.exports = {
       production: {
         user : "judadm",
         host : "10.0.1.197",
-        key: "/home/judadm/.ssh/hill.pub",
+        // key: "/home/judadm/.ssh/hill.pub",
         repo : "git@bitbucket.org:dion_santana/forms-portal-backend.git",
         ref  : "origin/master",
         path : "/var/www/html/forms-portal-backend",
