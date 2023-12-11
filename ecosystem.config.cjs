@@ -31,9 +31,11 @@ module.exports = {
         ref  : "origin/master",
         path : "/var/www/html/forms-portal-backend",
         // "pre-deploy": "git reset --hard",
+        'pre-deploy': 'cd /var/www/html/forms-portal-backend && git pull origin master',
         // "post-deploy" : "npm install && sudo nginx -s reload && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
         // "post-deploy": "cd /var/www/html/jsswf-server/current && pm2 startOrRestart ecosystem.config.js --env production && pm2 save",
-        "post-deploy": "git reset --hard && git pull origin master && cd /var/www/html/jsswf-server/current && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
+        // "post-deploy": "git reset --hard && git pull origin master && cd /var/www/html/jsswf-server/current && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
+        "post-deploy": "git pull origin master && cd /var/www/html/forms-poral-backend/current && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
       },
       staging: { 
         user : "root",

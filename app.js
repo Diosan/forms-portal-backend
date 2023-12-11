@@ -146,12 +146,12 @@ const server = http.createServer(app);
 // CORS MIDDLEWARE
 //------------------------------------------------
 var allowedDomains = [
-  'http://swf.ttlawcourts.org', 'https://swf.ttlawcourts.org', 
+  // 'http://swf.ttlawcourts.org', 'https://swf.ttlawcourts.org', 
   'http://swif.ttlawcourts.org', 'https://swif.ttlawcourts.org', 
-  'http://jsswf.sytes.net', 'https://jsswf.sytes.net', 
+  // 'http://jsswf.sytes.net', 'https://jsswf.sytes.net', 
   'http://localhost:3000', 'https://localhost:3000',
   'http://localhost:5173', 'https://localhost:5173',
-  'http://localhost:8443', 'https://localhost:8443',
+  // 'http://localhost:8443', 'https://localhost:8443',
   'http://localhost:8080', 'https://localhost:8080',
   'http://127.0.0.1:5173', 'https://127.0.0.1:5173',
   'http://localhost', 'https://localhost'
@@ -241,6 +241,9 @@ var allowedDomains = [
   app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')));
   app.use(express.static( 'dist'));
   app.use('/public', express.static(path.join(__dirname, 'public')));
+
+
+  console.log("Public Directory: ........ ",  path.join(__dirname, 'public'))
 
   //----------------------------------------------------------------
   //----------------------------------------------------------------
