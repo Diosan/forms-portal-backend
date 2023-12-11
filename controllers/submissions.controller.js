@@ -252,6 +252,38 @@ export const submissionSignature = async (req, res) => {
 }
 
 
+export const submissionVerification = async (req, res) => {
+
+
+  console.log('\n\n\n Request body: ', req.body)
+
+  let user = await UserModel.findByPk(
+    req.body.userId,
+    { raw: true }
+  );
+
+  console.log('\n\n\n user: ', user);  
+
+  let signature = await SignatureModel.findOne({
+    where: {
+      type: 'verification',
+      content_id: req.body.submission_id,
+      userId: req.body.userId
+    },
+    raw: true
+  });
+
+  console.log('\n\n\n signature: ', signature);
+
+  res.status(201).json({
+    signature: signature,
+    user: user
+  });
+
+  // res.status(201).json({});
+
+}
+
 
 export const findAll = (req, res) => {
 
