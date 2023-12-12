@@ -546,7 +546,26 @@ var allowedDomains = [
           options: {
             properties: {
               createdAt: {
-                isVisible: { list: true, filter: true, show: true, edit: false }, 
+                isVisible: { list: false, filter: false, show: false, edit: false }, 
+              },
+              UpdatedAt:
+            {
+                isVisible: { list: false, filter: false, show: false, edit: false }, 
+              },
+              resetToken:
+            {
+                isVisible: { list: false, filter: false, show: false, edit: false }, 
+              },
+              notifications:
+            {
+                isVisible: { list: false, filter: false, show: false, edit: false }, 
+              },
+              agencyName:
+            {
+                isVisible: { list: false, filter: false, show: false, edit: false }, 
+              },
+              verifierId: {
+                isVisible: { list: true, filter: true, show: true, edit: true }, 
               },
               username: {
                 isVisible: { list: true, filter: true, show: true, edit: false }, 
