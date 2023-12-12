@@ -39,3 +39,5 @@ document/*
 .deploys
 current
 source/
+public/errors
+./public/errors/*
