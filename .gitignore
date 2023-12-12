@@ -11,6 +11,11 @@ config/config.json
 config/mail.config.js
 config/*
 config/db.config.js
+./config
+./config/config.json
+./config/mail.config.js
+./config/*
+./config/db.config.js
 
 node_modules
 *.local
