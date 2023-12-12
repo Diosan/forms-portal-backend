@@ -893,18 +893,18 @@ export const forgotPasswordRequest = async (req, res) => {
 
   // Send an email to the user containing a link to the password reset page
   const transporter = nodemailer.createTransport({
-    host: 'mail.link868.com',
-    port: 465,
-    secure: true,
-    auth: {
-      user: 'emailer@jsswf.sytes.net',
-      pass: ''
-    }
+    host: '10.0.1.99',
+    port: 25,
+    secure: false,
+    // auth: {
+    //   user: 'emailer@jsswf.sytes.net',
+    //   pass: ''
+    // }
   });
 
-  const resetUrl = `http://localhost:4001/api/users/password/new?token=${token}`;
+  const resetUrl = `https://swif.ttlawcourts.org/api/users/password/new?token=${token}`;
   const mailOptions = {
-    from: 'emailer@jsswf.sytes.net',
+    from: 'swif-noreply@ttlawcourts.org',
     to: username,
     subject: 'Password Reset',
     text: `Click the following link to reset your password: ${resetUrl}`
@@ -932,7 +932,7 @@ export const handlePasswordForgotPage = async (req, res) => {
   // Redirect the user the password reset page
   // res.render('reset-password', { token });
   console.log('Redirecting the user back to the reset token page');
-  res.redirect(`http://localhost:3000/user/password/new?token=${token}`);
+  res.redirect(`https://swif.ttlawcourts.org/user/password/new?token=${token}`);
 }
 
 // handle forgot password
@@ -971,7 +971,7 @@ export const requestSignature = async (req, res) => {
     from: 'JSSWF <omm@link868.com>',
     to: req.body.complainant_email,
     subject: 'Complaint with Oath',
-    text: `New complaint with oath requires your signature http://jsswf.sytes.net/sign/${req.body.submission_id}`
+    text: `New complaint with oath requires your signature https://swif.ttlawcourts.org/sign/${req.body.submission_id}`
   });
   res.status(201).json({
     outcome: 'success'

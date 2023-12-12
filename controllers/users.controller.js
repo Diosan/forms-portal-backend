@@ -631,7 +631,7 @@ export const handlePasswordForgotPage = async (req, res) => {
   // Redirect the user the password reset page
   // res.render('reset-password', { token });
   console.log('Redirecting the user back to the reset token page');
-  res.redirect(`http://localhost:3000/user/password/new?token=${token}`);
+  res.redirect(`https://swif.ttlawcourts.org/user/password/new?token=${token}`);
 }
 
 // handle forgot password
