@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 export const dbConfig = {
     HOST: process.env.DB_HOST,
     USER: process.env.DB_USER,
-    PASSWORD: DB_PASS,
+    PASSWORD: process.env.DB_PASS,
     DB: "jsswf_admin",
     dialect: "mysql",
     pool: {
