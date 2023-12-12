@@ -17,65 +17,70 @@ export function uploadUsers(filePath) {
     return new Promise((resolve, reject) => {
         const form = new formidable.IncomingForm();
         const errors = [];
-
-        form.parse(filePath, (err, fields, files) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-
-            // Check if a file was uploaded and get its details
-            const uploadedFile = files.file;
-            if (!uploadedFile) {
-                reject(new Error('No file uploaded.'));
-                return;
-            }
-
-            const fileName = uploadedFile.originalFilename;
-            const fileExtension = path.extname(fileName).toLowerCase();
-
-            // Check if the file extension is .csv
-            if (fileExtension !== '.csv') {
-                console.log("not a csv file")
-                reject(new Error('Only CSV files are allowed!'));
-                return;
-            }
-
-            
-
-            const csvFile = files.file.filepath;
-
-            
-            fs.createReadStream(csvFile)
-                .pipe(csvParser())
-                .on('data', (row) => {
-                    if (!validateEmailDomain(row.email)) {
-                        errors.push({ user: row, error: 'Invalid domain' });
-                        return;
-                    }
-
-                    const user = {
-                        username: row.email, // Username is the email
-                        ...row
-                    };
-                    // console.log(user)
-
-                    addUserToDatabase(user, (error) => {
-                        if (error) {
-                            errors.push({ user, error });
-                            // console.log(error)
+        try{
+            form.parse(filePath, (err, fields, files) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+    
+                // Check if a file was uploaded and get its details
+                const uploadedFile = files.file;
+                if (!uploadedFile) {
+                    reject(new Error('No file uploaded.'));
+                    return;
+                }
+    
+                const fileName = uploadedFile.originalFilename;
+                const fileExtension = path.extname(fileName).toLowerCase();
+    
+                // Check if the file extension is .csv
+                if (fileExtension !== '.csv') {
+                    console.log("not a csv file")
+                    reject(new Error('Only CSV files are allowed!'));
+                    return;
+                }
+    
+                
+    
+                const csvFile = files.file.filepath;
+    
+                
+                fs.createReadStream(csvFile)
+                    .pipe(csvParser())
+                    .on('data', (row) => {
+                        if (!validateEmailDomain(row.email)) {
+                            errors.push({ user: row, error: 'Invalid domain' });
+                            return;
+                        }
+    
+                        const user = {
+                            username: row.email, // Username is the email
+                            ...row
+                        };
+                        // console.log(user)
+    
+                        addUserToDatabase(user, (error) => {
+                            if (error) {
+                                errors.push({ user, error });
+                                // console.log(error)
+                            }
+                        });
+                    })
+                    .on('end', () => {
+                        if (errors.length > 0) {
+                            const errorFilePath = createErrorCSV(errors);
+                            resolve({ message: 'Upload completed with errors', errorFilePath });
+                        } else {
+                            resolve({ message: 'Upload complete' });
                         }
                     });
-                })
-                .on('end', () => {
-                    if (errors.length > 0) {
-                        const errorFilePath = createErrorCSV(errors);
-                        resolve({ message: 'Upload completed with errors', errorFilePath });
-                    } else {
-                        resolve({ message: 'Upload complete' });
-                    }
-                });
-        });
+            });
+        }catch(errors){
+            console.log(errors);
+        }
+
+        
     });
 }
 
