@@ -231,7 +231,7 @@ export const convertWithPuppeteer = async (req, res) => {
     console.log("============================================")
     //Build the efiling submission
     const efilingRecord = {
-                "swftransid": JSON.stringify(submissionWithDetails?.id),
+                "swftransid": submissionWithDetails?.id,
                 "email": JSON.stringify(submissionWithDetails?.user?.email) || "",
                 "court": JSON.stringify(submissionWithDetails?.complainant?.court) || "",
                 "courtoffice": JSON.stringify(submissionWithDetails?.complainant?.courtDistrict) || "",
