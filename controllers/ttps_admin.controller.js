@@ -95,6 +95,10 @@ export function uploadUsers(filePath) {
 
 
 export const bulkUploadUsers = async (req, res) => {
+    console.log("uploading the file");
+    return
+
+
     try{
         uploadUsers(req)
         .then(result => {
