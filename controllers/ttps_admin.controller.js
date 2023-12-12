@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 export function uploadUsers(filePath) {
 
     console.log('Uploading', filePath);
-    return
+
     return new Promise((resolve, reject) => {
         const form = new formidable.IncomingForm();
         const errors = [];
@@ -111,7 +111,7 @@ export const bulkUploadUsers = async (req, res) => {
                 });
             } else {
                 console.log("ERROR UPLOADING B")
-                res.status(200).json({ message: result.message });
+                // res.status(200).json({ message: result.message });
             }
         })
         .catch(error => {
@@ -119,7 +119,7 @@ export const bulkUploadUsers = async (req, res) => {
             res.status(500).json({ error: error.message });
         });
     }catch(errors){
-        console.log("ERROR UPLOADING D")
+        console.log("ERROR UPLOADING D >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
         // console.log(errors);
     }
 };
@@ -179,4 +179,119 @@ function createErrorCSV(errors) {
     // Return the publicly accessible URL path
     return `/public/errors/${filename}`;
 }
+
+
+// This function will handle the file upload and the CSV parsing
+export const uploadCsvAndCreateUsers = (req) => {
+    return new Promise((resolve, reject) => {
+      const form = new formidable.IncomingForm();
+      console.log('Started file parsing');
+  
+      form.parse(req, (err, fields, files) => {
+        console.log('>>>> 1');
+        if (err) {
+          console.error('Form parsing error:', err);
+          reject(err);
+          return;
+        }
+        console.log('>>>> 1');
+      
+        console.log('Form parsed. Fields:', fields, 'Files:', files);
+      
+        if (!files.file) {
+          console.error('No file found in the form data.');
+          reject(new Error('No file uploaded.'));
+          return;
+        }
+  
+        const file = Array.isArray(files.file) ? files.file[0] : files.file;
+        console.log('Processing file:', file.filepath);
+  
+        const results = [];
+  
+        fs.createReadStream(file.filepath)
+          .pipe(csvParser())
+          .on('data', (row) => {
+            console.log('Row received:', row);
+            results.push(row);
+          })
+          .on('end', () => {
+            console.log('CSV file has been read, number of records:', results.length);
+            const createUserPromises = results.map((user) => {
+              return UserModel.create(user).then((createdUser) => {
+                console.log('User created:', createdUser);
+                return createdUser;
+              }).catch((error) => {
+                console.error('Error creating user:', error);
+                return { error: error.message };
+              });
+            });
+  
+            Promise.allSettled(createUserPromises)
+              .then((results) => {
+                const errors = results.filter(result => result.status === 'rejected');
+                console.log('User creation results:', results);
+                if (errors.length > 0) {
+                  console.error('Some users could not be created:', errors);
+                  reject(errors);
+                } else {
+                  console.log('All users have been created successfully.');
+                  resolve('All users have been created successfully.');
+                }
+              })
+              .catch((error) => {
+                console.error('An error occurred while creating users:', error);
+                reject(error);
+              });
+          })
+          .on('error', (error) => {
+            console.error('Error reading the CSV file:', error);
+            reject(error);
+          });
+      });
+    });
+  };
+
+
+
+ 
+ 
+  export const csvTemp = (req, res) => {
+      const form = new formidable.IncomingForm();
+      form.parse(req, (err, fields, files) => {
+          if (err) {
+              res.status(500).json({ error: err.message });
+              return;
+          }
+  
+          const csvFilePath = files.file.filepath;
+          const results = [];
+  
+          fs.createReadStream(csvFilePath)
+              .pipe(csvParser())
+              .on('data', (data) => results.push(data))
+              .on('end', () => {
+                  // Process the parsed data
+                  // Here you can use Sequelize to save data to your database
+                  // For example, assuming each row in your CSV is a user:
+                  results.forEach(async (row) => {
+                      try {
+                          await UserModel.create(row);
+                      } catch (dbError) {
+                          console.error(dbError);
+                      }
+                  });
+  
+                  res.json(results);
+              });
+      });
+  };
+
+  
+
+  
+
+
+
+
 

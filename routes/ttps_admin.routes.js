@@ -1,5 +1,5 @@
 
-import {bulkUploadUsers} from "../controllers/ttps_admin.controller.js";
+import {bulkUploadUsers, uploadCsvAndCreateUsers, csvTemp} from "../controllers/ttps_admin.controller.js";
 import express from "express";
 
 export default function(app) {
@@ -9,5 +9,11 @@ export default function(app) {
   // Login a user
   router.post("/upload/bulk", bulkUploadUsers);
 
+  // UPLOAD Users temporary
+  router.post("/upload/csvTemp", csvTemp);
+
   app.use('/api/ttps/admin', router);
 };
+
+
+
