@@ -214,8 +214,14 @@ export const convertWithPuppeteer = async (req, res) => {
     
     console.log("Submission ID:  ", req.body.submissionId)
     // return res.send()
-    const submissionDetails = await getSubmissionWithDetails(req.body.submissionId);
-    console.log(submissionDetails)
+    const submissionWithDetails = await getSubmissionWithDetails(req.body.submissionId);
+    console.log("Submission Details")
+    // Manipulate the response to remove previousDataValues
+    const result = submissionWithDetails.get({ plain: true });
+    // Delete the previousDataValues property if it exists
+    delete result.previousDataValues;
+    console.log(result)
+    console.log("============================================")
     // return res.send()
 
     console.log("Efiling: ",externalApiUrl)
