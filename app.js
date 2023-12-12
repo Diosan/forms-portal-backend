@@ -556,7 +556,7 @@ var allowedDomains = [
               },
             },
             actions: {
-              new: { isAccessible: canCreateAdmins },
+              new: { isAccessible: true },
               edit: { isAccessible: canModifyUsers },
               delete: { isAccessible: canModifyUsers },
             },
