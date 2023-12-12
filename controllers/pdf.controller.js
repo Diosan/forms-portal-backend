@@ -249,7 +249,7 @@ export const convertWithPuppeteer = async (req, res) => {
 
     // return res.send()
 
-    console.log("Efiling Record: ", efilingRecord)
+    console.log("Efiling Record: ", JSON.stringify(efilingRecord))
     try {
         const { html, submissionId, jsondata} = req.body;
         // console.log(req.body);
