@@ -117,7 +117,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
   //________________________________________________
   // SYNC Database -  USE WHEN NECESSARY
   //---------------------------------------------
-  // db.sequelize.sync();
+  db.sequelize.sync();
   //----------------------------------------------------------------
 
 
@@ -304,9 +304,17 @@ function validateEmailDomain(email) {
   }
 }
 
+
 // Function to add a user to the database
 function addUserToDatabase(user, callback) {
+
+
+
+
+
+
   UserModel.create(user).then(() => {
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + user)
       callback(null);
   }).catch((err) => {
       callback(err);
@@ -346,12 +354,9 @@ function createErrorCSV(errors) {
 
 app.post('/api/ttps/admin/bulk/upload-csv', async (req, res) => {
     console.log("uploading the file");
+    
+    
     //tempKey
-    if(req.body.AUTHKEY === process.env.AUTHKEY)
-    {
-      console.log("bye")
-      return
-    }
     try{
         uploadUsers(req)
         .then(result => {
@@ -362,8 +367,8 @@ app.post('/api/ttps/admin/bulk/upload-csv', async (req, res) => {
                     errorFile: result.errorFilePath
                 });
             } else {
-                console.log("ERROR UPLOADING B")
-                // res.status(200).json({ message: result.message });
+                console.log("SUCCESS")
+                res.status(200).json({ message: result.message });
             }
         })
         .catch(error => {

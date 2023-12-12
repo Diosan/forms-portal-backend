@@ -21,11 +21,12 @@ const UploadUsers = () => {
 
     const formData = new FormData()
     formData.append('file', file)
+    formData.append('AUTHKEY', "hkhasd")
 
     try {
       const response = await fetch('https://swif.ttlawcourts.org/api/ttps/admin/bulk/upload-csv', {
         method: 'POST',
-        body: {formData, AUTHKEY:process.env.AUTHKEY},
+        body: formData,
       })
 
       if (response.ok) {

@@ -1,4 +1,5 @@
 import { DataTypes } from "sequelize";
+import crypto from 'crypto';
 
 export default (sequelize) => {
     const User = sequelize.define("users", {
@@ -59,10 +60,10 @@ export default (sequelize) => {
       },
       phone: {
         type: DataTypes.STRING(20),
-        unique: true,
-        validate: {
-          is: /^(868[0-9]{7}|[0-9]{7})$/
-        }
+        allowNull:true,
+        // validate: {
+        //   is: /^(868[0-9]{7}|[0-9]{7})$/
+        // }
       },
       role: {
         type: DataTypes.STRING,
@@ -77,6 +78,11 @@ export default (sequelize) => {
         type: DataTypes.UUID,
         allowNull: true
       },
+      hashValue: {
+        type: DataTypes.STRING,
+        unique: true
+      },
+      
       createdAt: {
         type: DataTypes.DATE
       },
@@ -87,11 +93,18 @@ export default (sequelize) => {
       tableName: 'users'
     });
 
-    // User.associate = function (models) {
-    //   User.hasMany(models.submission, {
-    //     onDelete: "CASCADE",
-    //   });
-    // };
+    // User.beforeCreate((user, options) => {
+    //   const hash = crypto.createHash('sha256').update(`${user.id}${user.agencyMemberUniqueId}`).digest('hex');
+    //   user.hashValue = hash;
+    // });
+
+    User.afterCreate(async (user, options) => {
+      const hash = crypto.createHash('sha256').update(`${user.id}${user.agencyMemberUniqueId}`).digest('hex');
+      user.hashValue = hash;
+      
+      // Save the updated user instance
+      await user.save();
+    });
 
     return User;
 };
