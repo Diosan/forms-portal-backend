@@ -32,7 +32,7 @@ node_modules
 *.sw?
 .env
 *.env
-
+documents
 .deploys
 current
 source/
