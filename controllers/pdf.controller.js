@@ -230,12 +230,12 @@ export const convertWithPuppeteer = async (req, res) => {
     console.log("============================================")
     //Build the efiling submission
     const efilingRecord = {
-                "swftransid": `${submissionWithDetails?.id}`,
-                "email": `${submissionWithDetails?.user.email || ""}`,
-                "court": `${submissionWithDetails?.complainant?.court || ""}`,
-                "courtoffice": `${submissionWithDetails?.complainant?.courtDistrict}` || "",
-                "submissiondata": `${submissionWithDetails}` || "",
-                "signatureobject": `${submissionWithDetails?.signatures}` || "",
+                "swftransid": submissionWithDetails?.id,
+                "email": submissionWithDetails?.user?.email || "",
+                "court": submissionWithDetails?.complainant?.court || "",
+                "courtoffice": submissionWithDetails?.complainant?.courtDistrict || "",
+                "submissiondata": submissionWithDetails || "",
+                "signatureobject": submissionWithDetails?.signatures || [],
                 "filepath": "-",
                 "returnurl": "-",
                 "type": 1,
