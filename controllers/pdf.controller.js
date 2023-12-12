@@ -233,10 +233,10 @@ export const convertWithPuppeteer = async (req, res) => {
     const efilingRecord = {
                 "swftransid": submissionWithDetails?.id,
                 "email": submissionWithDetails?.user?.email || "",
-                "court": JSON.stringify(submissionWithDetails?.complainant?.court) || "",
-                "courtoffice": JSON.stringify(submissionWithDetails?.complainant?.courtDistrict) || "",
+                "court": submissionWithDetails?.complainant?.court || "",
+                "courtoffice": submissionWithDetails?.complainant?.courtDistrict || "",
                 // "submissiondata": JSON.stringify(result) || "",
-                "signatureobject": JSON.stringify(submissionWithDetails?.signatures) || [],
+                "signatureobject": submissionWithDetails?.signatures || [],
     }
 
  
