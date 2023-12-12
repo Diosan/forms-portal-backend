@@ -234,14 +234,15 @@ export const convertWithPuppeteer = async (req, res) => {
     console.log("============================================")
     //Build the efiling submission
     const efilingRecord = {
-                "swftransid": req.body.submissionId,
+                "swftransid": "swif-"+req.body.submissionId,
                 "email": submissionWithDetails.user.email,
                 "username": submissionWithDetails.user.email,
-                "court": submissionWithDetails.complainant.court,
+                // "court": submissionWithDetails.complainant.court,
+                "court": "hcrim",
                 "courtoffice": submissionWithDetails.complainant.courtDistrict,
                 "type" : 1,
                 "casenotes" : "These are the case notes",
-                "filingid" : "dcrim002",
+                "filingid" : "hcr---",
                 "filepath" : "https://link.testfile.org/PDF10MB",
                 "returnurl" : "https://eservices.ttlawcourts.org/filing/dev/api/return.php",
                 "submissiondata": JSON.stringify(result) || "",
