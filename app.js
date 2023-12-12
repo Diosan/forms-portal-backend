@@ -117,7 +117,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
   //________________________________________________
   // SYNC Database -  USE WHEN NECESSARY
   //---------------------------------------------
-  db.sequelize.sync();
+  // db.sequelize.sync();
   //----------------------------------------------------------------
 
 
