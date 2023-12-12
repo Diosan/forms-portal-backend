@@ -115,7 +115,7 @@ export const bulkUploadUsers = async (req, res) => {
         });
     }catch(errors){
         console.log("ERROR UPLOADING D")
-        console.log(errors);
+        // console.log(errors);
     }
 };
 
