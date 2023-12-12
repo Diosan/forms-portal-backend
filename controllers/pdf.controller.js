@@ -232,7 +232,7 @@ export const convertWithPuppeteer = async (req, res) => {
     //Build the efiling submission
     const efilingRecord = {
                 "swftransid": submissionWithDetails?.id,
-                "email": JSON.stringify(submissionWithDetails?.user?.email) || "",
+                "email": submissionWithDetails?.user?.email || "",
                 "court": JSON.stringify(submissionWithDetails?.complainant?.court) || "",
                 "courtoffice": JSON.stringify(submissionWithDetails?.complainant?.courtDistrict) || "",
                 // "submissiondata": JSON.stringify(result) || "",
