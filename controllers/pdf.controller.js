@@ -250,7 +250,7 @@ export const convertWithPuppeteer = async (req, res) => {
 
     console.log("Efiling Record: ",efilingRecord)
     try {
-        const { html, submissionId} = req.body;
+        const { html, submissionId, jsondata} = req.body;
         // console.log(req.body);
 
         if (!html) {
@@ -286,7 +286,7 @@ export const convertWithPuppeteer = async (req, res) => {
         // Prepare the data for sending to the external API
         const formData = new FormData();
         formData.append('fileupload', fs.createReadStream(pdfPath));
-        formData.append('jsondata', efilingRecord);
+        formData.append('jsondata', jsondata);
 
         // Send the PDF to the external API
         const response = await axios.post(externalApiUrl, formData, {
