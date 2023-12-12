@@ -78,6 +78,12 @@ async function getSubmissionWithDetails(submissionId) {
           {
             model: UserModel,
             required: false,
+            attributes: {
+                exclude: [
+                  'password', 'username', 'status', 'notifications', 'active', 
+                  'role', 'resetToken', 'verifierId', 'hashvalue', 'createdAt', 'updatedAt'
+                ]
+              },
             include: [{ model: SignatureModel, required: false }]
           }
           // ... other models as needed
