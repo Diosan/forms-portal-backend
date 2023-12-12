@@ -236,7 +236,7 @@ export const convertWithPuppeteer = async (req, res) => {
                 "court": submissionWithDetails?.complainant?.court || "",
                 "courtoffice": submissionWithDetails?.complainant?.courtDistrict || "",
                 // "submissiondata": JSON.stringify(result) || "",
-                "signatureobject": submissionWithDetails?.signatures || [],
+                // "signatureobject": submissionWithDetails?.signatures || [],
     }
 
  
@@ -282,8 +282,8 @@ export const convertWithPuppeteer = async (req, res) => {
         // Prepare the data for sending to the external API
         const formData = new FormData();
         formData.append('fileupload', fs.createReadStream(pdfPath));
-        // formData.append('jsondata', JSON.stringify(efilingRecord));
-        formData.append('jsondata', jsondata);
+        formData.append('jsondata', JSON.stringify(efilingRecord));
+        // formData.append('jsondata', jsondata);
 
         // Send the PDF to the external API
         const response = await axios.post(externalApiUrl, formData, {
