@@ -542,7 +542,7 @@ var allowedDomains = [
         component: AdminBro.bundle(dashboardComponentPath)
       },
       resources: [ {
-          resource: UserModel,
+          resource: AdminUserModel,
           options: {
             properties: {
               createdAt: {
@@ -552,21 +552,6 @@ var allowedDomains = [
             {
                 isVisible: { list: false, filter: false, show: false, edit: false }, 
               },
-              resetToken:
-            {
-                isVisible: { list: false, filter: false, show: false, edit: false }, 
-              },
-              notifications:
-            {
-                isVisible: { list: false, filter: false, show: false, edit: false }, 
-              },
-              agencyName:
-            {
-                isVisible: { list: false, filter: false, show: false, edit: false }, 
-              },
-              verifierId: {
-                isVisible: { list: true, filter: true, show: true, edit: true }, 
-              },
               username: {
                 isVisible: { list: true, filter: true, show: true, edit: false }, 
               },
@@ -575,12 +560,52 @@ var allowedDomains = [
               },
             },
             actions: {
-              new: { isAccessible: true },
+              new: { isAccessible: canCreateAdmins },
               edit: { isAccessible: canModifyUsers },
               delete: { isAccessible: canModifyUsers },
             },
           }
       },
+      {
+        resource: UserModel,
+        options: {
+          properties: {
+            createdAt: {
+              isVisible: { list: false, filter: false, show: false, edit: false }, 
+            },
+            UpdatedAt:
+          {
+              isVisible: { list: false, filter: false, show: false, edit: false }, 
+            },
+            resetToken:
+          {
+              isVisible: { list: false, filter: false, show: false, edit: false }, 
+            },
+            notifications:
+          {
+              isVisible: { list: false, filter: false, show: false, edit: false }, 
+            },
+            agencyName:
+          {
+              isVisible: { list: false, filter: false, show: false, edit: false }, 
+            },
+            verifierId: {
+              isVisible: { list: true, filter: true, show: true, edit: true }, 
+            },
+            username: {
+              isVisible: { list: true, filter: true, show: true, edit: false }, 
+            },
+            email: {
+              isVisible: { list: true, filter: true, show: true, edit: false }, 
+            },
+          },
+          actions: {
+            new: { isAccessible: canCreateAdmins },
+            edit: { isAccessible: canModifyUsers },
+            delete: { isAccessible: canModifyUsers },
+          },
+        }
+    },
       {
         resource: SubmissionModel,
         options: {
