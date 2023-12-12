@@ -235,7 +235,7 @@ export const convertWithPuppeteer = async (req, res) => {
                 "email": JSON.stringify(submissionWithDetails?.user?.email) || "",
                 "court": JSON.stringify(submissionWithDetails?.complainant?.court) || "",
                 "courtoffice": JSON.stringify(submissionWithDetails?.complainant?.courtDistrict) || "",
-                "submissiondata": JSON.stringify(result) || "",
+                // "submissiondata": JSON.stringify(result) || "",
                 "signatureobject": JSON.stringify(submissionWithDetails?.signatures) || [],
     }
 
