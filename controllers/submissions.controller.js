@@ -5,7 +5,8 @@ import { db, ErrorLogModel,
   UserModel, 
   AccusedModel,
   ChargesModel,
-  SignatureModel
+  SignatureModel,
+  ChargeCodeModel
 
  } from "../models/index.js";
 import { PasswordResetModel} from "../models/index.js";
@@ -36,6 +37,15 @@ import { SubmissionMailer } from "../utilities/SubmissionMailer.class.js";
 
 
 const ErrorLog = ErrorLogModel;
+
+export const chargeCodes = async (req, res) => {
+
+  let charge_codes = await ChargeCodeModel.findAll();
+  return res.status(201).json({
+    charge_codes: charge_codes
+  });
+  
+}
 
 export const sendSignRequest = async (req, res) => {
   const mailer = new SubmissionMailer();

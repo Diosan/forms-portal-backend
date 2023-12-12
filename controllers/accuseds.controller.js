@@ -5,11 +5,15 @@
 // const Pending = db.pendings;
 // const Conviction = db.convictions;
 
-import { db, SubmissionModel, AccusedModel, ChargesModel, PendingModel, ConvictionModel, RelatedMatterModel } from "../models/index.js";
+import { db, SubmissionModel, AccusedModel, ChargesModel, PendingModel, ConvictionModel, RelatedMatterModel, ChargeCodeModel } from "../models/index.js";
 import fs from "fs";
 import formidable from 'formidable'
 import {dbConfig} from "../config/db.config.js"
 import mysql from 'mysql2'
+
+
+
+
 
 export const saveCharge = async (req, res) => {
     
