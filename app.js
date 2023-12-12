@@ -560,9 +560,9 @@ var allowedDomains = [
               },
             },
             actions: {
-              new: { isAccessible: canCreateAdmins },
-              edit: { isAccessible: canModifyUsers },
-              delete: { isAccessible: canModifyUsers },
+              new: { isAccessible: true },
+              edit: { isAccessible: true },
+              delete: { isAccessible: true },
             },
           }
       },
@@ -600,9 +600,9 @@ var allowedDomains = [
             },
           },
           actions: {
-            new: { isAccessible: canCreateAdmins },
-            edit: { isAccessible: canModifyUsers },
-            delete: { isAccessible: canModifyUsers },
+            new: { isAccessible: true },
+            edit: { isAccessible: true },
+            delete: { isAccessible: true },
           },
         }
     },
@@ -621,9 +621,9 @@ var allowedDomains = [
             },
           },
           actions: {
-            new: { isAccessible: canCreateAdmins },
-            edit: { isAccessible: canModifyUsers },
-            delete: { isAccessible: canModifyUsers },
+            new: { isAccessible: true },
+            edit: { isAccessible: true },
+            delete: { isAccessible: true },
           },
         }
     }

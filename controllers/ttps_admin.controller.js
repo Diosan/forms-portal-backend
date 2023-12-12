@@ -22,6 +22,7 @@ export function uploadUsers(filePath) {
         try{
             form.parse(filePath, (err, fields, files) => {
                 if (err) {
+                    console.log("Error");
                     reject(err);
                     return;
                 }
@@ -29,6 +30,7 @@ export function uploadUsers(filePath) {
                 // Check if a file was uploaded and get its details
                 const uploadedFile = files.file;
                 if (!uploadedFile) {
+                    console.log("No file uploaded");
                     reject(new Error('No file uploaded.'));
                     return;
                 }
@@ -52,6 +54,7 @@ export function uploadUsers(filePath) {
                     .pipe(csvParser())
                     .on('data', (row) => {
                         if (!validateEmailDomain(row.email)) {
+                            console.log("Invalid Domain");
                             errors.push({ user: row, error: 'Invalid domain' });
                             return;
                         }
@@ -64,6 +67,7 @@ export function uploadUsers(filePath) {
     
                         addUserToDatabase(user, (error) => {
                             if (error) {
+                                console.log(error);
                                 errors.push({ user, error });
                                 // console.log(error)
                             }
@@ -72,6 +76,7 @@ export function uploadUsers(filePath) {
                     .on('end', () => {
                         if (errors.length > 0) {
                             const errorFilePath = createErrorCSV(errors);
+                            console.log(errors);
                             resolve({ message: 'Upload completed with errors', errorFilePath });
                         } else {
                             resolve({ message: 'Upload complete' });
@@ -90,9 +95,11 @@ export function uploadUsers(filePath) {
 
 
 export const bulkUploadUsers = async (req, res) => {
-    uploadUsers(req)
+    try{
+        uploadUsers(req)
         .then(result => {
             if (result.errorFilePath) {
+                console.log(result)
                 res.status(200).json({
                     message: result.message,
                     errorFile: result.errorFilePath
@@ -104,6 +111,9 @@ export const bulkUploadUsers = async (req, res) => {
         .catch(error => {
             res.status(500).json({ error: error.message });
         });
+    }catch(errors){
+        console.log(errors);
+    }
 };
 
 
