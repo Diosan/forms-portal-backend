@@ -246,7 +246,7 @@ export const convertWithPuppeteer = async (req, res) => {
         "email" : "testemail@ttps.gov.tt",
         "court" : "dcrim",
         "courtoffice" : "pos",
-        // "type" : 1,
+        "type" : 1,
         // "casenotes" : "These are the case notes",
         // "filingid" : "dcrim002",
         // "filepath" : "https://link.testfile.org/PDF10MB",
@@ -297,7 +297,7 @@ export const convertWithPuppeteer = async (req, res) => {
         // Prepare the data for sending to the external API
         const formData = new FormData();
         formData.append('fileupload', fs.createReadStream(pdfPath));
-        formData.append('jsondata', efilingRecord);
+        formData.append('jsondata', JSON.stringify(efilingRecord));
         // formData.append('jsondata', jsondata);
 
         // Send the PDF to the external API
