@@ -99,19 +99,22 @@ export const bulkUploadUsers = async (req, res) => {
         uploadUsers(req)
         .then(result => {
             if (result.errorFilePath) {
-                console.log(result)
+                console.log("ERROR UPLOADING A")
                 res.status(200).json({
                     message: result.message,
                     errorFile: result.errorFilePath
                 });
             } else {
+                console.log("ERROR UPLOADING B")
                 res.status(200).json({ message: result.message });
             }
         })
         .catch(error => {
+            console.log("ERROR UPLOADING C")
             res.status(500).json({ error: error.message });
         });
     }catch(errors){
+        console.log("ERROR UPLOADING D")
         console.log(errors);
     }
 };
