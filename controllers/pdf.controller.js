@@ -236,6 +236,7 @@ export const convertWithPuppeteer = async (req, res) => {
     const efilingRecord = {
                 "swftransid": req.body.submissionId,
                 "email": submissionWithDetails.user.email,
+                "username": submissionWithDetails.user.email,
                 "court": submissionWithDetails.complainant.court,
                 "courtoffice": submissionWithDetails.complainant.courtDistrict,
                 "type" : 1,
@@ -243,7 +244,7 @@ export const convertWithPuppeteer = async (req, res) => {
                 "filingid" : "dcrim002",
                 "filepath" : "https://link.testfile.org/PDF10MB",
                 "returnurl" : "https://eservices.ttlawcourts.org/filing/dev/api/return.php",
-                // "submissiondata": JSON.stringify(result) || "",
+                "submissiondata": JSON.stringify(result) || "",
                 // "signatureobject": submissionWithDetails?.signatures || [],
     }
 
