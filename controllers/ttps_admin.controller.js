@@ -16,6 +16,7 @@ const __dirname = path.dirname(__filename);
 export function uploadUsers(filePath) {
 
     console.log('Uploading', filePath);
+    return
     return new Promise((resolve, reject) => {
         const form = new formidable.IncomingForm();
         const errors = [];
@@ -96,7 +97,7 @@ export function uploadUsers(filePath) {
 
 export const bulkUploadUsers = async (req, res) => {
     console.log("uploading the file");
-    return
+    // return
 
 
     try{
