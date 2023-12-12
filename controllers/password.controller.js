@@ -64,9 +64,6 @@ export const handlePasswordReset = async (req, res) => {
 
 
 
-
-
-
 export const resetPassword = async (req, res) => {
     console.log(req.body)
     // Validate request
@@ -108,11 +105,6 @@ export async function generatePasswordResetToken(userEmail) {
 
     return {token:token, userFirstName:userFirstName, userId:userId || ""};
 }
-
-
-
-
-
 
 //handle Request to reset password from email
 export const forgotPasswordRequest = async (req, res) => {
