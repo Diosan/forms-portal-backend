@@ -80,7 +80,7 @@ async function getSubmissionWithDetails(submissionId) {
             required: false,
             attributes: {
                 exclude: [
-                  'id, address, phone, password', 'username', 'status', 'notifications', 'active', 
+                  'id', 'address', 'phone', 'password', 'username', 'status', 'notifications', 'active', 
                   'role', 'resetToken', 'verifierId', 'hashValue', 'createdAt', 'updatedAt'
                 ]
               },
@@ -221,6 +221,7 @@ export const convertWithPuppeteer = async (req, res) => {
     console.log("Submission ID:  ", req.body.submissionId)
     // return res.send()
     const submissionWithDetails = await getSubmissionWithDetails(req.body.submissionId);
+    if(!submissionWithDetails){return res.status(400).send('error');}
     console.log("Submission Details")
     // Manipulate the response to remove previousDataValues
     const result = submissionWithDetails.get({ plain: true });
@@ -286,7 +287,7 @@ export const convertWithPuppeteer = async (req, res) => {
         // Prepare the data for sending to the external API
         const formData = new FormData();
         formData.append('fileupload', fs.createReadStream(pdfPath));
-        formData.append('jsondata', jsondata);
+        formData.append('jsondata', efilingRecord);
 
         // Send the PDF to the external API
         const response = await axios.post(externalApiUrl, formData, {
