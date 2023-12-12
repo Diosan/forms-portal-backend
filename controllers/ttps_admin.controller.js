@@ -14,6 +14,8 @@ const __dirname = path.dirname(__filename);
 
 // Function to process the CSV file
 export function uploadUsers(filePath) {
+
+    console.log('Uploading', filePath);
     return new Promise((resolve, reject) => {
         const form = new formidable.IncomingForm();
         const errors = [];
