@@ -43,7 +43,7 @@ import {Logger} from "./utilities/logger.js";
 
 // Internal libraries next
 
-import { db, UserModel, SubmissionModel } from "./models/index.js";
+import { db, UserModel, SubmissionModel, AdminUserModel } from "./models/index.js";
 import { dbConfig } from './config/db.config.js';
 import { TOTPGenerator } from './utilities/TOTPGenerator.class.js';
 import { mailConfig } from './config/mail.config.js';
@@ -72,6 +72,18 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
 // const secret = crypto.randomBytes(1024).toString('hex');
 // console.log(secret); 
 //-----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -105,6 +117,45 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
   //---------------------------------------------
   // db.sequelize.sync();
   //----------------------------------------------------------------
+
+            //create superadmin
+            async function createSuperadmin() {
+                try {
+                    // Check if a superadmin user already exists
+                    const superadminExists = await AdminUserModel.findOne({ where: { username: 'hhernandez@ttlawcourts.org' } });
+                    if (superadminExists) {
+                        console.log('Superadmin user already exists.');
+                        return;
+                    }
+                    // Hash the password
+                    const saltRounds = 10;
+                    const hashedPassword =  await bcrypt.hash(process.env.SA, saltRounds);
+                    // Create a new superadmin user
+                    const superadmin = await AdminUserModel.create({
+                        email: 'hhernandez@ttlawcourts.org',
+                        username: 'swf-noreply@ttlawcourts.org',
+                        password: hashedPassword,
+                        role: 'superadmin',
+                        fullname: 'Admin',
+                        firstName: 'SA',
+                        middleName: '',
+                        lastName: 'SA',
+                        address: '',
+                        phone: '8680000000'
+                    });
+                    console.log('Superadmin user created successfully.');
+                } catch (error) {
+                    console.error('Error creating superadmin user:', error);
+                }
+            }
+            // Call this function when your app starts
+            createSuperadmin();
+
+
+
+
+
+
 
 
 //________________________________________________
