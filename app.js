@@ -585,12 +585,12 @@ var allowedDomains = [
     ],
       rootPath: '/admin',
       assets: {
-        styles: ['/admin-bro.css'], 
+        styles: ['/admin/public/admin-bro.css'], 
       },
       locale,
       branding: {
         companyName: AGENCY_NAME,
-        logo: '/logo.png', 
+        logo: '/admin/public/logo.png', 
         softwareBrothers: false, 
       },
       pages: {
