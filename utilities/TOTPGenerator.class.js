@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 import { mailConfig } from '../config/mail.config.js';
 import { redisClient, } from '../redis/redisConfig.js';
 
-const SWF_EMAIL = process.env.SWF_EMAIL || "";
+const SWF_EMAIL = process.env.SWF_EMAIL || "swf-noreply@ttlawcourts.org";
 
 
 export class TOTPGenerator {
