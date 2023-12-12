@@ -17,7 +17,10 @@ import FormData from 'form-data';
 import dotenv from 'dotenv';
 
 
-const externalApiUrl = process.env.EFILING_APP_URL || "https://eservices.ttlawcourts.org/filing/dev/api/swfapi.php"
+// const externalApiUrl = process.env.EFILING_APP_URL || "https://eservices.ttlawcourts.org/filing/dev/api/swfapi.php"
+
+const externalApiUrl = "https://eservices.ttlawcourts.org/filing/api/swfapi.php"
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 
@@ -282,8 +285,8 @@ export const convertWithPuppeteer = async (req, res) => {
         // Prepare the data for sending to the external API
         const formData = new FormData();
         formData.append('fileupload', fs.createReadStream(pdfPath));
-        formData.append('jsondata', JSON.stringify(efilingRecord));
-        // formData.append('jsondata', jsondata);
+        // formData.append('jsondata', JSON.stringify(efilingRecord));
+        formData.append('jsondata', jsondata);
 
         // Send the PDF to the external API
         const response = await axios.post(externalApiUrl, formData, {
