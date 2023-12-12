@@ -149,7 +149,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
                 }
             }
             // Call this function when your app starts
-            createSuperadmin();
+            // createSuperadmin();
 
 
 
@@ -432,9 +432,9 @@ var allowedDomains = [
 
     customAdminRouter.post('/ttps/admin/login', async (req, res) => {
 
-      console.log("LOGIN session: ", req.session)
-      console.log(">> session id: ", req.session.id)
-      console.log("---------------------------- ")
+      // console.log("LOGIN session: ", req.session)
+      // console.log(">> session id: ", req.session.id)
+      // console.log("---------------------------- ")
 
 
       // console.log(req.body)
