@@ -4,7 +4,8 @@ import { db, ErrorLogModel,
   UserModel, 
   AccusedModel,
   ChargesModel,
-  SignatureModel
+  SignatureModel,
+  ChargeCodeModel
 
  } from "../models/index.js";
 import { PasswordResetModel} from "../models/index.js";
@@ -36,6 +37,15 @@ import { SubmissionMailer } from "../utilities/SubmissionMailer.class.js";
 
 const ErrorLog = ErrorLogModel;
 
+export const chargeCodes = async (req, res) => {
+
+  let charge_codes = await ChargeCodeModel.findAll();
+  return res.status(201).json({
+    charge_codes: charge_codes
+  });
+  
+}
+
 export const sendSignRequest = async (req, res) => {
   const mailer = new SubmissionMailer();
   let complainant = await ComplainantModel.findOne(
@@ -56,8 +66,7 @@ export const sendSignRequest = async (req, res) => {
   let verifierUser = await UserModel.findByPk(
     complainantUser.verifierId,
     {raw: true}
-  )
-  console.log(verifierUser);
+  );
   let email = verifierUser.email;
   let name = verifierUser.firstName;
   mailer.signatureRequestEmail(
@@ -82,6 +91,49 @@ export const sendOTP = async (req, res) => {
     outcome: 'success', 
     message: "Successfully logged in: OTP send to " + req.body.email,
     email: req.body.email
+  })
+
+  // return res.status.json(201)({
+  //   outcome: 'failure'
+  // })
+
+}
+
+
+export const sendVerifyOTP = async (req, res) => {
+
+  let complainant = await ComplainantModel.findOne(
+    {
+      where: {submissionId: req.body.submission_id},
+      raw: true
+    }
+  );
+
+  console.log('\n\n\n\n Complainant: ', complainant);
+
+  let complainantUser = await UserModel.findOne(
+    {
+      where: {email: complainant.email},
+      raw: true
+    }
+  );
+  let verifierUser = await UserModel.findByPk(
+    complainantUser.verifierId,
+    {raw: true}
+  )
+  let email = verifierUser.email;
+  let name = verifierUser.firstName;
+
+  const totp = new SignOTPGenerator();
+
+  totp.generateOTP(req.body.submission_id, email, name)
+  .then(() => console.log('OTP sent to user email.'))
+  .catch(error => console.error('Error generating or sending OTP:', error));
+
+  return res.status(201).json({
+    outcome: 'success', 
+    message: "Successfully logged in: OTP send to " + email,
+    email: email
   })
 
   // return res.status.json(201)({
@@ -136,6 +188,47 @@ export const complainantSign = async (req, res) => {
 }
 
 
+
+export const verifierSign = async (req, res) => {
+
+  let signatures = new Signatures;
+
+  console.log('\n\n\n Request body: ', req.body);
+
+  let complainant_email = req.body.email;
+  let submission_id = req.body.submission_id;
+
+  let complainantUser = await UserModel.findOne(
+    {
+      where: {email: complainant_email},
+      raw: true
+    }
+  );
+  let verifierUser = await UserModel.findByPk(
+    complainantUser.verifierId,
+    {raw: true}
+  );
+
+  let email = verifierUser.email;
+
+  // console.log('Email: ', email);
+
+  let signature = await signatures.verifierSubmissionSign(
+    email=email,
+    submission_id=submission_id
+  );
+
+  console.log('\n\n\n Signature from Signature Class: ', signature);
+  
+  res.status(201).json(signature);
+
+  // res.status(201).json({ submission_hash: submissionHash});
+
+  // res.status(201).json({ submission_hash: 'abcdefghijklmnopqrstuvwyz'});
+
+}
+
+
 export const submissionSignature = async (req, res) => {
 
 
@@ -167,6 +260,38 @@ export const submissionSignature = async (req, res) => {
 
 }
 
+
+export const submissionVerification = async (req, res) => {
+
+
+  console.log('\n\n\n Request body: ', req.body)
+
+  let user = await UserModel.findByPk(
+    req.body.userId,
+    { raw: true }
+  );
+
+  console.log('\n\n\n user: ', user);  
+
+  let signature = await SignatureModel.findOne({
+    where: {
+      type: 'verification',
+      content_id: req.body.submission_id,
+      userId: req.body.userId
+    },
+    raw: true
+  });
+
+  console.log('\n\n\n signature: ', signature);
+
+  res.status(201).json({
+    signature: signature,
+    user: user
+  });
+
+  // res.status(201).json({});
+
+}
 
 
 export const findAll = (req, res) => {

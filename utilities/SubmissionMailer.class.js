@@ -2,6 +2,7 @@ import redis from 'redis';
 import nodemailer from 'nodemailer';
 import { mailConfig } from '../config/mail.config.js';
 import { redisClient, } from '../redis/redisConfig.js';
+import 'dotenv/config';
 
 export class SubmissionMailer {
 
@@ -26,6 +27,7 @@ export class SubmissionMailer {
         
         const currentTime = getCurrentTimeInTrinidad();
         const pathToImage = 'https://www.ttlawcourts.org/images/swf-logo.png';
+
 
         const htmlEmailString = `
         <!DOCTYPE html>
@@ -94,7 +96,7 @@ export class SubmissionMailer {
                   <p class="swf-text">Hi, <b>${name}</b></p>
                   <p class="swf-text">Your signature has been requested for verification on a submission in SWF</p>
 
-                  <p class="swf-text">Click <a href="http://localhost:5173/verify/${submission_id}">here</a> to verify submission</p>  
+                  <p class="swf-text">Click <a href="${process.env.APP_DOMAIN + '/sign/' + submission_id}">here</a> to verify submission</p>  
               
     
                   <p class="small-text swf-time">This verification request was generated at ${currentTime}</p>
