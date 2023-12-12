@@ -512,16 +512,19 @@ var allowedDomains = [
     //Custom Admin Router ------------------------------------------------
     const customAdminRouter = express.Router();
     customAdminRouter.get('/ttps/admin/login', async (req, res) => {
+      console.log("get to ttps admin login" )
       // Render custom login page (including OTP field or separate OTP page)
       res.render('login', {  });
     });
 
     customAdminRouter.get('/admin/login', async (req, res) => {
       // Render custom login page (including OTP field or separate OTP page)
+      console.log("get to admin login" )
       res.render('login', { message: message });
     });
 
     customAdminRouter.get('/ttps/admin/mfa', async (req, res) => {
+      console.log("get to ttps admin" )
       if (req.session.otp_user = {}) {
         console.log(req?.session?.otp_user || "NO OTP USER" )
         res.redirect('/admin/login'); // Replace '/login' with your login route
@@ -529,7 +532,7 @@ var allowedDomains = [
     });
 
     customAdminRouter.post('/ttps/admin/mfa', async (req, res) => {
-      
+      console.log("post to ttps admin mfa" )
       if (!req.body) {
         res.status(400).json({ error: "Request body is empty" });
         return;
