@@ -228,11 +228,29 @@ export const convertWithPuppeteer = async (req, res) => {
     delete result.previousDataValues;
     console.log(result)
     console.log("============================================")
+    //Build the efiling submission
+    const efilingRecord = {
+                "swftransid": `${submissionWithDetails?.id}`,
+                "email": `${submissionWithDetails?.user.email || ""}`,
+                "court": `${submissionWithDetails?.complainant?.court || ""}`,
+                "courtoffice": `${submissionWithDetails?.complainant?.courtDistrict}` || "",
+                "submissiondata": `${submissionWithDetails}` || "",
+                "signatureobject": `${submissionWithDetails?.signatures}` || "",
+                "filepath": "-",
+                "returnurl": "-",
+                "type": 1,
+                "casenotes": "",
+                "filingid": "",
+    }
+
+ 
+
+
     // return res.send()
 
     console.log("Efiling: ",externalApiUrl)
     try {
-        const { html, submissionId, jsondata } = req.body;
+        const { html, submissionId } = req.body;
         // console.log(req.body);
 
         if (!html) {
@@ -268,7 +286,7 @@ export const convertWithPuppeteer = async (req, res) => {
         // Prepare the data for sending to the external API
         const formData = new FormData();
         formData.append('fileupload', fs.createReadStream(pdfPath));
-        formData.append('jsondata', jsondata);
+        formData.append('jsondata', efilingRecord);
 
         // Send the PDF to the external API
         const response = await axios.post(externalApiUrl, formData, {
