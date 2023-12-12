@@ -511,6 +511,7 @@ var allowedDomains = [
 
      //Role based access control
      const canModifyUsers = (currentAdmin) => {
+      console.log("Current Admin:", currentAdmin); 
       return currentAdmin && (currentAdmin.role === 'superadmin' || currentAdmin.role === 'admin');
     };
     const canCreateAdmins = (currentAdmin) => {
