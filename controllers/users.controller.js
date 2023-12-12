@@ -501,10 +501,12 @@ export const resetPassword = async (req, res) => {
 
 //handle Request to reset password from email
 export const forgotPasswordRequest = async (req, res) => {
-  console.log("email: ", req.body)
+  console.log("email: ", req.body.username)
+  console.log("------------------------------------")
   const { username } = req.body;
   const genToken = await generatePasswordResetToken(username)
-  
+  console.log("token: ", genToken)
+  console.log("------------------------------------")
   try {
     
 
