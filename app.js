@@ -437,7 +437,7 @@ var allowedDomains = [
       console.log("---------------------------- ")
 
 
-      console.log(req.body)
+      // console.log(req.body)
       if (!req.body) {
         res.status(400).json({ error: "Request body is empty" });
         return;
