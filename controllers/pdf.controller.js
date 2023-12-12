@@ -231,17 +231,12 @@ export const convertWithPuppeteer = async (req, res) => {
     console.log("============================================")
     //Build the efiling submission
     const efilingRecord = {
-                "swftransid": submissionWithDetails?.id,
-                "email": submissionWithDetails?.user?.email || "",
-                "court": submissionWithDetails?.complainant?.court || "",
-                "courtoffice": submissionWithDetails?.complainant?.courtDistrict || "",
-                "submissiondata": result || "",
-                "signatureobject": submissionWithDetails?.signatures || [],
-                "filepath": "-",
-                "returnurl": "-",
-                "type": 1,
-                "casenotes": "",
-                "filingid": "",
+                "swftransid": JSON.stringify(submissionWithDetails?.id),
+                "email": JSON.stringify(submissionWithDetails?.user?.email) || "",
+                "court": JSON.stringify(submissionWithDetails?.complainant?.court) || "",
+                "courtoffice": JSON.stringify(submissionWithDetails?.complainant?.courtDistrict) || "",
+                "submissiondata": JSON.stringify(result) || "",
+                "signatureobject": JSON.stringify(submissionWithDetails?.signatures) || [],
     }
 
  
@@ -287,8 +282,8 @@ export const convertWithPuppeteer = async (req, res) => {
         // Prepare the data for sending to the external API
         const formData = new FormData();
         formData.append('fileupload', fs.createReadStream(pdfPath));
-        // formData.append('jsondata', JSON.stringify(efilingRecord));
-        formData.append('jsondata', jsondata);
+        formData.append('jsondata', JSON.stringify(efilingRecord));
+        // formData.append('jsondata', jsondata);
 
         // Send the PDF to the external API
         const response = await axios.post(externalApiUrl, formData, {
