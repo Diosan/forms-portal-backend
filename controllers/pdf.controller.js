@@ -234,13 +234,25 @@ export const convertWithPuppeteer = async (req, res) => {
     console.log("============================================")
     //Build the efiling submission
     const efilingRecord = {
-                "swftransid": submissionWithDetails?.id,
-                "email": submissionWithDetails?.user?.email || "",
-                "court": submissionWithDetails?.complainant?.court || "",
-                "courtoffice": submissionWithDetails?.complainant?.courtDistrict || "",
+                "swftransid": req.body.submissionId,
+                "email": submissionWithDetails.user.email,
+                "court": submissionWithDetails.complainant.court,
+                "courtoffice": submissionWithDetails.complainant.courtDistrict,
                 // "submissiondata": JSON.stringify(result) || "",
                 // "signatureobject": submissionWithDetails?.signatures || [],
     }
+
+    // efilingRecord = {   "swftransid" : "SWF0000001",
+    //     "email" : "testemail@ttps.gov.tt",
+    //     "court" : "dcrim",
+    //     "courtoffice" : "pos",
+    //     "type" : 1,
+    //     "casenotes" : "These are the case notes",
+    //     "filingid" : "dcrim002",
+    //     "filepath" : "https://link.testfile.org/PDF10MB",
+    //     "returnurl" : "https://eservices.ttlawcourts.org/filing/dev/api/return.php",
+    //     "signatureobject" : "signatureobject"
+    // }
 
  
 
