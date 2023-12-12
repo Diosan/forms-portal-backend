@@ -22,6 +22,10 @@
     // router.put("/password/reset", resetPassword);
     // Update Message
     router.put("/message/add", updateMessage);
+
+
+
+    
     // User forgot Password
     router.post("/password/forgotPasswordRequest", forgotPasswordRequest);
     // User forgot Password

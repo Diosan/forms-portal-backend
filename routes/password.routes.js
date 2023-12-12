@@ -1,4 +1,5 @@
     import { resetPassword, 
+      resetCheckFromEmail,
         forgotPasswordRequest,
         handlePasswordReset
     } from "../controllers/password.controller.js";
@@ -15,6 +16,10 @@
     
     // Validate Reset Token, Reset password, Remove token form database
     router.put("/new", handlePasswordReset);
+
+    // Reset Password
+    router.get("/reset/:token", resetCheckFromEmail);
+
 
 
     // User forgot Password
