@@ -248,9 +248,9 @@ export const convertWithPuppeteer = async (req, res) => {
 
     // return res.send()
 
-    console.log("Efiling: ",externalApiUrl)
+    console.log("Efiling Record: ",efilingRecord)
     try {
-        const { html, submissionId } = req.body;
+        const { html, submissionId} = req.body;
         // console.log(req.body);
 
         if (!html) {
