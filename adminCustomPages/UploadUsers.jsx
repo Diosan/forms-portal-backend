@@ -25,7 +25,7 @@ const UploadUsers = () => {
     try {
       const response = await fetch('https://swif.ttlawcourts.org/api/ttps/admin/bulk/upload-csv', {
         method: 'POST',
-        body: formData,
+        body: {formData, AUTHKEY:process.env.AUTHKEY},
       })
 
       if (response.ok) {

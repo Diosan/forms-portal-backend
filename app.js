@@ -346,7 +346,12 @@ function createErrorCSV(errors) {
 
 app.post('/api/ttps/admin/bulk/upload-csv', async (req, res) => {
     console.log("uploading the file");
-    // return
+    //tempKey
+    if(req.body.AUTHKEY === process.env.AUTHKEY)
+    {
+      console.log("bye")
+      return
+    }
     try{
         uploadUsers(req)
         .then(result => {
