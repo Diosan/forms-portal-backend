@@ -344,7 +344,7 @@ function createErrorCSV(errors) {
 }
 
 
-app.post('/api/bulk/upload-csv', async (req, res) => {
+app.post('/api/ttps/admin/bulk/upload-csv', async (req, res) => {
     console.log("uploading the file");
     // return
     try{
