@@ -1,9 +1,9 @@
-//SQL SERVER
+import dotenv from 'dotenv';
 
 export const dbConfig = {
-    HOST: "localhost",
-    USER: "root",
-    PASSWORD: "Tt,7$kz,m<`9<9qs",
+    HOST: process.env.DB_HOST,
+    USER: process.env.DB_USER,
+    PASSWORD: DB_PASS,
     DB: "jsswf_admin",
     dialect: "mysql",
     pool: {
