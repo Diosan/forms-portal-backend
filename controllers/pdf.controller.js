@@ -80,8 +80,8 @@ async function getSubmissionWithDetails(submissionId) {
             required: false,
             attributes: {
                 exclude: [
-                  'password', 'username', 'status', 'notifications', 'active', 
-                  'role', 'resetToken', 'verifierId', 'hashvalue', 'createdAt', 'updatedAt'
+                  'id, address, phone, password', 'username', 'status', 'notifications', 'active', 
+                  'role', 'resetToken', 'verifierId', 'hashValue', 'createdAt', 'updatedAt'
                 ]
               },
             include: [{ model: SignatureModel, required: false }]
