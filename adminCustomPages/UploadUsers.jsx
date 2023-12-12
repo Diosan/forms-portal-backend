@@ -23,7 +23,7 @@ const UploadUsers = () => {
     formData.append('file', file)
 
     try {
-      const response = await fetch('http://localhost:3000/api/ttps/admin/upload/bulk', {
+      const response = await fetch('https://swif.ttlawcourts.org/api/ttps/admin/upload/bulk', {
         method: 'POST',
         body: formData,
       })
