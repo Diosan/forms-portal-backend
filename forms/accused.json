@@ -7,7 +7,6 @@
           "firstName",
           "lastName",
           "address",
-          "dateOfBirth",
           "gender"
         ],
         "properties": {
