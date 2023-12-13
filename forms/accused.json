@@ -48,7 +48,7 @@
           },
           "gender": {
             "type": "string",
-            "title": "Gender",
+            "title": "Gender Identity",
             "enum": [
               "Male",
               "Female",
