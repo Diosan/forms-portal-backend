@@ -1,0 +1,10 @@
+.stretched-text-input {
+  font-size: 14px; /* Adjust as needed */
+  letter-spacing: 2px; /* Adjust as needed */
+  text-align: center; /* Adjust as needed */
+}
+.form-container{
+  max-width:600px;
+}
+.swf-form label{font-size:.8rem; margin-top:10px;}
+.swf-form input{font-size:.9rem; border:1px solid #ccc; width:100%; margin:3px 0 5px 0 }

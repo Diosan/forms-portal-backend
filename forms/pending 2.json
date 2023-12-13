@@ -1,0 +1,24 @@
+{
+    "schema": {
+        "type": "object",
+        "required": [
+            "offence",
+            "dateOfOffence"
+        ],
+        "properties": {
+            "offence": {
+                "type": "string",
+                "title": "Offence"
+            },
+            "dateOfOffence": {
+                "type": "string",
+                "title": "Date Of Offence"
+            }
+        }
+    },
+    "UI": {
+        "dateOfOffence": {
+            "ui:widget": "date"
+        }
+    }
+}

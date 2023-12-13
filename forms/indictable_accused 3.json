@@ -1,0 +1,30 @@
+{
+    "schema": {
+        "type": "object",
+        "required": [
+            "title",
+            "courtDistrict"
+        ],
+        "properties": {
+            "title": {
+                "type": "string",
+                "title": "Title"
+            },
+            "courtDistrict": {
+                "type": "string",
+                "title": "Court District",
+                "enum": [
+                    "North Trinidad",
+                    "South Trinidad",
+                    "Tobago"
+                ],
+                "enumNames": [
+                    "North Trinidad",
+                    "South Trinidad",
+                    "Tobago"
+                ]
+            }
+        }
+    },
+    "UI": {}
+}

@@ -236,7 +236,7 @@ export const convertWithPuppeteer = async (req, res) => {
     const efilingRecord = {
                 "swftransid": "swif-"+req.body.submissionId,
                 "email": submissionWithDetails.user.email,
-                "username": submissionWithDetails.user.email,
+                // "username": submissionWithDetails.user.email,
                 // "court": submissionWithDetails.complainant.court,
                 "court": "hcrim",
                 "courtoffice": submissionWithDetails.complainant.courtDistrict,
