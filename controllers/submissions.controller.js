@@ -5,7 +5,8 @@ import { db, ErrorLogModel,
   AccusedModel,
   ChargesModel,
   SignatureModel,
-  ChargeCodeModel
+  ChargeCodeModel,
+  VerifierModel
 
  } from "../models/index.js";
 import { PasswordResetModel} from "../models/index.js";
@@ -32,10 +33,21 @@ import {mailConfig} from '../config/mail.config.js';
 import axios  from "axios";
 import { SubmissionMailer } from "../utilities/SubmissionMailer.class.js";
 
-
+const APP_DOMAIN = process.env.APP_DOMAIN;
+const SWF_LOGO = process.env.SWF_LOGO;
+const SWF_EMAIL = process.env.SWF_EMAIL;
 
 
 const ErrorLog = ErrorLogModel;
+
+export const verifiers = async (req, res) => {
+  let returned_verifiers = await VerifierModel.findAll(
+    {raw: true}
+  );
+  return res.status(201).json({
+    verifiers: returned_verifiers
+  })
+}
 
 export const chargeCodes = async (req, res) => {
 
@@ -47,6 +59,9 @@ export const chargeCodes = async (req, res) => {
 }
 
 export const sendSignRequest = async (req, res) => {
+
+  console.log('\n\n\n Sign Request Request Body: ', req.body);
+
   const mailer = new SubmissionMailer();
   let complainant = await ComplainantModel.findOne(
     {
@@ -63,12 +78,23 @@ export const sendSignRequest = async (req, res) => {
       raw: true
     }
   );
-  let verifierUser = await UserModel.findByPk(
-    complainantUser.verifierId,
-    {raw: true}
-  );
+
+  // let verifierUser = await UserModel.findByPk(
+  //   complainantUser.verifierId,
+  //   {raw: true}
+  // );
+  // let email = verifierUser.email;
+  // let name = verifierUser.firstName;
+
+  let verifierUser = await UserModel.findOne({
+    where: {
+      email: req.body.commisioned_email
+    },
+    raw: true
+  });
   let email = verifierUser.email;
   let name = verifierUser.firstName;
+
   mailer.signatureRequestEmail(
     req.body.submission_id, 
     email,
@@ -964,15 +990,131 @@ export const resetPasswordFromEmail = async (req, res) => {
 };
 
 export const requestSignature = async (req, res) => {
+
+  function getCurrentTimeInTrinidad() {
+    const options = {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: 'America/Port_of_Spain' // Time zone for Trinidad and Tobago
+    };
+
+    const trinidadTime = new Date().toLocaleTimeString('en-US', options);
+    return trinidadTime; // Returns time in Trinidad and Tobago time zone
+  }
+
+  const currentTime = getCurrentTimeInTrinidad();
+  const pathToImage = 'https://www.ttlawcourts.org/images/swf-logo.png';
+
+
+  const htmlEmailString = `
+  <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Verification Code</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                font-size:14px;
+            }
+            .container {
+                width: 80%;
+                margin: auto;
+                overflow: hidden;
+            }
+            .logo {
+                width: 100px;
+                height: 75px;
+            }
+            .code {
+                font-size: 30px;
+                color: #333;
+                letter-spacing:5px;
+                font-weight: bold;
+            }
+            .footer {
+                font-size: 12px;
+                color: #999;
+            }
+            .security-tip {
+                color: #ff0000;
+            }
+
+            .small-text {
+              font-size: 10px;
+          }
+
+          .swf-text{
+            font-size: 14px;
+          }
+
+          .swf-grey-bg{
+            background-color:#eee;
+            padding:20px;
+            color:#222;
+          }
+
+          .swf-grey-red{
+            background-color:#f8e6e0;
+            padding:20px;
+            color:#222;
+            margin-top:10px; 
+          }
+          .swf-time{
+            margin-top:10px; margin-bottom:30px
+          }
+
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <img src="${pathToImage}" alt="SWF Logo" class="logo"/>
+
+            <p class="swf-text">Hi, <b></b></p>
+            <p class="swf-text">Your signature has been requested on a submission in SWF</p>
+
+            <p class="swf-text">Click <a href="${process.env.APP_DOMAIN + '/sign/' + req.body.submission_id}">here</a> to sign submission</p>  
+        
+
+            <p class="small-text swf-time">This signature request was generated at ${currentTime}</p>
+
+            <div class="swf-grey-bg">
+            <p>Do not share this verification code with a third party or other employee. We will NEVER ask you for this code.</p>
+
+            </div>
+
+            <p class="security-tip swf-grey-red "><b>Security Tip</b><br/>
+            SWF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
+            We will never ask you to validate or restore your account access through email or pop-up windows.</p>
+            
+        </div>
+    </body>
+    </html>`
+
+
+
   let signatureRequest = req.body;
   console.log('\n\n\n Request Body: ', req.body);
   let transporter = nodemailer.createTransport(mailConfig);
+
   await transporter.sendMail({
-    from: 'JSSWF <omm@link868.com>',
+    from: `SWF <${SWF_EMAIL}>`,
     to: req.body.complainant_email,
-    subject: 'Complaint with Oath',
-    text: `New complaint with oath requires your signature https://swif.ttlawcourts.org/sign/${req.body.submission_id}`
+    subject: 'SWF - Complaint with Oath',
+    html: resetEmailString,
   });
+
+  // await transporter.sendMail({
+  //   from: 'JSSWF <omm@link868.com>',
+  //   to: req.body.complainant_email,
+  //   subject: 'Complaint with Oath',
+  //   html: htmlEmailString
+  // });
+
+
+
+
   res.status(201).json({
     outcome: 'success'
   })

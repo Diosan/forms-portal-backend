@@ -30,6 +30,10 @@ export default sequelize => {
         type: DataTypes.TEXT,
         allowNull: true
       },
+      additionalNotes: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
       status: { 
         type: DataTypes.STRING,
         allowNull: false,

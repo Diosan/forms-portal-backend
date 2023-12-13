@@ -7,7 +7,6 @@
           "firstName",
           "lastName",
           "address",
-          "dateOfBirth",
           "gender"
         ],
         "properties": {
@@ -48,14 +47,18 @@
           },
           "gender": {
             "type": "string",
-            "title": "Gender",
+            "title": "Gender Identity",
             "enum": [
               "Male",
-              "Female"
+              "Female",
+              "Non-Binary",
+              "Other"
             ],
             "enumNames": [
               "Male",
-              "Female"
+              "Female",
+              "Non-Binary",
+              "Other"
             ]
           },
           "adulthood": {

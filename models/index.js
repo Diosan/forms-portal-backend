@@ -32,6 +32,7 @@ import createConvictionModel from "./convictions.model.js";
 import createSigntureModel from "./signatures.model.js";
 import createRelatedMatterModel from "./related_matters.model.js";
 import createChargeCodeModel from "./charge_code.model.js";
+import createVerifierModel from "./verifier.model.js";
 
 
 export const UserModel = createUserModel(sequelize);
@@ -50,6 +51,7 @@ export const ConvictionModel = createConvictionModel(sequelize);
 export const SignatureModel = createSigntureModel(sequelize);
 export const RelatedMatterModel = createRelatedMatterModel(sequelize);
 export const ChargeCodeModel = createChargeCodeModel(sequelize);
+export const VerifierModel = createVerifierModel(sequelize);
 
 // ---------------------
 // ASSOCIATIONS

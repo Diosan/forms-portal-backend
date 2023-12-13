@@ -27,7 +27,6 @@ export function uploadUsers(filePath) {
                     reject(err);
                     return;
                 }
-    
                 // Check if a file was uploaded and get its details
                 const uploadedFile = files.file;
                 if (!uploadedFile) {
