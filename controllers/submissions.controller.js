@@ -6,7 +6,8 @@ import { db, ErrorLogModel,
   AccusedModel,
   ChargesModel,
   SignatureModel,
-  ChargeCodeModel
+  ChargeCodeModel,
+  VerifierModel
 
  } from "../models/index.js";
 import { PasswordResetModel} from "../models/index.js";
@@ -38,6 +39,15 @@ import { SubmissionMailer } from "../utilities/SubmissionMailer.class.js";
 
 const ErrorLog = ErrorLogModel;
 
+export const verifiers = async (req, res) => {
+  let returned_verifiers = await VerifierModel.findAll(
+    {raw: true}
+  );
+  return res.status(201).json({
+    verifiers: returned_verifiers
+  })
+}
+
 export const chargeCodes = async (req, res) => {
 
   let charge_codes = await ChargeCodeModel.findAll();
@@ -48,6 +58,9 @@ export const chargeCodes = async (req, res) => {
 }
 
 export const sendSignRequest = async (req, res) => {
+
+  console.log('\n\n\n Sign Request Request Body: ', req.body);
+
   const mailer = new SubmissionMailer();
   let complainant = await ComplainantModel.findOne(
     {
@@ -64,12 +77,23 @@ export const sendSignRequest = async (req, res) => {
       raw: true
     }
   );
-  let verifierUser = await UserModel.findByPk(
-    complainantUser.verifierId,
-    {raw: true}
-  );
+
+  // let verifierUser = await UserModel.findByPk(
+  //   complainantUser.verifierId,
+  //   {raw: true}
+  // );
+  // let email = verifierUser.email;
+  // let name = verifierUser.firstName;
+
+  let verifierUser = await UserModel.findOne({
+    where: {
+      email: req.body.commisioned_email
+    },
+    raw: true
+  });
   let email = verifierUser.email;
   let name = verifierUser.firstName;
+
   mailer.signatureRequestEmail(
     req.body.submission_id, 
     email,
