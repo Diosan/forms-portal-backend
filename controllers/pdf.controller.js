@@ -242,7 +242,7 @@ export const convertWithPuppeteer = async (req, res) => {
                 "courtoffice": submissionWithDetails.complainant.courtDistrict,
                 "type" : 1,
                 "casenotes" : "-",
-                "filingid" : "---",
+                "filingid" : "compl",
                 "filepath" : "https://link.testfile.org/PDF10MB",
                 "returnurl" : "https://eservices.ttlawcourts.org/filing/dev/api/return.php",
                 "submissiondata": JSON.stringify(result) || "",
