@@ -39,9 +39,6 @@ import {Logger} from "./utilities/logger.js";
 
 
 
-// Read the SSL certificate files
-// const key = fs.readFileSync(path.resolve(__dirname, './key.pem'));
-// const cert = fs.readFileSync(path.resolve(__dirname, './cert.pem'));
 
 // Internal libraries next
 
@@ -110,20 +107,13 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
         console.log("Database running successfully");
     });
   });
-
   // Close the connection
   //connection.end();
-
   //________________________________________________
   // SYNC Database -  USE WHEN NECESSARY
   //---------------------------------------------
   // db.sequelize.sync();
   //----------------------------------------------------------------
-
-
-
-
-
 
 
             //create superadmin
@@ -198,13 +188,6 @@ const server = http.createServer(app);
 
 //use cookie parser
 // app.use(cookieParser());
-
-
-
-
-
-
-
 
 // Function to process the CSV file
 export function uploadUsers(filePath) {
@@ -285,7 +268,6 @@ export function uploadUsers(filePath) {
       
   });
 }
-
 // Function to validate email domain
 function validateEmailDomain(email) {
   // Check if email is not undefined and is a truthy value
@@ -303,16 +285,8 @@ function validateEmailDomain(email) {
       return false;
   }
 }
-
-
 // Function to add a user to the database
 function addUserToDatabase(user, callback) {
-
-
-
-
-
-
   UserModel.create(user).then(() => {
     console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + user)
       callback(null);
@@ -320,26 +294,20 @@ function addUserToDatabase(user, callback) {
       callback(err);
   });
 }
-
 // Function to create an error CSV
 function createErrorCSV(errors) {
   // The directory where the error file will be stored
   const errorDirectory = path.join(__dirname, 'public/errors');
-
   console.log(errorDirectory);
-
   // Ensure the directory exists, create it if it doesn't
   if (!fs.existsSync(errorDirectory)) {
       fs.mkdirSync(errorDirectory, { recursive: true });
   }
-
   // Create a unique filename using a timestamp (up to seconds)
   const timestamp = new Date().toISOString().replace(/:\d{2}\.\d{3}Z$/, '').replace(/[-T:]/g, '');
   const filename = `errors_${timestamp}.csv`;
   const errorFilePath = path.join(errorDirectory, filename);
-
   const errorFile = fs.createWriteStream(errorFilePath);
-
   errorFile.write('Username,Error\n');
   errors.forEach(({ user, error }) => {
       errorFile.write(`${user.username},${error}\n`);
@@ -350,12 +318,9 @@ function createErrorCSV(errors) {
   // Return the publicly accessible URL path
   return `/public/errors/${filename}`;
 }
-
-
+//BULK UPLOAD USERS
 app.post('/api/ttps/admin/bulk/upload-csv', async (req, res) => {
     console.log("uploading the file");
-    
-    
     //tempKey
     try{
         uploadUsers(req)
@@ -458,16 +423,16 @@ var allowedDomains = [
     }));
   //------------------------------------------------
   //LOGGING 
-          // app.use((req, res, next) => {
-          //   console.log('Incoming request:', req.method, req.path);
-          //   console.log('Headers:', req.headers);
-          //   next();
-          // });
+          app.use((req, res, next) => {
+            console.log('Incoming request:', req.method, req.path);
+            console.log('Headers:', req.headers);
+            next();
+          });
 
-          // app.use((req, res, next) => {
-          //   console.log('Session data:', req.session);
-          //   next();
-          // });
+          app.use((req, res, next) => {
+            console.log('Session data:', req.session);
+            next();
+          });
           
     //LOGGING
   //------------------------------------------------
@@ -485,21 +450,16 @@ var allowedDomains = [
   app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')));
   app.use(express.static( 'dist'));
   app.use('/public', express.static(path.join(__dirname, 'public')));
-
-
   console.log("Public Directory: ........ ",  path.join(__dirname, 'public'))
-
   //----------------------------------------------------------------
   //----------------------------------------------------------------
   // FILE UPLOAD
   app.use(express.json({ limit: '50mb' })); 
   app.use(fileUpload());
-
-
   //----------------------------------------------------------------
-    //PASSWORD ROUTES
-    //----------------------------------------------------------------
-    passwordRoutes(app);
+  //PASSWORD ROUTES
+  //----------------------------------------------------------------
+  passwordRoutes(app);
 
 
 
@@ -555,23 +515,23 @@ var allowedDomains = [
 
 
       if (req.session.otp_user == {}) {
-        res.redirect('/admin/login'); // Replace '/login' with your login route
+        res.redirect('/admin/login'); 
       }
 
       const uid = req?.session?.otp_user?.id || ""
       const email = req?.session?.otp_user?.email || ""
       const { otp } = req.body;      
-      console.log(otp);
+      // console.log(otp);
       try {
-          console.log("incoming: ", otp);
-          const keyToget = `otp:${req.session.id}`;
-          console.log("Key to get: ", keyToget)
-          console.log("---------------------------- ")
-          const storedOTP = await getStoredOTP(keyToget, otp);
-          console.log("---------------------------- ")
-          const theStoredOTP = `${storedOTP?.code || ""}`;
-          console.log("stored otp: ", theStoredOTP);
-          console.log("incoing otp: ", otp);
+          // console.log("incoming: ", otp);
+          // const keyToget = `otp:${req.session.id}`;
+          // console.log("Key to get: ", keyToget)
+          // console.log("---------------------------- ")
+          // const storedOTP = await getStoredOTP(keyToget, otp);
+          // console.log("---------------------------- ")
+          // const theStoredOTP = `${storedOTP?.code || ""}`;
+          // console.log("stored otp: ", theStoredOTP);
+          // console.log("incoing otp: ", otp);
 
           // Initialize incorrect attempts counter if it does not exist
           if (!req.session.incorrectOtpAttempts) {
@@ -631,8 +591,6 @@ var allowedDomains = [
       // console.log("LOGIN session: ", req.session)
       // console.log(">> session id: ", req.session.id)
       // console.log("---------------------------- ")
-
-
       // console.log(req.body)
       if (!req.body) {
         res.status(400).json({ error: "Request body is empty" });
@@ -700,7 +658,6 @@ var allowedDomains = [
     });
 
 
-    // const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const dashboardComponentPath = path.join(__dirname, 'views', 'my-dashboard-component.jsx');
     const uploadUsersComponentPath = path.join(__dirname, 'adminCustomPages', 'UploadUsers.jsx');
 
@@ -758,7 +715,7 @@ var allowedDomains = [
             actions: {
               new: { isAccessible: true },
               edit: { isAccessible: true },
-              delete: { isAccessible: true },
+              delete: { isAccessible: false },
             },
           }
       },
@@ -862,7 +819,7 @@ var allowedDomains = [
     // }
     );
     //use this by default
-    app.use(customAdminRouter); // Custom login and OTP routes
+    app.use(customAdminRouter);                 // Custom login and OTP routes
     app.use(adminBro.options.rootPath, router); // AdminBro routes
     // or is using custom admin router
     // app.use(router)
@@ -920,11 +877,11 @@ var allowedDomains = [
   io.on("connection", async (socket) => {
     console.log(">> A user connected:", socket.id);  
 
-    //channels ++++++++++++++
-    // join user to channels when they connect
-    socket.join('drawUpdate');
-    socket.join('notifyAlert');
-    //--------------------------------------------  
+    // //channels ++++++++++++++
+    // // join user to channels when they connect
+    // socket.join('drawUpdate');
+    // socket.join('notifyAlert');
+    // //--------------------------------------------  
 
     // On User Login event +++++++++++++++++++++++
     socket.on("login", (userId) => {
@@ -949,18 +906,18 @@ var allowedDomains = [
 
     // Listen for the "activity" +++++++++++++++
     // to ensure active users are 
-    socket.on('activity', async (userId) => {
-      console.log(userId)
-      socket.join('drawUpdate');
-      socket.join('notifyAlert');
-      socket.join(`user:${userId}`);
-      socket.userId = userId;
-      connectedUsers[socket.id] = { 
-        socket: socket,
-        connected: true,
-        userId: userId
-      };
-    });
+    // socket.on('activity', async (userId) => {
+    //   console.log(userId)
+    //   socket.join('drawUpdate');
+    //   socket.join('notifyAlert');
+    //   socket.join(`user:${userId}`);
+    //   socket.userId = userId;
+    //   connectedUsers[socket.id] = { 
+    //     socket: socket,
+    //     connected: true,
+    //     userId: userId
+    //   };
+    // });
 
     // Emitting a message to all channels
     //below is an example of how to chain messages emit to a number of channels
@@ -968,14 +925,12 @@ var allowedDomains = [
 
     // Private message to user ++++++++++++++++++++++++
     socket.on('privateMessage', async (channel, message) => {
-      // const userId = channel.slice('user:'.length);
       emitter.emit(channel, message);
     });
 
     // Handle disconnection ++++++++++++++++++++++++
     socket.on('disconnect', () => {
       console.log(` >> Client disconnected: ${socket.id}`);
-      // Unsubscribe the socket from the 'drawUpdate' channel
       delete connectedUsers[socket.id];
     });
 
@@ -1035,7 +990,7 @@ var allowedDomains = [
 
           //ALL OTHER ROUTES
           app.get('/', async (req, res) => {
-            expressListRoutes(app, {  });
+            // expressListRoutes(app, {  });
             // const transporter = nodemailer.createTransport(mailConfig);
             // transporter.sendMail({
             //   from: 'omm@link868.com',
@@ -1043,14 +998,15 @@ var allowedDomains = [
             //   subject: 'hello world!',
             //   text: 'hello world!'
             // });
-            res.json({message: 'JSSWF-API-TS'});
+            console.log("*")
+            // res.json({message: 'JSSWF-API-TS'});
           })
 
         // Current servier time route, used to sync app with server
-        app.get("/api/jsswf-time", (req, res) => {
-          // console.log("Current time ")
-          res.json({ time: new Date().toISOString() });
-        });
+        // app.get("/api/jsswf-time", (req, res) => {
+        //   // console.log("Current time ")
+        //   res.json({ time: new Date().toISOString() });
+        // });
         //------------------------------------------------
 
         // here all other routes go to react
@@ -1075,7 +1031,7 @@ app.use(errorHandler);
 //----------------------------------------------------------------
 // START ALL APPLICATIONS
   //START THE HTTP SERVER - (remember to change in code on at top if  using HTTP)
-  app.listen(PORT, () => console.log('Judiciary of Trinidad and Tobago Web Forms Portal:3000!'))
+  app.listen(PORT, () => console.log('Judiciary of Trinidad and Tobago Web Forms Portal'))
   // Start the HTTPS server - (remember to change in code on at top if  using HTTPS)
   // app.listen(PORT_SSL, () => { console.log(`Server running at https://localhost:${PORT_SSL}`);});
   // server.listen(PORT_SSL, () => {
