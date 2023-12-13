@@ -51,11 +51,15 @@
             "title": "Gender",
             "enum": [
               "Male",
-              "Female"
+              "Female",
+              "Non-Binary",
+              "Other"
             ],
             "enumNames": [
               "Male",
-              "Female"
+              "Female",
+              "Non-Binary",
+              "Other"
             ]
           },
           "adulthood": {
