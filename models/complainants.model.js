@@ -48,7 +48,12 @@ export default (sequelize) => {
             rank: {
                 type: DataTypes.STRING,
                 allowNull: true
+            },
+            unit: {
+                type: DataTypes.STRING,
+                allowNull: true
             }
+
         });
     
         Complainant.associate = function (models) {
