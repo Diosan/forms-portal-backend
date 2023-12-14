@@ -7,7 +7,6 @@ import { db, ErrorLogModel,
   SignatureModel,
   ChargeCodeModel,
   VerifierModel,
-  VerifierModel
 
  } from "../models/index.js";
 import { PasswordResetModel} from "../models/index.js";
