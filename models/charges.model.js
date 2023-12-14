@@ -35,13 +35,18 @@ export default sequelize => {
                 allowNull: false
             },
             dateOfOffence: {
-              type: DataTypes.DATEONLY,
+              type: DataTypes.TEXT,
               allowNull: true
             },
             accusedId: {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
+            isLead:{
+            type: DataTypes.BOOLEAN, 
+            allowNull: true,
+            defaultValue: 0
+            }
         });
     
         // Charge.associate = function (models) {

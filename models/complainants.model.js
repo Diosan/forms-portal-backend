@@ -42,8 +42,18 @@ export default (sequelize) => {
             },
             court: {
               type: DataTypes.STRING,
-              allowNull: true
+              allowNull: true,
+              defaultValue: 'High Court'
+            },
+            rank: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
+            unit: {
+                type: DataTypes.STRING,
+                allowNull: true
             }
+
         });
     
         Complainant.associate = function (models) {

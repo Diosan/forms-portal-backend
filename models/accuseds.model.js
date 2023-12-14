@@ -75,7 +75,16 @@ export default sequelize => {
     dateOfBirth:{
       type: DataTypes.DATEONLY, 
       allowNull: true
+    },
+    alias:{
+      type: DataTypes.STRING, 
+      allowNull: true
+    },
+    email:{
+      type: DataTypes.STRING, 
+      allowNull: true
     }
+    
 });
 
     // Accused.associate = function (models) {

@@ -495,10 +495,13 @@ export const saveComplainant = async (req, res) => {
         lastName: req.body.lastName,
         email: req.body.email,
         regNum: req.body.regNum,
+        rank: req.body.rank,
+        unit: req.body.unit,
         submissionId: req.body.submissionId
     };
 
     console.log('\n\n\n New Complainant: ', new_complainant);
+    
 
     try {
         const complainant = await ComplainantModel.create(new_complainant, {});

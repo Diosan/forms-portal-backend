@@ -1,12 +1,11 @@
 {
     "schema": {
-        "title": "Accuseds and Charges",
+        "title": "Accused & Charges",
         "description": "Persons being charged and charges being laid",
         "type": "object",
         "required": [
           "firstName",
           "lastName",
-          "address",
           "gender"
         ],
         "properties": {
@@ -22,6 +21,10 @@
             "type": "string",
             "title": "Address"
           },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
           "dateOfBirth": {
             "type": "string",
             "format": "date",
@@ -33,12 +36,14 @@
             "enum": [
               "National ID Card",
               "Passport",
-              "Drivers Permit"
+              "Drivers Permit",
+              "Other"
             ],
             "enumNames": [
               "National ID Card",
               "Passport",
-              "Drivers Permit"
+              "Drivers Permit",
+              "Other"
             ]
           },
           "identification": {
@@ -49,14 +54,14 @@
             "type": "string",
             "title": "Gender Identity",
             "enum": [
-              "Male",
-              "Female",
+              "Man",
+              "Woman",
               "Non-Binary",
               "Other"
             ],
             "enumNames": [
-              "Male",
-              "Female",
+              "Man",
+              "Woman",
               "Non-Binary",
               "Other"
             ]
@@ -108,6 +113,10 @@
           "otherResident": {
               "type": "boolean",
               "title": "Resident of other country"
+          },
+          "alias": {
+            "type": "string",
+            "title": "Alias"
           }
 
         }
@@ -118,6 +127,9 @@
         },
         "relatedMatters": {
           "ui:widget": "select"
-      }
+        },
+        "alias": {
+          "ui:widget": "textarea"
+        }
     }
 }
