@@ -41,3 +41,6 @@ current
 source/
 public/errors
 ./public/errors/*
+*.pem
+./test
+./test/*
