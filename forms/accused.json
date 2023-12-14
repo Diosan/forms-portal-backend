@@ -32,12 +32,14 @@
             "enum": [
               "National ID Card",
               "Passport",
-              "Drivers Permit"
+              "Drivers Permit",
+              "Other"
             ],
             "enumNames": [
               "National ID Card",
               "Passport",
-              "Drivers Permit"
+              "Drivers Permit",
+              "Other"
             ]
           },
           "identification": {
