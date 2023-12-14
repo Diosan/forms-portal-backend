@@ -2,7 +2,6 @@
     "schema": {
         "type": "object",
         "required": [
-            "summaryOfEvidence"
         ],
         "properties": {
             "summaryOfEvidence": {

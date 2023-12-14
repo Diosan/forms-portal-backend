@@ -1021,7 +1021,7 @@ export const requestSignature = async (req, res) => {
   const pathToImage = 'https://www.ttlawcourts.org/images/swf-logo.png';
 
 
-  const htmlEmailString = `
+  const resetEmailString = `
   <!DOCTYPE html>
     <html>
     <head>
