@@ -481,6 +481,7 @@ export const saveComplainant = async (req, res) => {
         lastName: req.body.lastName,
         email: req.body.email,
         regNum: req.body.regNum,
+        rank: req.body.rank,
         submissionId: req.body.submissionId
     };
 
