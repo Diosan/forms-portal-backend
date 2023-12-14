@@ -35,7 +35,7 @@ export default sequelize => {
                 allowNull: false
             },
             dateOfOffence: {
-              type: DataTypes.DATEONLY,
+              type: DataTypes.TEXT,
               allowNull: true
             },
             accusedId: {
