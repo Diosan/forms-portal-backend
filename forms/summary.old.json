@@ -2,10 +2,13 @@
     "schema": {
         "type": "object",
         "required": [
-            
+            "summaryOfEvidence"
         ],
         "properties": {
-            
+            "summaryOfEvidence": {
+                "type": "string",
+                "title": "Summary Of Evidence"
+            },
             "additionalNotes": {
                 "type": "string",
                 "title": "Additional Notes"
@@ -13,6 +16,9 @@
         }
     },
     "UI": {
+        "summaryOfEvidence": {
+            "ui:widget": "textarea"
+        },
         "additionalNotes": {
             "ui:widget": "textarea"
         }
