@@ -1,6 +1,6 @@
 {
     "schema": {
-        "title": "Accuseds & Charges",
+        "title": "Accused & Charges",
         "description": "Persons being charged and charges being laid",
         "type": "object",
         "required": [
@@ -49,14 +49,14 @@
             "type": "string",
             "title": "Gender Identity",
             "enum": [
-              "Male",
-              "Female",
+              "Man",
+              "Woman",
               "Non-Binary",
               "Other"
             ],
             "enumNames": [
-              "Male",
-              "Female",
+              "Man",
+              "Woman",
               "Non-Binary",
               "Other"
             ]
