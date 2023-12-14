@@ -79,6 +79,10 @@ export default sequelize => {
     alias:{
       type: DataTypes.STRING, 
       allowNull: true
+    },
+    email:{
+      type: DataTypes.STRING, 
+      allowNull: true
     }
     
 });

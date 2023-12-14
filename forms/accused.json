@@ -21,6 +21,10 @@
             "type": "string",
             "title": "Address"
           },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
           "dateOfBirth": {
             "type": "string",
             "format": "date",

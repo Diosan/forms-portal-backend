@@ -42,6 +42,11 @@ export default sequelize => {
                 type: DataTypes.INTEGER,
                 allowNull: true
             },
+            isLead:{
+            type: DataTypes.BOOLEAN, 
+            allowNull: true,
+            defaultValue: 0
+            }
         });
     
         // Charge.associate = function (models) {
