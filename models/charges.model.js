@@ -31,7 +31,7 @@ export default sequelize => {
                 allowNull: false
             },
             particulars: {
-                type: DataTypes.STRING,
+                type: DataTypes.TEXT,
                 allowNull: false
             },
             dateOfOffence: {
