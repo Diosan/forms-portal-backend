@@ -11,13 +11,45 @@ export default sequelize => {
         type: DataTypes.STRING,
         allowNull: false
     },
+    middleName: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     lastName: {           
         type: DataTypes.STRING,
         allowNull: false
     },
     address: {           
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    addressLine1: {           
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    addressLine2: {           
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    addressLine3: {           
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    cityTown: {           
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    postalCode: {           
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    communityCode: {           
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    countryCode: {           
+      type: DataTypes.STRING,
+      allowNull: true
     },
     tntNational:{
       type: DataTypes.BOOLEAN, 
@@ -62,6 +94,10 @@ export default sequelize => {
     gender:{
       type: DataTypes.STRING, 
       allowNull: false
+    },
+    otherGender:{
+      type: DataTypes.STRING, 
+      allowNull: true
     },
     adulthood:{
       type: DataTypes.STRING, 
