@@ -20,9 +20,33 @@
             "type": "string",
             "title": "Last Name"
           },
-          "address": {
+          "addressLine1": {
             "type": "string",
-            "title": "Address"
+            "title": "Address Line 1"
+          },
+          "addressLine2": {
+            "type": "string",
+            "title": "Address Line 2"
+          },
+          "addressLine3": {
+            "type": "string",
+            "title": "Address Line 3"
+          },
+          "cityTown": {
+            "type": "string",
+            "title": "City/Town"
+          },
+          "postalCode": {
+            "type": "string",
+            "title": "Postal Code"
+          },
+          "communityCode": {
+            "type": "string",
+            "title": "Community"
+          },
+          "countryCode": {
+            "type": "string",
+            "title": "Country"
           },
           "email": {
             "type": "string",
