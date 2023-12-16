@@ -163,7 +163,7 @@ app.post('/api/ttps/admin/bulk/upload-csv', async (req, res) => {
 
 
 //get charge codes
-app.post('/api/utils/charge-codes', async (req, res) => {
+app.get('/api/utils/charge-codes', async (req, res) => {
     const filePath = path.join(__dirname, 'files', 'charge_codes.json');
     res.sendFile(filePath); 
     // if(){        //do some redis work here
@@ -177,7 +177,7 @@ app.post('/api/utils/charge-codes', async (req, res) => {
 })
 
 //get countries
-app.post('/api/utils/countries', async (req, res) => {
+app.get('/api/utils/countries', async (req, res) => {
     const filePath = path.join(__dirname, 'files', 'countries.json');
     res.sendFile(filePath); 
     // Read the file contents
