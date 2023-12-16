@@ -93,7 +93,7 @@ export default sequelize => {
     },
     gender:{
       type: DataTypes.STRING, 
-      allowNull: false
+      allowNull: true
     },
     otherGender:{
       type: DataTypes.STRING, 
