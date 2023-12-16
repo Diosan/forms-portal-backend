@@ -36,7 +36,8 @@ export const handlePasswordReset = async (req, res) => {
 
         // Check if the token exists and is not expired
         if (!passwordResetEntry || new Date() > passwordResetEntry.expiration) {
-            return res.json({ message: 'Invalid or expired token' });
+          console.log(passwordResetEntry.dataValues ||  "Invalid or expired token")
+          // return res.json({ message: 'Invalid or expired token' }); -----------------
         }
         console.log(passwordResetEntry.dataValues ||  "nothing")
         // Hash the new password
@@ -47,14 +48,21 @@ export const handlePasswordReset = async (req, res) => {
             where: { id: passwordResetEntry.userId } 
         });
 
-        const theUser = await UserModel.findOne({ where: { id: passwordResetEntry.userId } });
-        console.log(theUser ||  "no user")
+        const theUser = await UserModel.findOne({ 
+          where: { id: passwordResetEntry.userId },
+          order: [['createdAt', 'DESC']] 
+         });
+        // console.log(theUser ||  "no user")
+
+        // return
 
         // Delete the token from the database
         await PasswordResetModel.destroy({ where: { userId: passwordResetEntry.userId } });
 
+        console.log("------------Completed")
+
         // Send success response
-        return res.json({ message: 'Password successfully reset' });
+        return res.json({ outcome: 'success' });
 
     } catch (error) {
         console.error('Error handling password reset:', error);

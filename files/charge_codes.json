@@ -1,5 +1,5 @@
 {
-	"1": [
+	"cat1": [
 		{
 			"id": 8,
 			"name": "Abortion",
@@ -71,7 +71,7 @@
 			"category": 1
 		}
 	],
-	"2": [
+	"cat2": [
 		{
 			"id": 193,
 			"name": "Abandoning or exposing children so that life is endangered",
@@ -514,7 +514,7 @@
 			"category": 2
 		}
 	],
-	"3": [
+	"cat3": [
 		{
 			"id": 224,
 			"name": "Allowing or encouraging a child to reside in or frequent a brothel",
@@ -754,7 +754,7 @@
 			"category": 3
 		}
 	],
-	"4": [
+	"cat4": [
 		{
 			"id": 262,
 			"name": "Assault with intent to rob",
@@ -791,7 +791,7 @@
 			"category": 4
 		}
 	],
-	"5": [
+	"cat5": [
 		{
 			"id": 346,
 			"name": "Abstracting electricity",
@@ -1381,7 +1381,7 @@
 			"category": 5
 		}
 	],
-	"6": [
+	"cat6": [
 		{
 			"id": 357,
 			"name": "Administering, giving, selling or furnishing a dangerous drug by physician except for medicinal purposes",
@@ -1551,7 +1551,7 @@
 			"category": 6
 		}
 	],
-	"7": [
+	"cat7": [
 		{
 			"id": 422,
 			"name": "Advertising, holding out or practise by an unauthorized person",
@@ -2092,7 +2092,7 @@
 			"category": 7
 		}
 	],
-	"8": [
+	"cat8": [
 		{
 			"id": 547,
 			"name": "Acts against public order, norms or standards on any port or vessel",
@@ -3137,7 +3137,7 @@
 			"category": 8
 		}
 	],
-	"9": [
+	"cat9": [
 		{
 			"id": 599,
 			"name": "Aiding, encouraging or coercing persons to become a gang member",
@@ -3524,7 +3524,7 @@
 			"category": 9
 		}
 	],
-	"10": [
+	"cat10": [
 		{
 			"id": 669,
 			"name": "Bathing, washing clothes or polluting the Maraval River",
@@ -3687,7 +3687,7 @@
 			"category": 10
 		}
 	],
-	"11": [
+	"cat11": [
 		{
 			"id": 675,
 			"name": "Attempted suicide",
