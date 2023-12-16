@@ -9,7 +9,7 @@
         "properties": {
             "name": {
                 "type": "string",
-                "title": "Charge Name"
+                "title": "Name Of Offence"
             },
             "count": {
                 "type": "number",
