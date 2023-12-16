@@ -65,6 +65,10 @@ export default sequelize => {
       efilingResponse: {
         type: DataTypes.JSON,
         allowNull: true
+    },
+    additionalNotes: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
     });
 
