@@ -28,6 +28,8 @@ const SWF_LOGO = process.env.SWF_LOGO;
 const SWF_EMAIL = process.env.SWF_EMAIL;
 const transporter = nodemailer.createTransport(mailConfig);
 
+console.log(mailConfig)
+
 //**************** */
 export const findAll = (req, res) => {
     var sortObject = {};

@@ -162,48 +162,6 @@ app.post('/api/ttps/admin/bulk/upload-csv', async (req, res) => {
 });
 
 
-//get charge codes
-app.get('/api/utils/charge-codes', async (req, res) => {
-    const filePath = path.join(__dirname, 'files', 'charge_codes.json');
-    res.sendFile(filePath); 
-    // if(){        //do some redis work here
-    // }else{
-        // Call the function and log the result
-        // getChargeCodes().then(result => {
-        //     console.log(JSON.stringify(result, null, 2));
-        //     res.json(result, null, 2)
-        // });
-    // }  
-})
-
-//get countries
-app.get('/api/utils/countries', async (req, res) => {
-    const filePath = path.join(__dirname, 'files', 'countries.json');
-    res.sendFile(filePath); 
-    // Read the file contents
-    //   fs.readFile(filePath, 'utf8', (err, data) => {
-    //     if (err) {
-    //       console.error('Error reading file:', err);
-    //       res.status(500).json({ error: 'Internal server error' });
-    //     } else {
-    //       try {
-    //         const jsonData = JSON.parse(data);
-    //         // Send the JSON data as a response
-    //         res.json(jsonData);
-    //       } catch (parseError) {
-    //         console.error('Error parsing JSON:', parseError);
-    //         res.status(500).json({ error: 'Error parsing JSON' });
-    //       }
-    //     }
-    //   });
-})
-
-
-
-
-
-
-
 
 
   // BULK UPLOAD CHARGE CODES
@@ -859,6 +817,19 @@ var allowedDomains = [
 //ROUTES
 //----------------------------------------------------------------
     setupRoutes(app);
+
+    //get charge codes
+    app.get('/api/utils/charge-codes', async (req, res) => {
+        const filePath = path.join(__dirname, 'files', 'charge_codes.json');
+        res.sendFile(filePath);   
+    })
+
+    //get countries
+    app.get('/api/utils/countries', async (req, res) => {
+        const filePath = path.join(__dirname, 'files', 'countries.json');
+        res.sendFile(filePath); 
+    })
+
 //----------------------------------------------------------------
 // ***** TO BE CONFIRMED ACTIVE **** 
 // CHECK THESE WIHH DEVELOPERS
