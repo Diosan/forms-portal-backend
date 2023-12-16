@@ -646,7 +646,8 @@ export const create = async (req, res) => {
     userId: req.body.userId,
     status: 'pending',
     type: req.body.type,
-    matterType: req.body.matterType
+    matterType: req.body.matterType,
+    adultOnly: req.body.adultOnly
   }
 
   try {

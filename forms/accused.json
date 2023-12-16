@@ -5,13 +5,16 @@
         "type": "object",
         "required": [
           "firstName",
-          "lastName",
-          "gender"
+          "lastName"
         ],
         "properties": {
           "firstName": {
             "type": "string",
             "title": "First Name"
+          },
+          "middleName": {
+            "type": "string",
+            "title": "Middle Name"
           },
           "lastName": {
             "type": "string",
@@ -32,7 +35,7 @@
           },
           "identificaionType": {
             "type": "string",
-            "title": "Identificaion Type",
+            "title": "Identification Type",
             "enum": [
               "National ID Card",
               "Passport",
@@ -48,7 +51,7 @@
           },
           "identification": {
             "type": "string",
-            "title": "Identification"
+            "title": "Identification Number"
           },
           "gender": {
             "type": "string",

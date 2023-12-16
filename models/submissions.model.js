@@ -26,6 +26,11 @@ export default sequelize => {
         allowNull: true,
         defaultValue: 'Indictable'
       },
+      adultOnly: {           
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: 'adult'
+      },
       summaryOfEvidence: {
         type: DataTypes.TEXT,
         allowNull: true
