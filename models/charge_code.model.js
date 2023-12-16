@@ -9,19 +9,30 @@ export default sequelize => {
             unique: true,
             autoIncrement: true,
         },
+        nid:{
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
         name: {
             type: DataTypes.TEXT,
-            allowNull: false
+            allowNull: true
+        },
+        section:{
+            type: DataTypes.STRING(500),
+            allowNull: true
         },
         ICCS: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
+        },
+        category:{
+            type: DataTypes.INTEGER,
+            allowNull: true
         },
         UNODC: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         }
-
     });
 
     return ChargeCode;

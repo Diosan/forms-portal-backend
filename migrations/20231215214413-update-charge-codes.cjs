@@ -1,17 +1,13 @@
 'use strict';
-import { DataTypes } from 'sequelize';
-import UserModel from '../models/index.mjs'; // Make sure the path is correct
-
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    await queryInterface.addColumn('users', 'verifierId', {
-      type: DataTypes.UUID,
+  async up(queryInterface, Sequelize) {
+    await queryInterface.changeColumn('charge_codes', 'UNODC', {
+      type: Sequelize.STRING,
       allowNull: true
-    },)
+    });
   },
-
 
   async down (queryInterface, Sequelize) {
     /**
@@ -21,5 +17,4 @@ module.exports = {
      * await queryInterface.dropTable('users');
      */
   }
-}
-
+};

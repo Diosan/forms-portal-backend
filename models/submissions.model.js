@@ -52,6 +52,11 @@ export default sequelize => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      adultOnly: {           
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: 'adult'
+      },
       efilingResponse: {
         type: DataTypes.JSON,
         allowNull: true

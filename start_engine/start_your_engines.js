@@ -2,9 +2,131 @@ import bcrypt from "bcrypt";
 import {
   db,
   UserModel,
-  SubmissionModel,
+  SubmissionModel, ChargeCodeModel,
   AdminUserModel,
 } from "../models/index.js";
+
+import fs from 'fs';
+import csvParser from 'csv-parser';
+import formidable from 'formidable';
+import path from 'path';
+
+
+
+
+// Define a function to fetch and format the data
+export const getChargeCodes = async () => {
+  try {
+    const chargeCodes = await ChargeCodeModel.findAll({
+      attributes: ['id', 'name', 'section', 'ICCS', 'category'],
+      order: [['category', 'ASC'], ['name', 'ASC']],
+    });
+
+    const groupedData = {};
+    
+    // Group the data by category
+    chargeCodes.forEach(chargeCode => {
+      const { category } = chargeCode;
+      if (!groupedData[category]) {
+        groupedData[category] = [];
+      }
+      groupedData[category].push(chargeCode);
+    });
+
+    return groupedData;
+  } catch (error) {
+    console.error('Error fetching charge codes:', error);
+    throw error;
+    
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//UPLOAD THE CHARGE CODES
+export const uploadChargeCodes = async (req) => {
+    console.log("getting the file")
+  return new Promise((resolve, reject) => {
+    const form = new formidable.IncomingForm();
+    const errors = [];
+
+    form.parse(req, (err, fields, files) => {
+      if (err) {
+        console.log("Error parsing form: ", err);
+        reject(err);
+        return;
+      }
+
+      const uploadedFile = files.file;
+      if (!uploadedFile) {
+        console.log("No file uploaded");
+        reject(new Error("No file uploaded."));
+        return;
+      }
+
+      const fileName = uploadedFile.originalFilename;
+      const fileExtension = path.extname(fileName).toLowerCase();
+
+      if (fileExtension !== ".csv") {
+        console.log("File is not a CSV");
+        reject(new Error("Only CSV files are allowed!"));
+        return;
+      }
+
+      const csvFile = uploadedFile.filepath;
+
+      fs.createReadStream(csvFile)
+        .pipe(csvParser())
+        .on("data", async (row) => {
+          try {
+            const newChargeCode = {
+              name: row.name,
+              ICCS: row.iccs,
+              category: row.category,
+              section: row.section,
+              nid: row.nid
+            };
+            console.log(newChargeCode);
+            // return
+            await ChargeCodeModel.create(newChargeCode);
+          } catch (error) {
+            console.log("Error adding to database: ", error);
+            errors.push({ row, error: error.message });
+          }
+        })
+        .on("end", async () => {
+          if (errors.length > 0) {
+            // Handle errors (e.g., create an error file or log them)
+            resolve({
+              message: "Upload completed with errors",
+              errorDetails: errors,
+            });
+          } else {
+            resolve({ message: "Upload complete" });
+          }
+        });
+    });
+  });
+};
+
+
+
+
+
+
+
+
 
 //create superadmin
 export const createSuperAdmins = async () => {
@@ -157,8 +279,11 @@ function addUserToDatabase(user, callback) {
       callback(err);
     });
 }
+
 // Function to create an error CSV
 function createErrorCSV(errors) {
+    console.log("Uploading the charges codes csv");
+
   // The directory where the error file will be stored
   const errorDirectory = path.join(__dirname, "public/errors");
   console.log(errorDirectory);

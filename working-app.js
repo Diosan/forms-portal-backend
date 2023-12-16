@@ -31,7 +31,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import {MorganMiddleware} from "./middlewares/morgan.middleware.js"
 import fileUpload from 'express-fileupload';
-import {createSuperAdmins, uploadUsers, uploadChargeCodes, getChargeCodes,
+import {createSuperAdmins, uploadUsers,
   uploadDefaultDb, generateKey
 } from "./start_engine/start_your_engines.js"
 
@@ -86,7 +86,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
   //______________________________________________________________________________________
   // //START YOUR ENGINES ----------------------------------------------------------------
   //--------------------------------------------------------------------------------------
-    // db.sequelize.sync();     // create db schema
+  // db.sequelize.sync();     // create db schema
   //--------------------------------------------------------------------------------------
   // createSuperAdmins();        // create superadmin users
   // generateKey();              // generate key
@@ -95,7 +95,7 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080
   //--------------------------------------------------------------------------------------
   //--------------------------------------------------------------------------------------
 
-   
+  
 
 
 
@@ -160,74 +160,6 @@ app.post('/api/ttps/admin/bulk/upload-csv', async (req, res) => {
         console.log(errors);
     }
 });
-
-
-//get charge codes
-app.post('/api/utils/charge-codes', async (req, res) => {
-    const filePath = path.join(__dirname, 'files', 'charge_codes.json');
-    res.sendFile(filePath); 
-    // if(){        //do some redis work here
-    // }else{
-        // Call the function and log the result
-        // getChargeCodes().then(result => {
-        //     console.log(JSON.stringify(result, null, 2));
-        //     res.json(JSON.stringify(result, null, 2))
-        // });
-    // }  
-})
-
-//get charge codes
-app.post('/api/utils/countries', async (req, res) => {
-    const filePath = path.join(__dirname, 'files', 'countries.json');
-    res.sendFile(filePath); 
-    // if(){        //do some redis work here
-    // }else{
-        // Call the function and log the result
-        // getChargeCodes().then(result => {
-        //     console.log(JSON.stringify(result, null, 2));
-        //     res.json(JSON.stringify(result, null, 2))
-        // });
-    // }  
-})
-
-
-
-
-
-
-
-
-
-  // BULK UPLOAD CHARGE CODES
-                                                        // app.post('/api/admin/bulk/charge_codes', async (req, res) => {
-                                                        //     console.log("Uploading the charges codes csv");
-                                                        //     try {
-                                                        //         const result = await uploadChargeCodes(req);
-                                                        //         if (result.errorDetails) {
-                                                        //             console.log("Error uploading: ", result.errorDetails);
-                                                        //             res.status(200).json({
-                                                        //                 message: result.message,
-                                                        //                 errors: result.errorDetails
-                                                        //             });
-                                                        //         } else {
-                                                        //             console.log("Success");
-                                                        //             res.status(200).json({ message: result.message });
-                                                        //         }
-                                                        //     } catch (error) {
-                                                        //         console.log("Error uploading: ", error);
-                                                        //         res.status(500).json({ error: error.message });
-                                                        //     }
-                                                        // });
-
-
- 
-
-
-
-
-
-
-
 
 
 
@@ -343,28 +275,6 @@ var allowedDomains = [
   //PASSWORD ROUTES
   //----------------------------------------------------------------
   passwordRoutes(app);
-
- 
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
 
 
 
