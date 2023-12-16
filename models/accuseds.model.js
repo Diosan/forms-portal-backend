@@ -112,6 +112,10 @@ export default sequelize => {
       type: DataTypes.DATEONLY, 
       allowNull: true
     },
+    aproximateAge:       {
+      type: DataTypes.INTEGER, // Data type of the column
+      allowNull: true // Column can be null
+    },
     alias:{
       type: DataTypes.STRING, 
       allowNull: true
