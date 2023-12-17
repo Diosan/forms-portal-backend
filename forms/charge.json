@@ -15,7 +15,7 @@
                 "type": "string",
                 "title": "Date/Period Of Offence"
             },
-            "stateOfOffence": {
+            "statementOfOffence": {
                 "type": "string",
                 "title": "Statement Of Offence"
             },
@@ -32,7 +32,7 @@
         "dateOfOffence": {
             "ui:widget": "textarea"
         },
-        "stateOfOffence": {
+        "statementOfOffence": {
             "ui:widget": "textarea"
         }
     }
