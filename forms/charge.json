@@ -2,15 +2,10 @@
     "schema": {
         "type": "object",
         "required": [
-            "name",
             "count",
             "particulars"
         ],
         "properties": {
-            "name": {
-                "type": "string",
-                "title": "Name Of Offence"
-            },
             "count": {
                 "type": "number",
                 "title": "Count",
