@@ -34,6 +34,10 @@ export default sequelize => {
                 type: DataTypes.TEXT,
                 allowNull: false
             },
+            statementOfOffence: {
+                type: DataTypes.TEXT,
+                allowNull: false
+            },
             dateOfOffence: {
               type: DataTypes.TEXT,
               allowNull: true
