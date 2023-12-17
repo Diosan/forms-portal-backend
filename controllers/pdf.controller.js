@@ -233,38 +233,63 @@ export const convertWithPuppeteer = async (req, res) => {
     console.log(result)
     console.log("============================================")
     //Build the efiling submission
+
+    let docId;
+    let courtOffice;
+    let description = submissionWithDetails?.complainant?.courtDistrict || ""
+
+    if(submissionWithDetails?.complainant?.courtDistrict){
+        switch(submissionWithDetails.complainant.courtDistrict) {
+            case 'District Court Complaint with Oath':
+                docId = 'dcrim002';
+            case 'District Court Complaint without Oath':
+                docId = 'dcrim003';
+            case 'High Court Complaint without Oath':
+                docId = 'hcrim043';
+            case 'High Court Complaint with Oath':
+                docId = 'hcrim044';
+            case 'Children Complaint':
+                docId = 'cc001';
+            default:
+                docId = '-';
+        }
+    }
+
+    let courtoffice;
+    if (description.includes('North')) {
+        courtoffice = 'pos';
+    } else if (description.includes('South')) {
+        courtoffice = 'sfo';
+    } else if (description.includes('Tobago')) {
+        courtoffice = 'tgo';
+    } else {
+        courtoffice = 'pos';
+    }
+    
+
+
+
+
+
     const efilingRecord = {
                 "swftransid": "swif-"+req.body.submissionId,
                 "email": submissionWithDetails.user.email,
-                // "username": submissionWithDetails.user.email,
-                // "court": submissionWithDetails.complainant.court,
-                "court": "hcrim",
-                "courtoffice": submissionWithDetails.complainant.courtDistrict,
+                "userid": submissionWithDetails.user.email,
+                "username": "",
+                "court": "hcrim",   //this has to be updated
+                "courtoffice": courtoffice,
                 "type" : 1,
                 "casenotes" : "TEST",
-                "filingid" : submissionWithDetails.complainant.courtDistrict || "TEST",
-                "filepath" : "https://link.testfile.org/PDF10MB",
-                "returnurl" : "https://eservices.ttlawcourts.org/filing/dev/api/return.php",
-                "submissiondata": JSON.stringify(result) || "",
-                // "signatureobject": submissionWithDetails?.signatures || [],
+                "filingid" : submissionWithDetails.type || "TEST",
+                "returnurl" : "",
+                // "submissiondata": JSON.stringify(result) || "",
+                // "doc_id": docId,
+                // "doc_type":1,
+                // "court": submissionWithDetails.complainant.court,
+                "signatureobject": submissionWithDetails?.signatures || []
     }
 
-    // const efilingRecord = {   "swftransid" : "SWF0000001",
-    //     "email" : "testemail@ttps.gov.tt",
-    //     "court" : "dcrim",
-    //     "courtoffice" : "pos",
-    //     "type" : 1,
-    //     "casenotes" : "These are the case notes",
-    //     "filingid" : "dcrim002",
-    //     "filepath" : "https://link.testfile.org/PDF10MB",
-    //     "returnurl" : "https://eservices.ttlawcourts.org/filing/dev/api/return.php",
-    //     // "signatureobject" : "signatureobject"
-    // }
-
- 
-
-
-    // return res.send()
+    console.log(efilingRecord)
 
     console.log("Efiling Record: ", JSON.stringify(efilingRecord))
     try {
@@ -280,6 +305,7 @@ export const convertWithPuppeteer = async (req, res) => {
         await page.setContent(html);
         const pdf = await page.pdf({ 
             format: 'A4',
+            printBackground: true,
             margin: {
                 top: '7mm',    
                 right: '20mm',  
@@ -306,18 +332,20 @@ export const convertWithPuppeteer = async (req, res) => {
         formData.append('fileupload', fs.createReadStream(pdfPath));
         formData.append('jsondata', JSON.stringify(efilingRecord));
         // formData.append('jsondata', jsondata);
-
         // Send the PDF to the external API
         const response = await axios.post(externalApiUrl, formData, {
             headers: formData.getHeaders()
         });
-
+        console.log("-------------------------------");
+        console.log(response.data);
+        console.log("-------------------------------");
         // Update the submission in the database
         await SubmissionModel.update(
             { 
                 status: 'final',
                 efilingId: response.data.efilingappcode, // Save the efilingappcode
-                efilingResponse: JSON.stringify(response.data) // Save the entire response
+                // efilingResponse: JSON.stringify(response.data) // Save the entire response
+                // efilingResponse: JSON.stringify(response.data) // Save the entire response
             }, 
             { where: { id: submissionId } }
         );
