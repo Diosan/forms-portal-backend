@@ -562,7 +562,9 @@ export const updateTitle = async (req, res) => {
   const title = req.body.title
   console.log('updateTitle posted to for ID ' + id, req.body);
   let submission = await SubmissionModel.findByPk(id)
-  let updated_submission = await submission.update({ description: title })
+  let updated_submission = await submission.update({ description: title }, {
+                              where:{id: submission.id}
+                            })
   // console.log('')
   res.status(201).json({
     outcome: 'success',
@@ -582,7 +584,9 @@ export const updateComplainant = async (req, res) => {
       submissionId: complainant.submissionId
     }
   });
-  let updated_complainant = await ComplainantModel.update(complainant);
+  let updated_complainant = await ComplainantModel.update({complainant}, { where: {
+                            submissionId: complainant.submissionId
+                          }});
   
   res.status(200).json({
     outcome: 'success',
@@ -1090,7 +1094,7 @@ export const requestSignature = async (req, res) => {
             <img src="${pathToImage}" alt="SWF Logo" class="logo"/>
 
             <p class="swf-text">Hi, <b></b></p>
-            <p class="swf-text">Your signature has been requested on a submission in SWF</p>
+            <p class="swf-text">Your signature has been requested on a submission in SWiF</p>
 
             <p class="swf-text">Click <a href="${process.env.APP_DOMAIN + '/sign/' + req.body.submission_id}">here</a> to sign submission</p>  
         
@@ -1119,7 +1123,7 @@ export const requestSignature = async (req, res) => {
   await transporter.sendMail({
     from: `SWF <${SWF_EMAIL}>`,
     to: req.body.complainant_email,
-    subject: 'SWF - Complaint with Oath',
+    subject: 'SWF - New Complaint with Oath',
     html: resetEmailString,
   });
 

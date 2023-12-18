@@ -24,16 +24,60 @@ export const saveCharge = async (req, res) => {
     //     counts: 1,
     //     accusedId: 6
     // };
+
     let charge = req.body;
-    let new_charge = await ChargesModel.create(charge);
-    let accused = await AccusedModel.findByPk(req.body.accusedId);
-    let submission = await SubmissionModel.findByPk(accused.submissionId);
-    await submission.update({ status: 'charge_saved' });
-    await submission.save();
-    res.status(201).json({
-        outcome: 'success',
-        charge: new_charge
-    });
+    
+    try {
+        console.log(req.body);
+        
+        let new_charge = await ChargesModel.create(charge);
+        let accused = await AccusedModel.findByPk(req.body.accusedId);
+    
+        // Check if accused exists
+        if (!accused) {
+            throw new Error("Accused not found");
+        }
+    
+        let submission = await SubmissionModel.findByPk(accused.submissionId);
+    
+        // Check if submission exists
+        if (!submission) {
+            throw new Error("Submission not found");
+        }
+    
+        await submission.update({ status: 'charge_saved' });
+        await submission.save();
+    
+        res.status(201).json({
+            outcome: 'success',
+            charge: new_charge
+        });
+    
+    } catch (error) {
+        console.error("Error occurred:", error);
+    
+        // Send an appropriate error response
+        res.status(500).json({
+            outcome: 'error',
+            message: 'An error occurred while processing your request.'
+        });
+    }
+
+
+
+
+    // let charge = req.body;
+
+    // console.log(req.body)
+    // let new_charge = await ChargesModel.create(charge);
+    // let accused = await AccusedModel.findByPk(req.body.accusedId);
+    // let submission = await SubmissionModel.findByPk(accused.submissionId);
+    // await submission.update({ status: 'charge_saved' });
+    // await submission.save();
+    // res.status(201).json({
+    //     outcome: 'success',
+    //     charge: new_charge
+    // });
 
 };
 

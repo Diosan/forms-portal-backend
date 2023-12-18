@@ -83,7 +83,7 @@ async function getSubmissionWithDetails(submissionId) {
             required: false,
             attributes: {
                 exclude: [
-                  'id', 'address', 'phone', 'password', 'username', 'status', 'notifications', 'active', 
+                  'address', 'phone', 'password', 'username', 'status', 'notifications', 'active', 
                   'role', 'resetToken', 'verifierId', 'hashValue', 'createdAt', 'updatedAt'
                 ]
               },
@@ -274,19 +274,19 @@ export const convertWithPuppeteer = async (req, res) => {
     const efilingRecord = {
                 "swftransid": "swif-"+req.body.submissionId,
                 "email": submissionWithDetails.user.email,
-                "userid": submissionWithDetails.user.email,
+                "userid": submissionWithDetails.user.id,
                 "username": "",
                 "court": "hcrim",   //this has to be updated
                 "courtoffice": courtoffice,
                 "type" : 1,
                 "casenotes" : "TEST",
                 "filingid" : submissionWithDetails.type || "TEST",
-                "returnurl" : "",
-                // "submissiondata": JSON.stringify(result) || "",
+                "returnurl" : "http://swif.ttlawcourts.org/efiling/subs",
+                "submissiondata": JSON.stringify(result) || "",
                 // "doc_id": docId,
                 // "doc_type":1,
                 // "court": submissionWithDetails.complainant.court,
-                "signatureobject": submissionWithDetails?.signatures || []
+                // "signatureobject": submissionWithDetails?.signatures || []
     }
 
     console.log(efilingRecord)
@@ -333,9 +333,13 @@ export const convertWithPuppeteer = async (req, res) => {
         formData.append('jsondata', JSON.stringify(efilingRecord));
         // formData.append('jsondata', jsondata);
         // Send the PDF to the external API
+
+
+        //*******************************PAUSED***************************** */
         const response = await axios.post(externalApiUrl, formData, {
             headers: formData.getHeaders()
         });
+        //************************************************************ */
         console.log("-------------------------------");
         console.log(response.data);
         console.log("-------------------------------");
@@ -344,7 +348,7 @@ export const convertWithPuppeteer = async (req, res) => {
             { 
                 status: 'final',
                 efilingId: response.data.efilingappcode, // Save the efilingappcode
-                // efilingResponse: JSON.stringify(response.data) // Save the entire response
+                efilingResponse: JSON.stringify(response.data) // Save the entire response
                 // efilingResponse: JSON.stringify(response.data) // Save the entire response
             }, 
             { where: { id: submissionId } }
