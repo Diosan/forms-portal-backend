@@ -141,11 +141,18 @@ export default class SignOTPGenerator {
       </body>
       </html>`
 
+    // await this.transporter.sendMail({
+    //   from: 'JSSWF <omm@link868.com>',
+    //   to: email,
+    //   subject: 'Your One-Time Password (OTP)',
+    //   html: htmlEmailString
+    // });
+
     await this.transporter.sendMail({
-      from: 'JSSWF <omm@link868.com>',
+      from: `SWF <${SWF_EMAIL}>`,
       to: email,
-      subject: 'Your One-Time Password (OTP)',
-      html: htmlEmailString
+      subject: 'SWF -Your One-Time Password (OTP)',
+      html: htmlEmailString,
     });
 
   }

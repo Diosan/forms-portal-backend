@@ -114,12 +114,19 @@ export class SubmissionMailer {
           </body>
           </html>`
           
+        // await this.transporter.sendMail({
+        //     from: 'JSSWF <omm@link868.com>',
+        //     to: email,
+        //     subject: 'SWiF submission verification request',
+        //     html: htmlEmailString
+        // });
+
         await this.transporter.sendMail({
-            from: 'JSSWF <omm@link868.com>',
+            from: `SWF <${SWF_EMAIL}>`,
             to: email,
             subject: 'SWiF submission verification request',
-            html: htmlEmailString
-        });
+            html: htmlEmailString,
+          });
 
     }
 
