@@ -36,7 +36,7 @@ export default sequelize => {
             },
             statementOfOffence: {
                 type: DataTypes.TEXT,
-                allowNull: false
+                allowNull: true
             },
             dateOfOffence: {
               type: DataTypes.TEXT,

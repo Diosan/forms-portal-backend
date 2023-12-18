@@ -51,6 +51,10 @@ export default sequelize => {
       type: DataTypes.STRING,
       allowNull: true
     },
+    countryName: {
+      type: Sequelize.STRING, // Data type of the column
+      allowNull: true // Column can be null
+    },
     tntNational:{
       type: DataTypes.BOOLEAN, 
       allowNull: false,

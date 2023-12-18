@@ -1123,7 +1123,7 @@ export const requestSignature = async (req, res) => {
   await transporter.sendMail({
     from: `SWF <${SWF_EMAIL}>`,
     to: req.body.complainant_email,
-    subject: 'SWF - New Complaint with Oath',
+    subject: 'SWF - Submission',
     html: resetEmailString,
   });
 
