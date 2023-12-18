@@ -4,8 +4,10 @@ import nodemailer from 'nodemailer';
 import { mailConfig } from '../config/mail.config.js';
 import { redisClient, } from '../redis/redisConfig.js';
 // const { redisClient, redisURL, userChannel, redisAdapter, emitter } = require('../redis/redisConfig');
+import dotenv from 'dotenv';
+dotenv.config()
 
-
+const SWF_EMAIL = process.env.SWF_EMAIL
 export default class SignOTPGenerator {
   constructor() {
     this.redisClient = redisClient;
