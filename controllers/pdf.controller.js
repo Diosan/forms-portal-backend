@@ -336,24 +336,26 @@ export const convertWithPuppeteer = async (req, res) => {
 
 
         //*******************************PAUSED***************************** */
-        const response = await axios.post(externalApiUrl, formData, {
-            headers: formData.getHeaders()
-        });
-        //************************************************************ */
-        console.log("-------------------------------");
-        console.log(response.data);
-        console.log("-------------------------------");
-        // Update the submission in the database
-        await SubmissionModel.update(
-            { 
-                status: 'final',
-                efilingId: response.data.efilingappcode, // Save the efilingappcode
-                efilingResponse: JSON.stringify(response.data) // Save the entire response
-                // efilingResponse: JSON.stringify(response.data) // Save the entire response
-            }, 
-            { where: { id: submissionId } }
-        );
+        // const response = await axios.post(externalApiUrl, formData, {
+        //     headers: formData.getHeaders()
+        // });
+        
+        // console.log("-------------------------------");
+        // console.log(response.data);
+        // console.log("-------------------------------");
+        // // Update the submission in the database
+        // await SubmissionModel.update(
+        //     { 
+        //         status: 'final',
+        //         efilingId: response.data.efilingappcode, // Save the efilingappcode
+        //         efilingResponse: JSON.stringify(response.data) // Save the entire response
+        //         // efilingResponse: JSON.stringify(response.data) // Save the entire response
+        //     }, 
+        //     { where: { id: submissionId } }
+        // );
         res.json(response.data);
+        //************************************************************ */
+        res.send();
     } catch (error) {
         console.log(error);
         res.status(500).send('Error in processing: ' + error.message);
