@@ -240,7 +240,6 @@ export const convertWithPuppeteer = async (req, res) => {
     console.log(result)
     console.log(result.user.signatures[0].hash)
 
-
     function formatTime(date) {
         let hours = date.getHours();
         let minutes = date.getMinutes();
@@ -263,6 +262,8 @@ export const convertWithPuppeteer = async (req, res) => {
     const signedName = (result?.complainant?.firstName ?? '' ) + " " + (result?.complainant?.lastName ?? '' )
     const complainantRank = (result?.complainant?.rank ?? '' ) 
     const complainantRegNum = (result?.complainant?.regNum ?? '' ) 
+
+    const summaryOfEidence = (result?.summaryOfEvidence ?? '' ) 
     
 
 
@@ -423,6 +424,38 @@ export const convertWithPuppeteer = async (req, res) => {
     </div>
   `
 
+    const appendixA = `
+    
+        <div class="" style="margin:30px 0 0 0; font-size:15px; font-weight:bold; padding:30px 10px 10px 10px; text-align:center; border-top:1px solid #000" >
+            Appendix - A
+        </div>
+        
+        <div style="font-size:30px; font-weight:bold; padding:10px 10px 25px 10px; text-align:center" >
+            Summary of Evidence
+        </div>`
+
+
+    const printSummary = `
+        <div
+        id="acnhor-sign"
+        style="
+        padding: 20px;
+        margin: 0;
+        font-size: 10pt; line-height:14pt;
+        "
+        >
+        ${summaryOfEidence}
+        </div>
+        `
+
+
+
+
+
+
+
+
+
 
     console.log("Efiling Record: ", JSON.stringify(efilingRecord))
     try {
@@ -432,7 +465,7 @@ export const convertWithPuppeteer = async (req, res) => {
         if (!html) {
             return res.status(400).send('No HTML content provided');
         }
-        const htmlWithSignature = `<div><div>${html}</div> <div>${signatureHTML}</div></div>`
+        const htmlWithSignature = `<div><div>${html}</div> <div>${signatureHTML}</div><div>${appendixA} ${printSummary}</div></div>`
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         await page.setContent(htmlWithSignature);
