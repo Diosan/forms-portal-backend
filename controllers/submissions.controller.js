@@ -188,7 +188,7 @@ export const verifyOTP = async (req, res) => {
 
   const totp = new SignOTPGenerator();
   let verified = await totp.verifyOTP(req.body.email, req.body.otp);
-  
+
   // console.log('\n\n\n verification result: ', verified);
 
   if(verified) {
