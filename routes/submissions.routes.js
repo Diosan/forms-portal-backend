@@ -1,6 +1,6 @@
   import {findAll, findOne, authenticateUser, create, update, del, resetPassword,
     updateMessage, forgotPasswordRequest, handlePasswordForgotPage, resetPasswordFromEmail,
-    saveComplainant, signSubmission, updateTitle, updateComplainant, saveAccused, accuseds, requestSignature, createIndictable, signIndictable, complainantSign, sendOTP, submissionSignature, verifyOTP, sendSignRequest, sendVerifyOTP, verifierSign, submissionVerification, chargeCodes, verifiers
+    saveComplainant, signSubmission, updateTitle, updateComplainant, saveAccused, accuseds, requestSignature, createIndictable, signIndictable, complainantSign, sendOTP, submissionSignature, verifyOTP, sendSignRequest, sendVerifyOTP, verifierSign, submissionVerification, chargeCodes, verifiers, adminSubmissions
   } from "../controllers/submissions.controller.js";
   import express from "express";
   import verifyToken from '../middlewares/authMiddleware.js';
@@ -70,6 +70,8 @@
     router.get('/codes/:id', chargeCodes);
 
     router.get('/verifiers/:id', verifiers);
+
+    router.get('/admin/:id', adminSubmissions);
 
     app.use('/api/submissions', router);
   };

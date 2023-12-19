@@ -426,6 +426,25 @@ export const findAll = (req, res) => {
 
 }
 
+export const adminSubmissions = (req, res) => {
+  SubmissionModel.findAndCountAll()
+  .then(data => {
+    console.log('Submission. Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
+    res.status(201).json({
+        outcome: 'success',
+        submissions: data
+    });
+  })
+  .catch(error => {
+    console.log(error)
+      res.status(201).json({
+          outcome: 'error', 
+          error: error
+        });
+  });
+  
+}
+
 //  
 
 export const findOne = async (req, res) => {
