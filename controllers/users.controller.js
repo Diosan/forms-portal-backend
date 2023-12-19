@@ -23,9 +23,13 @@ import { generatePasswordResetToken } from './password.controller.js';
 
 const saltRounds = 10; 
 const JWT_SECRET = process.env.JWT_SECRET;
-const APP_DOMAIN = process.env.APP_DOMAIN;
-const SWF_LOGO = process.env.SWF_LOGO;
-const SWF_EMAIL = process.env.SWF_EMAIL;
+// const APP_DOMAIN = process.env.APP_DOMAIN;
+// const SWF_LOGO = process.env.SWF_LOGO;
+// const SWF_EMAIL = process.env.SWF_EMAIL;
+const SWF_EMAIL="swif@ttlawcourts.org"
+const APP_DOMAIN="https://swif.ttlawcourts.org"
+const SWF_LOGO="https://www.ttlawcourts.org/images/swf-logo.png"
+
 const transporter = nodemailer.createTransport(mailConfig);
 
 
