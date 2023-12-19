@@ -1100,10 +1100,10 @@ export const makePDFsendToEfiling = async (req, res) => {
       // court: "hcrim", //this has to be updated
       // courtoffice: courtoffice,
       type: 1,
-      casenotes: "TEST",
-      filingid: submissionWithDetails.type || "TEST",
+      casenotes: "-",
+      filingid: submissionWithDetails.type || 1,
       returnurl: "http://swif.ttlawcourts.org/efiling/subs",
-      submissiondata: JSON.stringify(result) || "",
+      submissiondata: JSON.stringify(result) || "-",
       // "doc_id": docId,
       // "doc_type":1,
       // "court": submissionWithDetails.complainant.court,

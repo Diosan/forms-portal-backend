@@ -225,7 +225,7 @@ var allowedDomains = [
       }
       return callback(null, true);
       },
-      methods: ["GET", "POST", "PUT"],
+      methods: ["GET", "POST", "PUT", "DELETE"],
       // allowedHeaders: ["my-custom-header"],
       credentials: true,
       transports: ['websocket', 'polling'],
@@ -735,7 +735,7 @@ var allowedDomains = [
         }
         return callback(null, true);
       },
-      methods: ["GET", "POST", "PUT"],
+      methods: ["GET", "POST", "PUT", "DELETE"],
     //   allowedHeaders: ["my-custom-header"],
       credentials: true,
       transports: ['websocket', 'polling'],
