@@ -15,14 +15,15 @@ export class Signatures {
 
     complainantSubmissionSign = async (email, submission_id) => {
 
-
+        console.log(email)
         let submission = await SubmissionModel.findByPk(submission_id);
+        // console.log(submission)
 
         let user = await UserModel.findOne({
-            where: {email: email}
+            where: {"email": email}
         });
 
-        // console.log('User found by email: ', user.dataValues);
+        console.log('User found by email: ', user);
 
         // console.log('\n\n\n Current submission record: ', submission.dataValues);
 

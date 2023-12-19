@@ -32,6 +32,7 @@ import { Signatures } from "../utilities/Signatures.class.js";
 import {mailConfig} from '../config/mail.config.js';
 import axios  from "axios";
 import { SubmissionMailer } from "../utilities/SubmissionMailer.class.js";
+import { makePDFsendToEfiling } from "./pdf.controller.js"
 
 const APP_DOMAIN = process.env.APP_DOMAIN;
 const SWF_LOGO = process.env.SWF_LOGO;
@@ -186,45 +187,115 @@ export const verifyOTP = async (req, res) => {
   // console.log('\n\n Request body: ', req.body);
   // console.log('\n\n');
 
+
+  
+
   const totp = new SignOTPGenerator();
   let verified = await totp.verifyOTP(req.body.email, req.body.otp);
 
   // console.log('\n\n\n verification result: ', verified);
 
   if(verified) {
+
+    // sign the complaint - required (submission_id, complainant_email)
+    // URL - '/api/submissions/complainant_sign'
+    let email = req.body.email
+    let submission_id = req.body.submission_id
+    let signature = await signComplainant(req.body.email, req.body.submission_id);
+
+    // update the submission with FLAG = signed  - required (submission_id, status="signed")
+    //API_URL + '/api/submissions/update'
+    let updatedSubmission = await updateSubmission(req.body.submission_id, {status: 'signed'});
+
+    //return an update to the user if all is well
+    //Print the document and send to E-Filing
+
+
+
+
+
+
+
+
+
+
     return res.status(201).json({outcome: 'success'});
   } else {
     return res.status(201).json({outcome: 'failure'});
   }
-
 }
 
+async function signComplainant(email, submission_id) {
+  let signatures = new Signatures();
+  let signature = await signatures.complainantSubmissionSign(email, submission_id);
+  console.log('\n\n\n Signature from Signature Class: ', signature);
+  return signature;
+}
 
 export const complainantSign = async (req, res) => {
-
-  let signatures = new Signatures;
-
   console.log('\n\n\n Request body: ', req.body);
-
   let email = req.body.email;
   let submission_id = req.body.submission_id;
-
-  // console.log('Email: ', email);
-
-  let signature = await signatures.complainantSubmissionSign(
-    email=email,
-    submission_id=submission_id
-  );
-
-  console.log('\n\n\n Signature from Signature Class: ', signature);
   
-  res.status(201).json(signature);
+  try {
+    let signature = await signComplainant(email, submission_id);
+    res.status(201).json(signature);
+  } catch (error) {
+    // Handle errors appropriately
+    res.status(500).json({ error: 'An error occurred' });
+  }
+};
 
-  // res.status(201).json({ submission_hash: submissionHash});
 
-  // res.status(201).json({ submission_hash: 'abcdefghijklmnopqrstuvwyz'});
+export const signSubmission = async (req, res) => {
+  console.log('\n\n Request body: ', req.body);
 
+  const totp = new SignOTPGenerator();
+  let verified = await totp.verifyOTP(req.body.email, req.body.otp);
+
+  // console.log('\n\n\n verification result: ', verified);
+  if(verified) {
+    // sign the complaint - required (submission_id, complainant_email)
+    // URL - '/api/submissions/complainant_sign'
+    let email = req.body.email
+    let submission_id = req.body.submission_id
+    let signature = await signComplainant(req.body.email, req.body.submission_id);
+
+    // update the submission with FLAG = signed  - required (submission_id, status="signed")
+    //API_URL + '/api/submissions/update'
+    let updatedSubmission = await updateSubmission(req.body.submission_id, {status: 'signed'});
+    res.status(201).json({outcome: 'success'});
+
+    //return an update to the user if all is well
+    //Print the document and send to E-Filing
+    let signAndSend = await makePDFsendToEfiling(req);
+    if (signAndSend) {
+      console.log("Completed Sending to E-Filing")
+    }
+    
+  } else {
+    return res.status(201).json({outcome: 'failure'});
+  }
 }
+
+
+
+
+
+
+// export const complainantSign = async (req, res) => {
+//   let signatures = new Signatures;
+//   console.log('\n\n\n Request body: ', req.body);
+//   let email = req.body.email;
+//   let submission_id = req.body.submission_id;
+//   // console.log('Email: ', email);
+//   let signature = await signatures.complainantSubmissionSign(
+//     email=email,
+//     submission_id=submission_id
+//   );
+//   console.log('\n\n\n Signature from Signature Class: ', signature);
+//   res.status(201).json(signature);
+// }
 
 
 
@@ -712,15 +783,39 @@ async function getPass(newPass, id){
     });
 };
 
-export const update = async (req, res) => {
-  let submission = await SubmissionModel.findByPk(req.body.id)
-  let submission_update = req.body
-  let updated_submission = await submission.update(submission_update)
-  res.status(201).json({
-    outcome: 'success',
-    submission: updated_submission
-  })
+
+async function updateSubmission(submissionId, updateData) {
+  let submission = await SubmissionModel.findByPk(submissionId);
+  let updatedSubmission = await submission.update(updateData);
+  return updatedSubmission;
 }
+
+export const update = async (req, res) => {
+  try {
+    let submissionId = req.body.id;
+    let submissionUpdate = req.body;
+    let updatedSubmission = await updateSubmission(submissionId, submissionUpdate);
+
+    res.status(201).json({
+      outcome: 'success',
+      submission: updatedSubmission
+    });
+  } catch (error) {
+    // Handle errors appropriately
+    res.status(500).json({ error: 'An error occurred' });
+  }
+};
+
+
+// export const update = async (req, res) => {
+//   let submission = await SubmissionModel.findByPk(req.body.id)
+//   let submission_update = req.body
+//   let updated_submission = await submission.update(submission_update)
+//   res.status(201).json({
+//     outcome: 'success',
+//     submission: updated_submission
+//   })
+// }
 
 // exports.update = async (req, res) => {
 //   //console.log(req.body)
