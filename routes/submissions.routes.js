@@ -3,12 +3,15 @@
     saveComplainant, updateTitle, updateComplainant, saveAccused, accuseds, requestSignature, createIndictable, signIndictable, complainantSign, sendOTP, submissionSignature, verifyOTP, sendSignRequest, sendVerifyOTP, verifierSign, submissionVerification, chargeCodes, verifiers
   } from "../controllers/submissions.controller.js";
   import express from "express";
+  import verifyToken from '../middlewares/authMiddleware.js';
+
+  
   
   export default function(app) {
     const router = express.Router();
     
     // Retrieve all submissions
-    router.get("/", findAll);
+    router.get("/", verifyToken, findAll);
     // Retrieve one user
     router.get("/:id", findOne);
     // Authenticate User

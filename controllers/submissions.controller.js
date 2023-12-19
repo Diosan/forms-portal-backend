@@ -335,7 +335,9 @@ export const submissionVerification = async (req, res) => {
 
 export const findAll = (req, res) => {
 
-    SubmissionModel.findAndCountAll()
+    console.log(req.user.id)
+
+    SubmissionModel.findAndCountAll({where:{"userId": req.user.id}})
     .then(data => {
         console.log('Submission. Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
         res.status(201).json({
@@ -344,6 +346,7 @@ export const findAll = (req, res) => {
         });
     })
     .catch(error => {
+      console.log(error)
         res.status(201).json({
             outcome: 'error', 
             error: error
