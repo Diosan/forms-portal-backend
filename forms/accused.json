@@ -547,10 +547,26 @@
             "type": "string",
             "title": "Email"
           },
+          "adulthood": {
+            "type": "string",
+            "title": "Adult or Child",
+            "enum": [
+              "Adult",
+              "Child"
+            ],
+            "enumNames": [
+              "Adult",
+              "Child"
+            ]
+          },
           "dateOfBirth": {
             "type": "string",
             "format": "date",
             "title": "Date of Birth"
+          },
+          "aproximateAge": {
+            "type": "string",
+            "title": "aproximateAge"
           },
           "identificaionType": {
             "type": "string",
@@ -586,18 +602,6 @@
               "Woman",
               "Non-Binary",
               "Other"
-            ]
-          },
-          "adulthood": {
-            "type": "string",
-            "title": "Adult or Child",
-            "enum": [
-              "Adult",
-              "Child"
-            ],
-            "enumNames": [
-              "Adult",
-              "Child"
             ]
           },
           "previousCriminalRecord": {
