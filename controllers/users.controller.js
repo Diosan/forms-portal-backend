@@ -521,12 +521,12 @@ export const forgotPasswordRequest = async (req, res) => {
     const resetEmailString = `<!DOCTYPE html>
       <html>
       <head>
-          <title>Verification Code</title>
+          <title>Password Reset</title>
           <style>
               body {
                   font-family: Arial, sans-serif;
                   line-height: 1.6;
-                  font-size:14px;
+                  font-size:16px;
               }
               .container {
                   width: 80%;
@@ -556,7 +556,7 @@ export const forgotPasswordRequest = async (req, res) => {
             }
 
             .swf-text{
-              font-size: 14px;
+              font-size: 16px;
             }
 
             .swf-grey-bg{
@@ -599,9 +599,9 @@ export const forgotPasswordRequest = async (req, res) => {
       </body>`
 
     await transporter.sendMail({
-      from: `SWF <${SWF_EMAIL}>`,
+      from: `SWIF <${SWF_EMAIL}>`,
       to: username,
-      subject: 'SWF Alerts - Password Reset',
+      subject: 'SWIF - Password Reset Instructions',
       html: resetEmailString,
     });
 

@@ -102,7 +102,7 @@ export class TOTPGenerator {
               body {
                   font-family: Arial, sans-serif;
                   line-height: 1.6;
-                  font-size:14px;
+                  font-size:16px;
               }
               .container {
                   width: 80%;
@@ -132,7 +132,7 @@ export class TOTPGenerator {
             }
 
             .swf-text{
-              font-size: 14px;
+              font-size: 16px;
             }
 
             .swf-grey-bg{
@@ -182,34 +182,12 @@ export class TOTPGenerator {
     `
 
     await this.transporter.sendMail({
-      from: `SWF <${SWF_EMAIL}>`,
+      from: `SWIF <${SWF_EMAIL}>`,
       to: email,
-      subject: 'SWF Alerts',
+      subject: 'SWIF - Your Verification Code',
       html: htmlEmailString,
     });
   }
-
-  //Hi, Hilwyn!
-// It looks like you’re signing in with a new computer.
-
-// Your verification code is:
-
-// 003553
-
-
-// Here's the code
-// you asked for
-// 264357
-// Don't share this code with anyone —
-// we won't call to ask for it.
-// If you didn't make this request,
-// call us right away at 800.933.6262.
-
-// We'll never ask for your personal information such as SSN or ATM PIN in email messages. If you get an email that looks suspicious, don't click on any hyperlinks. Instead, forward to abuse@bankofamerica.com then delete it.
-// Please don't reply to this automatically generated service email.
-// Privacy Notice	Equal Housing Lender 
-// Bank of America, N.A. Member FDIC
-// © 2023 Bank of America Corporation
 
 
 
