@@ -1,4 +1,4 @@
-import {saveCharge, removeAccused, charges, saveConviction, convictions, savePending, pendings, findOne, saveRelatedMatter, relateds
+import {saveCharge, removeAccused, removeAccusedCharge, charges, saveConviction, convictions, savePending, pendings, findOne, saveRelatedMatter, relateds
 
 } from "../controllers/accuseds.controller.js";
 import express from "express";
@@ -26,6 +26,9 @@ export default function(app) {
     router.get('/relateds/:id', relateds);
 
     router.delete('/remove-accused/:id', removeAccused);
+
+    router.delete('/remove-charge/:id/:accusedId', removeAccusedCharge);
+
 
     app.use('/api/accuseds', router);
 

@@ -1,7 +1,7 @@
 {
     "schema": {
-        "title": "Accused & Charges",
-        "description": "Persons being charged and charges being laid",
+        "title": "Add Accused",
+        "description": "Add an individual being accused",
         "type": "object",
         "required": [
           "firstName",
