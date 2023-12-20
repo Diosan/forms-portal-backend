@@ -566,7 +566,7 @@
           },
           "aproximateAge": {
             "type": "string",
-            "title": "aproximateAge"
+            "title": "Aproximate Age"
           },
           "identificaionType": {
             "type": "string",
