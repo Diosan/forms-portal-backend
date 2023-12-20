@@ -122,6 +122,18 @@ export const saveConviction = async (req, res) => {
 
 };
 
+export const removeAccusedCharge =async (req, res) => {
+    try {
+        console.log(req.params)
+        const { id, accusedId } = req.params;
+        await ChargesModel.destroy({ where: { "id":id, accusedId } });
+        res.status(200).json({ outcome: "success", message: 'Charge removed successfully' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Error removing charge from the accused' });
+    }
+};
+
 export const removeAccused =async (req, res) => {
     try {
         console.log(req.params)

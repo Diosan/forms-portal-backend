@@ -66,10 +66,11 @@ AccusedModel.belongsTo(SubmissionModel, { foreignKey: 'submissionId', onDelete: 
 SubmissionModel.hasMany(AccusedModel, { foreignKey: 'submissionId' });
 
 // Accuseds ++++++++++
-// ChargesModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 ChargesModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
-// AccusedModel.hasMany(ChargesModel)
 AccusedModel.hasMany(ChargesModel, { foreignKey: 'accusedId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+// ChargesModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+
+
 // Charges ++++++++++
 PendingModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 AccusedModel.hasMany(PendingModel)
@@ -84,8 +85,6 @@ RelatedMatterModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 
 AccusedModel.hasMany(RelatedMatterModel)
 // Related Matters ++++++++++
 
-AccusedModel.hasMany(ChargesModel, { foreignKey: 'accusedId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
-ChargesModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
 
 // Passwords ++++++++++
