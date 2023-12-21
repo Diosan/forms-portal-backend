@@ -347,7 +347,8 @@ export const convertWithPuppeteer = async (req, res) => {
                         .signature-format {
                             width: 300px;
                             border: 2px solid #000; 
-                            padding:5px 10px 7px 10px
+                            padding:5px 10px 7px 10px;
+                            background-color: #ecf7ff
                         }
                 
                 
@@ -776,7 +777,7 @@ export const convertWithPuppeteer = async (req, res) => {
     <div class="signature-container">
         <div
         class="signature-format"
-        style="background-color: rgb(255, 255, 255); padding:5px 5px; max-width:300px; border: 1px solid rgb(0,0,0)"
+        style="background-color: rgb(236, 247, 255); padding:5px 5px; max-width:300px; border: 1px solid rgb(0,0,0)"
         >
         <div style="display: flex; font-family:Calibri, Arial, Helvetica, sans-serif"
     
@@ -1123,7 +1124,8 @@ export const makePDFsendToEfiling = async (req, res) => {
                         .signature-format {
                             width: 300px;
                             border: 2px solid #000; 
-                            padding:5px 10px 7px 10px
+                            padding:5px 10px 7px 10px;
+                            background-color: #ecf7ff;
                         }
                 
                 
@@ -1552,7 +1554,7 @@ export const makePDFsendToEfiling = async (req, res) => {
     <div class="signature-container">
         <div
         class="signature-format"
-        style="background-color: rgb(255, 255, 255); padding:5px 5px; max-width:300px; border: 1px solid rgb(0,0,0)"
+        style="background-color: rgb(236, 247, 255); padding:5px 5px; max-width:300px; border: 1px solid rgb(0,0,0)"
         >
         <div style="display: flex; font-family:Calibri, Arial, Helvetica, sans-serif"
     

@@ -248,34 +248,51 @@ export const complainantSign = async (req, res) => {
 
 
 export const signSubmission = async (req, res) => {
-  console.log('\n\n Request body: ', req.body);
+      console.log('\n\n Request body: ', req.body);
+      //verify the otp
+      const totp = new SignOTPGenerator();
+  try{
+      let verified = await totp.verifyOTP(req.body.email, req.body.otp);
+      // console.log('\n\n\n verification result: ', verified);
+      if(verified) {
+        // sign the complaint - required (submission_id, complainant_email)
+        // URL - '/api/submissions/complainant_sign'
+        let email = req.body.email
+        let submission_id = req.body.submission_id
+        let signature = await signComplainant(req.body.email, req.body.submission_id);
+        // update the submission with FLAG = signed  - required (submission_id, status="signed")
+        //API_URL + '/api/submissions/update'
+        let updatedSubmission = await updateSubmission(req.body.submission_id, {status: 'signed'});
+        res.status(201).json({outcome: 'success'});
+        //return an update to the user if all is well
+        //Print the document and send to E-Filing
+        let signAndSend = await makePDFsendToEfiling(req);
+        if (signAndSend) {
+          console.log("Completed Sending to E-Filing")
+          //send Email to SWIF ADMIN
+          let signatureRequest = req.body;
+          console.log('\n\n\n Request Body: ', req.body);
+          let transporter = nodemailer.createTransport(mailConfig);
 
-  const totp = new SignOTPGenerator();
-  let verified = await totp.verifyOTP(req.body.email, req.body.otp);
-
-  // console.log('\n\n\n verification result: ', verified);
-  if(verified) {
-    // sign the complaint - required (submission_id, complainant_email)
-    // URL - '/api/submissions/complainant_sign'
-    let email = req.body.email
-    let submission_id = req.body.submission_id
-    let signature = await signComplainant(req.body.email, req.body.submission_id);
-
-    // update the submission with FLAG = signed  - required (submission_id, status="signed")
-    //API_URL + '/api/submissions/update'
-    let updatedSubmission = await updateSubmission(req.body.submission_id, {status: 'signed'});
-    res.status(201).json({outcome: 'success'});
-
-    //return an update to the user if all is well
-    //Print the document and send to E-Filing
-    let signAndSend = await makePDFsendToEfiling(req);
-    if (signAndSend) {
-      console.log("Completed Sending to E-Filing")
+          await transporter.sendMail({
+            from: `SWF <${SWF_EMAIL}>`,
+            to: req.body.complainant_email,
+            subject: 'SWF - Submission',
+            html: resetEmailString,
+          });
+        }
+        
+      } else {
+        return res.status(201).json({outcome: 'failure'});
+      }
+  }catch (error) {
+    console.log(`Error Signing Submission [${req.body.submission_id}]`, error)
+    res.status(201).json({
+        outcome: 'error', 
+        error:  "error"
+    });
     }
-    
-  } else {
-    return res.status(201).json({outcome: 'failure'});
-  }
+
 }
 
 
@@ -416,7 +433,7 @@ export const findAll = (req, res) => {
       limit: 10
     })
     .then(data => {
-        console.log('Submission. Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
+        // console.log('Submission. Fetched: ', data?.rows[data?.rows.length - 1].dataValues.id);
         res.status(201).json({
             outcome: 'success',
             submissions: data
