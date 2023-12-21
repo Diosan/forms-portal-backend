@@ -1636,7 +1636,7 @@ export const makePDFsendToEfiling = async (req, res) => {
         </div>
         
         <div style="font-size:30px; font-weight:bold; padding:10px 10px 25px 10px; text-align:center" >
-            Summary of Evidence
+            Additional Notes
         </div>`;
 
     const printSummary = `
