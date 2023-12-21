@@ -252,6 +252,7 @@ export const signSubmission = async (req, res) => {
       //verify the otp
       const totp = new SignOTPGenerator();
   try{
+      let transporter = nodemailer.createTransport(mailConfig);
       let verified = await totp.verifyOTP(req.body.email, req.body.otp);
       // console.log('\n\n\n verification result: ', verified);
       if(verified) {
@@ -272,13 +273,12 @@ export const signSubmission = async (req, res) => {
           //send Email to SWIF ADMIN
           let signatureRequest = req.body;
           console.log('\n\n\n Request Body: ', req.body);
-          let transporter = nodemailer.createTransport(mailConfig);
 
           await transporter.sendMail({
-            from: `SWF <${SWF_EMAIL}>`,
-            to: req.body.complainant_email,
-            subject: 'SWF - Submission',
-            html: resetEmailString,
+            from: `SWIF <${SWF_EMAIL}>`,
+            to: "swif_admin@link868.com",
+            subject: 'A SWIF Submission has been made successfully',
+            html: "",
           });
         }
         
@@ -286,7 +286,13 @@ export const signSubmission = async (req, res) => {
         return res.status(201).json({outcome: 'failure'});
       }
   }catch (error) {
-    console.log(`Error Signing Submission [${req.body.submission_id}]`, error)
+    console.log(`Error Signing Submission [ ${req.body.submission_id} ]`, error)
+    await transporter.sendMail({
+      from: `SWIF <${SWF_EMAIL}>`,
+      to: "swif_admin@link868.com",
+      subject: `Error making submission - Submission ID [ ${req.body.submission_id} ]`,
+      html: "",
+    });
     res.status(201).json({
         outcome: 'error', 
         error:  "error"
