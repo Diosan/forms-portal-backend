@@ -1621,7 +1621,7 @@ export const makePDFsendToEfiling = async (req, res) => {
 
     const appendixA = `
     
-        <div class="page-break" style="margin:30px 0 0 0; font-size:15px; font-weight:bold; padding:30px 10px 10px 10px; text-align:center; border-top:1px solid #000" >
+        <div class="" style="margin:30px 0 0 0; font-size:15px; font-weight:bold; padding:30px 10px 10px 10px; text-align:center; border-top:1px solid #000" >
             Appendix - A
         </div>
         
@@ -1629,15 +1629,15 @@ export const makePDFsendToEfiling = async (req, res) => {
             Summary of Evidence
         </div>`;
 
-    const appendixB = `
+    const appendixB = additionalNotes !== "" ? `
 
-        <div class="page-break" style="margin:30px 0 0 0; font-size:15px; font-weight:bold; padding:30px 10px 10px 10px; text-align:center; border-top:1px solid #000" >
+        <div class="" style="margin:30px 0 0 0; font-size:15px; font-weight:bold; padding:30px 10px 10px 10px; text-align:center; border-top:1px solid #000" >
             Appendix - B
         </div>
         
         <div style="font-size:30px; font-weight:bold; padding:10px 10px 25px 10px; text-align:center" >
             Additional Notes
-        </div>`;
+        </div>` : "";
 
     const printSummary = `
         <div
@@ -1651,7 +1651,7 @@ export const makePDFsendToEfiling = async (req, res) => {
         </div>
         `;
 
-    const printAdditionalNotes = `
+    const printAdditionalNotes = additionalNotes !== "" ? `
         <div
         id="acnhor-sign"
         class="avoid-break-inside"
@@ -1662,7 +1662,7 @@ export const makePDFsendToEfiling = async (req, res) => {
         >
         ${additionalNotes}
         </div>
-        `;
+        ` : "";
 
 
     console.log("Efiling Record: ", JSON.stringify(efilingRecord));
@@ -1678,12 +1678,12 @@ export const makePDFsendToEfiling = async (req, res) => {
             <div>${htmlHead}</div> 
             <div>${html}</div> 
             <div>${signatureHTML}</div>
-
+            <div class="page-break"></div>
             <div>
               <div>${appendixA}</div>
               <div>${printSummary}</div>
             </div>
-
+            <div class="page-break"></div>
             <div>
               <div>${appendixB}</div>
               <div>${printAdditionalNotes}</div>

@@ -277,8 +277,8 @@ export const signSubmission = async (req, res) => {
           await transporter.sendMail({
             from: `SWIF <${SWF_EMAIL}>`,
             to: "swif_admin@link868.com",
-            subject: 'A SWIF Submission has been made successfully',
-            html: "",
+            subject: `SWIF Submission successfuly made. Id: [ ${req.body.submission_id} ]`,
+            html: `Submission ID: [ <a href='https://www.swif.ttlawcourts.org/sign/${req.body.submission_id}'>${req.body.submission_id}</a> ]`,
           });
         }
         
@@ -290,8 +290,8 @@ export const signSubmission = async (req, res) => {
     await transporter.sendMail({
       from: `SWIF <${SWF_EMAIL}>`,
       to: "swif_admin@link868.com",
-      subject: `Error making submission - Submission ID [ ${req.body.submission_id} ]`,
-      html: "",
+      subject: `Error making submission - ID: [ ${req.body.submission_id} ]`,
+      html: `Submission ID: [ <a href='https://www.swif.ttlawcourts.org/sign/${req.body.submission_id}'>${req.body.submission_id}</a> ]`,
     });
     res.status(201).json({
         outcome: 'error', 
