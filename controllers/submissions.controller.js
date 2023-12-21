@@ -16,7 +16,7 @@ import formidable from 'formidable'
 import {dbConfig} from "../config/db.config.js"
 import mysql from 'mysql2'
 import { Op } from "sequelize";
- 
+
 
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -408,7 +408,13 @@ export const findAll = (req, res) => {
 
     console.log(req.user.id)
 
-    SubmissionModel.findAndCountAll({where:{"userId": req.user.id}})
+    SubmissionModel.findAndCountAll(
+      {where:{"userId": req.user.id},
+      order: [
+        ['id', 'DESC'],
+      ],
+      limit: 10
+    })
     .then(data => {
         console.log('Submission. Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
         res.status(201).json({
@@ -942,32 +948,39 @@ export const updateMessage = async (req, res) => {
 
 };
 
+
 export const del = (req, res) => {
-  console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-  console.log(req.params.id)
-  console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+  console.log("Delete operation initiated for ID:", req.params.id);
+  console.log(req.user.id)
   const id = req.params.id;
 
-  User.destroy({
-    where: { id: id }
+  SubmissionModel.destroy({
+    where: { 
+      id: id,
+      userId: req.user.id,
+      status: { [Op.ne]: "final" }
+    }
   })
-    .then(num => {
-      if (num == 1) {
-        res.send({
-          status: 200, message: "User was deleted successfully!"
-        });
-      } else {
-        res.send({
-          status: 200, message: `Cannot delete User with id=${id}. Maybe User was not found!`
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Could not delete User with id=" + id
+  .then(num => {
+    if (num == 1) {
+      console.log(num);
+      res.status(200).json({ outcome: "success", message: 'Submission removed successfully' });
+    } else {
+      console.log( "nothing");
+      res.send({
+        status: 200, 
+        message: `Cannot delete Submission with id=${id}. Maybe Submission was not found or the status is 'final'!`
       });
+    }
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).send({
+      message: "Could not delete Submission with id=" + id
     });
+  });
 };
+
 
 export const findAllPublished = (req, res) => {
   User.findAll({ where: { published: true } })

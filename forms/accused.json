@@ -1,7 +1,7 @@
 {
     "schema": {
-        "title": "Add Accused",
-        "description": "Add an individual being accused",
+        "title": "Add the Accused",
+        "description": "",
         "type": "object",
         "required": [
           "firstName",
