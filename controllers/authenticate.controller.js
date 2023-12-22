@@ -22,6 +22,8 @@ import { promisify } from "util";
 import { redisClient } from "../redis/redisConfig.js";
 import { TOTPGenerator } from "../utilities/TOTPGenerator.class.js";
 import { logAuthenticationEvent } from "../utilities/logger.js"
+import { allowedDomains } from "../config/domains.config.js";
+
 
 const saltRounds = parseInt(process.env.SALT_ROUNDS) || 10;
 
@@ -126,9 +128,29 @@ export const doNothing = async (req, res, next) => {
   console.log("+++++++++++++++ AUTHENTICATE +++++++++++++++++++");
 };
 
+
+
+
+
+
 export const login = async (req, res, next) => {
   console.log(req.body);
   const { email, password } = req.body;
+
+  // Extract the domain from the email
+  const emailDomain = email.split("@").pop();
+  // Check if the email domain is in the list of allowed domains
+  if (!allowedDomains.includes("@" + emailDomain)) {
+    return res.status(401).json({
+      outcome: "error",
+      error: "Access denied. Please use your agency's email address to log in.",
+    });
+  }
+
+
+
+
+
   try {
     const user = await getUserByEmail(email);
     // console.log(user)
@@ -186,7 +208,7 @@ export const login = async (req, res, next) => {
       const customError = new Error("Incorrect Passord");
       customError.status = 200; // HTTP status code
       customError.outcome = "error";
-      customError.publicMessage = "error" + req.body.email,
+      customError.publicMessage = "Incorrect username or password",
       customError.email
       
       customError.customResponse = true; // Indicate that this error should return a custom JSON response

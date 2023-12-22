@@ -347,7 +347,8 @@ export const convertWithPuppeteer = async (req, res) => {
                         .signature-format {
                             width: 300px;
                             border: 2px solid #000; 
-                            padding:5px 10px 7px 10px
+                            padding:5px 10px 7px 10px;
+                            background-color: #ecf7ff
                         }
                 
                 
@@ -776,7 +777,7 @@ export const convertWithPuppeteer = async (req, res) => {
     <div class="signature-container">
         <div
         class="signature-format"
-        style="background-color: rgb(255, 255, 255); padding:5px 5px; max-width:300px; border: 1px solid rgb(0,0,0)"
+        style="background-color: rgb(236, 247, 255); padding:5px 5px; max-width:300px; border: 1px solid rgb(0,0,0)"
         >
         <div style="display: flex; font-family:Calibri, Arial, Helvetica, sans-serif"
     
@@ -1054,6 +1055,7 @@ export const makePDFsendToEfiling = async (req, res) => {
     const complainantRegNum = result?.complainant?.regNum ?? "";
 
     const summaryOfEidence = result?.summaryOfEvidence ?? "";
+    const additionalNotes = result?.additionalNotes ?? "";
 
     console.log("============================================");
     //Build the efiling submission
@@ -1123,7 +1125,8 @@ export const makePDFsendToEfiling = async (req, res) => {
                         .signature-format {
                             width: 300px;
                             border: 2px solid #000; 
-                            padding:5px 10px 7px 10px
+                            padding:5px 10px 7px 10px;
+                            background-color: #ecf7ff;
                         }
                 
                 
@@ -1552,7 +1555,7 @@ export const makePDFsendToEfiling = async (req, res) => {
     <div class="signature-container">
         <div
         class="signature-format"
-        style="background-color: rgb(255, 255, 255); padding:5px 5px; max-width:300px; border: 1px solid rgb(0,0,0)"
+        style="background-color: rgb(236, 247, 255); padding:5px 5px; max-width:300px; border: 1px solid rgb(0,0,0)"
         >
         <div style="display: flex; font-family:Calibri, Arial, Helvetica, sans-serif"
     
@@ -1626,6 +1629,16 @@ export const makePDFsendToEfiling = async (req, res) => {
             Summary of Evidence
         </div>`;
 
+    const appendixB = additionalNotes !== "" ? `
+
+        <div class="" style="margin:30px 0 0 0; font-size:15px; font-weight:bold; padding:30px 10px 10px 10px; text-align:center; border-top:1px solid #000" >
+            Appendix - B
+        </div>
+        
+        <div style="font-size:30px; font-weight:bold; padding:10px 10px 25px 10px; text-align:center" >
+            Additional Notes
+        </div>` : "";
+
     const printSummary = `
         <div
         id="acnhor-sign"
@@ -1637,6 +1650,20 @@ export const makePDFsendToEfiling = async (req, res) => {
         ${summaryOfEidence}
         </div>
         `;
+
+    const printAdditionalNotes = additionalNotes !== "" ? `
+        <div
+        id="acnhor-sign"
+        class="avoid-break-inside"
+        style="
+        padding: 20px;
+        margin: 0;
+        font-size: 10pt; line-height:14pt;"
+        >
+        ${additionalNotes}
+        </div>
+        ` : "";
+
 
     console.log("Efiling Record: ", JSON.stringify(efilingRecord));
 
@@ -1651,8 +1678,17 @@ export const makePDFsendToEfiling = async (req, res) => {
             <div>${htmlHead}</div> 
             <div>${html}</div> 
             <div>${signatureHTML}</div>
-            <div>${appendixA}</div>
-            <div>${printSummary}</div>
+            <div class="page-break"></div>
+            <div>
+              <div>${appendixA}</div>
+              <div>${printSummary}</div>
+            </div>
+            <div class="page-break"></div>
+            <div>
+              <div>${appendixB}</div>
+              <div>${printAdditionalNotes}</div>
+            </div>
+            
             <div>${htmlFooter}</div> 
         </div>`;
       const browser = await puppeteer.launch();

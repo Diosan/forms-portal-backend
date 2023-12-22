@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 import { mailConfig } from '../config/mail.config.js';
 import { redisClient, } from '../redis/redisConfig.js';
 
-const SWF_EMAIL = process.env.SWF_EMAIL || "swf-noreply@ttlawcourts.org";
+const SWF_EMAIL = process.env.SWF_EMAIL || "swif-noreply@ttlawcourts.org";
 
 
 export class TOTPGenerator {
@@ -102,7 +102,7 @@ export class TOTPGenerator {
               body {
                   font-family: Arial, sans-serif;
                   line-height: 1.6;
-                  font-size:14px;
+                  font-size:16px;
               }
               .container {
                   width: 80%;
@@ -132,7 +132,7 @@ export class TOTPGenerator {
             }
 
             .swf-text{
-              font-size: 14px;
+              font-size: 16px;
             }
 
             .swf-grey-bg{
@@ -155,10 +155,10 @@ export class TOTPGenerator {
       </head>
       <body>
           <div class="container">
-              <img src="${pathToImage}" alt="SWF Logo" class="logo"/>
+              <img src="${pathToImage}" alt="SWIF Logo" class="logo"/>
 
               <p class="swf-text">Hi, <b>${name}</b>!</p>
-              <p class="swf-text">It looks like you’re signing in to SWF.</p>
+              <p class="swf-text">It looks like you’re signing in to SWIF.</p>
               <p class="swf-text">Your verification code is:</p>
 
               <p class="code">${otp}</p>
@@ -173,7 +173,7 @@ export class TOTPGenerator {
               <p class="footer">Please do not reply to this e-mail as it is sent from a notification only address and cannot accept incoming emails.</p>
 
               <p class="security-tip swf-grey-red "><b>Security Tip</b><br/>
-              SWF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
+              SWIF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
               We will never ask you to validate or restore your account access through email or pop-up windows.</p>
           </div>
       </body>
@@ -182,34 +182,12 @@ export class TOTPGenerator {
     `
 
     await this.transporter.sendMail({
-      from: `SWF <${SWF_EMAIL}>`,
+      from: `SWIF <${SWF_EMAIL}>`,
       to: email,
-      subject: 'SWF Alerts',
+      subject: `SWIF - Your Verification Code is ${otp}`,
       html: htmlEmailString,
     });
   }
-
-  //Hi, Hilwyn!
-// It looks like you’re signing in with a new computer.
-
-// Your verification code is:
-
-// 003553
-
-
-// Here's the code
-// you asked for
-// 264357
-// Don't share this code with anyone —
-// we won't call to ask for it.
-// If you didn't make this request,
-// call us right away at 800.933.6262.
-
-// We'll never ask for your personal information such as SSN or ATM PIN in email messages. If you get an email that looks suspicious, don't click on any hyperlinks. Instead, forward to abuse@bankofamerica.com then delete it.
-// Please don't reply to this automatically generated service email.
-// Privacy Notice	Equal Housing Lender 
-// Bank of America, N.A. Member FDIC
-// © 2023 Bank of America Corporation
 
 
 

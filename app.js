@@ -395,14 +395,14 @@ var allowedDomains = [
       // console.log(otp);
       try {
           // console.log("incoming: ", otp);
-          // const keyToget = `otp:${req.session.id}`;
-          // console.log("Key to get: ", keyToget)
-          // console.log("---------------------------- ")
-          // const storedOTP = await getStoredOTP(keyToget, otp);
-          // console.log("---------------------------- ")
-          // const theStoredOTP = `${storedOTP?.code || ""}`;
-          // console.log("stored otp: ", theStoredOTP);
-          // console.log("incoing otp: ", otp);
+          const keyToget = `otp:${req.session.id}`;
+          console.log("Key to get: ", keyToget)
+          console.log("---------------------------- ")
+          const storedOTP = await getStoredOTP(keyToget, otp);
+          console.log("---------------------------- ")
+          const theStoredOTP = `${storedOTP?.code || ""}`;
+          console.log("stored otp: ", theStoredOTP);
+          console.log("incoing otp: ", otp);
 
           // Initialize incorrect attempts counter if it does not exist
           if (!req.session.incorrectOtpAttempts) {

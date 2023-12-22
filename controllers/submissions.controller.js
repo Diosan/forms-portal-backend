@@ -16,7 +16,7 @@ import formidable from 'formidable'
 import {dbConfig} from "../config/db.config.js"
 import mysql from 'mysql2'
 import { Op } from "sequelize";
- 
+
 
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -248,34 +248,57 @@ export const complainantSign = async (req, res) => {
 
 
 export const signSubmission = async (req, res) => {
-  console.log('\n\n Request body: ', req.body);
+      console.log('\n\n Request body: ', req.body);
+      //verify the otp
+      const totp = new SignOTPGenerator();
+  try{
+      let transporter = nodemailer.createTransport(mailConfig);
+      let verified = await totp.verifyOTP(req.body.email, req.body.otp);
+      // console.log('\n\n\n verification result: ', verified);
+      if(verified) {
+        // sign the complaint - required (submission_id, complainant_email)
+        // URL - '/api/submissions/complainant_sign'
+        let email = req.body.email
+        let submission_id = req.body.submission_id
+        let signature = await signComplainant(req.body.email, req.body.submission_id);
+        // update the submission with FLAG = signed  - required (submission_id, status="signed")
+        //API_URL + '/api/submissions/update'
+        let updatedSubmission = await updateSubmission(req.body.submission_id, {status: 'signed'});
+        res.status(201).json({outcome: 'success'});
+        //return an update to the user if all is well
+        //Print the document and send to E-Filing
+        let signAndSend = await makePDFsendToEfiling(req);
+        if (signAndSend) {
+          console.log("Completed Sending to E-Filing")
+          //send Email to SWIF ADMIN
+          let signatureRequest = req.body;
+          console.log('\n\n\n Request Body: ', req.body);
 
-  const totp = new SignOTPGenerator();
-  let verified = await totp.verifyOTP(req.body.email, req.body.otp);
-
-  // console.log('\n\n\n verification result: ', verified);
-  if(verified) {
-    // sign the complaint - required (submission_id, complainant_email)
-    // URL - '/api/submissions/complainant_sign'
-    let email = req.body.email
-    let submission_id = req.body.submission_id
-    let signature = await signComplainant(req.body.email, req.body.submission_id);
-
-    // update the submission with FLAG = signed  - required (submission_id, status="signed")
-    //API_URL + '/api/submissions/update'
-    let updatedSubmission = await updateSubmission(req.body.submission_id, {status: 'signed'});
-    res.status(201).json({outcome: 'success'});
-
-    //return an update to the user if all is well
-    //Print the document and send to E-Filing
-    let signAndSend = await makePDFsendToEfiling(req);
-    if (signAndSend) {
-      console.log("Completed Sending to E-Filing")
+          await transporter.sendMail({
+            from: `SWIF <${SWF_EMAIL}>`,
+            to: "swif_admin@link868.com",
+            subject: `SWIF Submission successfuly made. Id: [ ${req.body.submission_id} ]`,
+            html: `Submission ID: [ <a href='https://www.swif.ttlawcourts.org/sign/${req.body.submission_id}'>${req.body.submission_id}</a> ]`,
+          });
+        }
+        
+      } else {
+        return res.status(201).json({outcome: 'failure'});
+      }
+  }catch (error) {
+    console.log(`Error Signing Submission [ ${req.body.submission_id} ]`, error)
+    await transporter.sendMail({
+      from: `SWIF <${SWF_EMAIL}>`,
+      to: "swif_admin@link868.com",
+      subject: `Error making submission - ID: [ ${req.body.submission_id} ]`,
+      html: `Submission ID: [ <a href='https://www.swif.ttlawcourts.org/sign/${req.body.submission_id}'>${req.body.submission_id}</a> ]`,
+    });
+    res.status(201).json({
+        outcome: 'error', 
+        error:  "error"
+    });
     }
-    
-  } else {
-    return res.status(201).json({outcome: 'failure'});
-  }
+
 }
 
 
@@ -408,9 +431,15 @@ export const findAll = (req, res) => {
 
     console.log(req.user.id)
 
-    SubmissionModel.findAndCountAll({where:{"userId": req.user.id}})
+    SubmissionModel.findAndCountAll(
+      {where:{"userId": req.user.id},
+      order: [
+        ['id', 'DESC'],
+      ],
+      limit: 10
+    })
     .then(data => {
-        console.log('Submission. Fetched: ', data.rows[data.rows.length - 1].dataValues.id);
+        // console.log('Submission. Fetched: ', data?.rows[data?.rows.length - 1].dataValues.id);
         res.status(201).json({
             outcome: 'success',
             submissions: data
@@ -942,32 +971,39 @@ export const updateMessage = async (req, res) => {
 
 };
 
+
 export const del = (req, res) => {
-  console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-  console.log(req.params.id)
-  console.log("YYYYYYYY&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+  console.log("Delete operation initiated for ID:", req.params.id);
+  console.log(req.user.id)
   const id = req.params.id;
 
-  User.destroy({
-    where: { id: id }
+  SubmissionModel.destroy({
+    where: { 
+      id: id,
+      userId: req.user.id,
+      status: { [Op.ne]: "final" }
+    }
   })
-    .then(num => {
-      if (num == 1) {
-        res.send({
-          status: 200, message: "User was deleted successfully!"
-        });
-      } else {
-        res.send({
-          status: 200, message: `Cannot delete User with id=${id}. Maybe User was not found!`
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Could not delete User with id=" + id
+  .then(num => {
+    if (num == 1) {
+      console.log(num);
+      res.status(200).json({ outcome: "success", message: 'Submission removed successfully' });
+    } else {
+      console.log( "nothing");
+      res.send({
+        status: 200, 
+        message: `Cannot delete Submission with id=${id}. Maybe Submission was not found or the status is 'final'!`
       });
+    }
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).send({
+      message: "Could not delete Submission with id=" + id
     });
+  });
 };
+
 
 export const findAllPublished = (req, res) => {
   User.findAll({ where: { published: true } })
@@ -1236,24 +1272,28 @@ export const requestSignature = async (req, res) => {
   let signatureRequest = req.body;
   console.log('\n\n\n Request Body: ', req.body);
   let transporter = nodemailer.createTransport(mailConfig);
-
-  await transporter.sendMail({
-    from: `SWF <${SWF_EMAIL}>`,
-    to: req.body.complainant_email,
-    subject: 'SWF - Submission',
-    html: resetEmailString,
-  });
-
-  // await transporter.sendMail({
-  //   from: 'JSSWF <omm@link868.com>',
-  //   to: req.body.complainant_email,
-  //   subject: 'Complaint with Oath',
-  //   html: htmlEmailString
-  // });
-
-
-
-
+  try{
+    await transporter.sendMail({
+      from: `SWF <${SWF_EMAIL}>`,
+      to: req.body.complainant_email,
+      subject: 'SWF - Submission',
+      html: resetEmailString,
+    });
+  
+    }catch (error) {
+      console.log(`Error Sending Reset Email`)
+        await transporter.sendMail({
+          from: `SWIF <${SWF_EMAIL}>`,
+          to: "swif_admin@link868.com",
+          subject: `Error sending reset email`,
+          html: `Error sending reset email`,
+        });
+        res.status(201).json({
+            outcome: 'error', 
+            error:  "error"
+        });
+      }
+  
   res.status(201).json({
     outcome: 'success'
   })

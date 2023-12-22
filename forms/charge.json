@@ -3,7 +3,8 @@
         "type": "object",
         "required": [
             "count",
-            "particulars"
+            "particulars",
+            "statementOfOffence"
         ],
         "properties": {
             "count": {

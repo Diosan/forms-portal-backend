@@ -33,7 +33,7 @@
     // User Password reset from email
     router.post("/password/resetPasswordFromEmail", resetPasswordFromEmail);
     // Delete a user
-    router.delete("/:id", del);
+    router.delete("/:id", verifyToken, del);
 
     router.post('/saveComplainant', saveComplainant);
 
