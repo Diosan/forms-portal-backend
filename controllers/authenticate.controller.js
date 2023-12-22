@@ -139,11 +139,15 @@ export const login = async (req, res, next) => {
 
   // Extract the domain from the email
   const emailDomain = email.split("@").pop();
+  const [agency = ""] = emailDomain.split(".") || [];
+  const agencyUpper = agency.toUpperCase(); // This will convert 'agency' to uppercase
+
+
   // Check if the email domain is in the list of allowed domains
   if (!allowedDomains.includes("@" + emailDomain)) {
     return res.status(401).json({
       outcome: "error",
-      error: "Access denied. Please use your agency's email address to log in.",
+      error: `Access denied. Please use your ${agencyUpper} agency's email address to log in.`,
     });
   }
 
@@ -159,7 +163,10 @@ export const login = async (req, res, next) => {
       return res.status(201).json({
         outcome: "error",
         // error: 'User does not exist. Try again'
-        error: "Sign in failed. Try again",
+        // error: "Sign in failed. Try again",
+        error: `Account does not exist. 
+        Please verify with your ${agencyUpper} IT Administrator that 
+        your account has been set up.`
       });
     }
 
