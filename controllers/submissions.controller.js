@@ -1272,24 +1272,28 @@ export const requestSignature = async (req, res) => {
   let signatureRequest = req.body;
   console.log('\n\n\n Request Body: ', req.body);
   let transporter = nodemailer.createTransport(mailConfig);
-
-  await transporter.sendMail({
-    from: `SWF <${SWF_EMAIL}>`,
-    to: req.body.complainant_email,
-    subject: 'SWF - Submission',
-    html: resetEmailString,
-  });
-
-  // await transporter.sendMail({
-  //   from: 'JSSWF <omm@link868.com>',
-  //   to: req.body.complainant_email,
-  //   subject: 'Complaint with Oath',
-  //   html: htmlEmailString
-  // });
-
-
-
-
+  try{
+    await transporter.sendMail({
+      from: `SWF <${SWF_EMAIL}>`,
+      to: req.body.complainant_email,
+      subject: 'SWF - Submission',
+      html: resetEmailString,
+    });
+  
+    }catch (error) {
+      console.log(`Error Sending Reset Email`)
+        await transporter.sendMail({
+          from: `SWIF <${SWF_EMAIL}>`,
+          to: "swif_admin@link868.com",
+          subject: `Error sending reset email`,
+          html: `Error sending reset email`,
+        });
+        res.status(201).json({
+            outcome: 'error', 
+            error:  "error"
+        });
+      }
+  
   res.status(201).json({
     outcome: 'success'
   })
