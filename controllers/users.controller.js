@@ -19,6 +19,8 @@ import { TOTPGenerator } from '../utilities/TOTPGenerator.class.js'
 import { redisClient, } from '../redis/redisConfig.js';
 import { mailConfig } from '../config/mail.config.js';
 import { generatePasswordResetToken } from './password.controller.js';
+import { allowedDomains } from "../config/domains.config.js";
+
 
 
 const saltRounds = 10; 
@@ -26,7 +28,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 // const APP_DOMAIN = process.env.APP_DOMAIN;
 // const SWF_LOGO = process.env.SWF_LOGO;
 // const SWF_EMAIL = process.env.SWF_EMAIL;
-const SWF_EMAIL="swif@ttlawcourts.org"
+const SWF_EMAIL="swif-noreply@ttlawcourts.org"
 const APP_DOMAIN="https://swif.ttlawcourts.org"
 const SWF_LOGO="https://www.ttlawcourts.org/images/swf-logo.png"
 
@@ -506,9 +508,32 @@ export const resetPassword = async (req, res) => {
 
 //handle Request to reset password from email
 export const forgotPasswordRequest = async (req, res) => {
-  console.log("email: ", req.body.username)
-  console.log("------------------------------------")
+  console.log(req.body)
   const { username } = req.body;
+
+  // Extract the domain from the email
+  const emailDomain = username.split("@").pop();
+  // Check if the email domain is in the list of allowed domains
+  if (!allowedDomains.includes("@" + emailDomain)) {
+    return res.status(401).json({
+      outcome: "error",
+      error: "Cannot reset password. Only agency email addresses are allowed.",
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  console.log("------------------------------------")
   const genToken = await generatePasswordResetToken(username)
   console.log("token: ", genToken)
   console.log("------------------------------------")
@@ -579,10 +604,10 @@ export const forgotPasswordRequest = async (req, res) => {
       </head>
       <body>
           <div class="container">
-              <img src="${SWF_LOGO}" alt="SWF Logo" class="logo"/>
+              <img src="${SWF_LOGO}" alt="SWIF Logo" class="logo"/>
 
               <p class="swf-text">Hi <b>${genToken.userFirstName}</b>,</p>
-              <p class="swf-text">It looks like you’re trying to change your password.</p>
+              <p class="swf-text">It looks like you're trying to change your password.</p>
 
               <p class="swf-time"><a href="${resetUrl}">Click this link to begin the password reset process:  ${resetUrl}</a></p>
 
@@ -593,7 +618,7 @@ export const forgotPasswordRequest = async (req, res) => {
               <p class="footer">Please do not reply to this e-mail as it is sent from a notification only address and cannot accept incoming emails.</p>
 
               <p class="security-tip swf-grey-red "><b>Security Tip</b><br/>
-              SWF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
+              SWIF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
               We will never ask you to validate or restore your account access through email or pop-up windows.</p>
           </div>
       </body>`
@@ -604,7 +629,7 @@ export const forgotPasswordRequest = async (req, res) => {
       subject: 'SWIF - Password Reset Instructions',
       html: resetEmailString,
     });
-
+I
     // Return a success response to the user
     res.json({
       outcome: 'success',

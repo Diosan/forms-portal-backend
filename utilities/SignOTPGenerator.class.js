@@ -120,10 +120,10 @@ export default class SignOTPGenerator {
       </head>
       <body>
           <div class="container">
-              <img src="${pathToImage}" alt="SWF Logo" class="logo"/>
+              <img src="${pathToImage}" alt="SWIF Logo" class="logo"/>
 
               <p class="swf-text">Hi, <b>${name}</b></p>
-              <p class="swf-text">It looks like you’re trying to sign a submission in SWF</p>
+              <p class="swf-text">It looks like you’re trying to sign a submission in SWIF</p>
               <p class="swf-text">Your verification code is:</p>
 
               <p class="code">${otp}</p>              
@@ -136,7 +136,7 @@ export default class SignOTPGenerator {
               </div>
 
               <p class="security-tip swf-grey-red "><b>Security Tip</b><br/>
-              SWF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
+              SWIF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
               We will never ask you to validate or restore your account access through email or pop-up windows.</p>
               
           </div>
@@ -151,9 +151,9 @@ export default class SignOTPGenerator {
     // });
 
     await this.transporter.sendMail({
-      from: `SWF <${SWF_EMAIL}>`,
+      from: `SWIF <${SWF_EMAIL}>`,
       to: email,
-      subject: 'SWF -Your One-Time Password (OTP)',
+      subject: `SWIF - Your One-Time Password (${otp})`,
       html: htmlEmailString,
     });
 

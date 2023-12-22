@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 import { mailConfig } from '../config/mail.config.js';
 import { redisClient, } from '../redis/redisConfig.js';
 
-const SWF_EMAIL = process.env.SWF_EMAIL || "swf-noreply@ttlawcourts.org";
+const SWF_EMAIL = process.env.SWF_EMAIL || "swif-noreply@ttlawcourts.org";
 
 
 export class TOTPGenerator {
@@ -155,10 +155,10 @@ export class TOTPGenerator {
       </head>
       <body>
           <div class="container">
-              <img src="${pathToImage}" alt="SWF Logo" class="logo"/>
+              <img src="${pathToImage}" alt="SWIF Logo" class="logo"/>
 
               <p class="swf-text">Hi, <b>${name}</b>!</p>
-              <p class="swf-text">It looks like you’re signing in to SWF.</p>
+              <p class="swf-text">It looks like you’re signing in to SWIF.</p>
               <p class="swf-text">Your verification code is:</p>
 
               <p class="code">${otp}</p>
@@ -173,7 +173,7 @@ export class TOTPGenerator {
               <p class="footer">Please do not reply to this e-mail as it is sent from a notification only address and cannot accept incoming emails.</p>
 
               <p class="security-tip swf-grey-red "><b>Security Tip</b><br/>
-              SWF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
+              SWIF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
               We will never ask you to validate or restore your account access through email or pop-up windows.</p>
           </div>
       </body>
@@ -184,7 +184,7 @@ export class TOTPGenerator {
     await this.transporter.sendMail({
       from: `SWIF <${SWF_EMAIL}>`,
       to: email,
-      subject: 'SWIF - Your Verification Code',
+      subject: `SWIF - Your Verification Code is ${otp}`,
       html: htmlEmailString,
     });
   }
