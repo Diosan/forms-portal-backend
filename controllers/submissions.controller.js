@@ -1235,7 +1235,7 @@ export const requestSignature = async (req, res) => {
       try {
         await transporter.sendMail({
           from: `SWIF <${SWF_EMAIL}>`,
-          to: "swif_admin@link868.com",
+          to: "hhernandez@ttlawcourts.org",
           subject: `Error sending reset email`,
           html: `Error sending reset email:${error}`,
         });

@@ -607,7 +607,7 @@ export const forgotPasswordRequest = async (req, res) => {
               <img src="${SWF_LOGO}" alt="SWIF Logo" class="logo"/>
 
               <p class="swf-text">Hi <b>${genToken.userFirstName}</b>,</p>
-              <p class="swf-text">It looks like you're trying to change your password.</p>
+              <p class="swf-text">It looks like youre trying to change your password.</p>
 
               <p class="swf-time"><a href="${resetUrl}">Click this link to begin the password reset process:  ${resetUrl}</a></p>
 
@@ -629,7 +629,7 @@ export const forgotPasswordRequest = async (req, res) => {
       subject: 'SWIF - Password Reset Instructions',
       html: resetEmailString,
     });
-I
+
     // Return a success response to the user
     res.json({
       outcome: 'success',
