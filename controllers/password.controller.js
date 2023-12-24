@@ -14,6 +14,8 @@ import { TOTPGenerator } from '../utilities/TOTPGenerator.class.js'
 import { redisClient, } from '../redis/redisConfig.js';
 import { mailConfig } from '../config/mail.config.js';
 import crypto from 'crypto';
+import { allowedDomains } from "../config/domains.config.js";
+
 
 const saltRounds = 10; 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -84,11 +86,44 @@ export const resetPassword = async (req, res) => {
 };
 
 export async function generatePasswordResetToken(userEmail) {
-    // Find the user by email
+    
+  // Extract the domain from the email
+  const emailDomain = userEmail.split("@").pop();
+  const [agency = ""] = emailDomain.split(".") || [];
+  const agencyUpper = agency.toUpperCase(); // This will convert 'agency' to uppercase
+
+  // Check if the email domain is in the list of allowed domains
+  if (!allowedDomains.includes("@" + emailDomain)) {
+    return res.status(401).json({
+      outcome: "error",
+      error: `Access denied. Please use your ${agencyUpper} agency's email address.`,
+    });
+  }
+  
+  // Find the user by email
     const user = await UserModel.findOne({ where: { email: userEmail } });
     if (!user) {
-        throw new Error('User not found');
+      // return res.status(201).json({
+      //   outcome: "error",
+      //   // error: 'User does not exist. Try again'
+      //   // error: "Sign in failed. Try again",
+      //   error: `Account does not exist. 
+      //   Please verify with your ${agencyUpper} IT Administrator that 
+      //   your account has been set up.`
+      // });
+        throw new Error(`Account does not exist. 
+          Please verify with your ${agencyUpper} IT Administrator that 
+          your account has been set up.`);
     }
+    
+
+    
+
+
+
+
+
+
     // console.log(user)
 
     // console.log(updatedUser)
