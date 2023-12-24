@@ -1232,17 +1232,6 @@ export const requestSignature = async (req, res) => {
       });
     } catch (error) {
       console.log(`Error Sending Reset Email: ${error}`);
-      try {
-        await transporter.sendMail({
-          from: `SWIF <${SWF_EMAIL}>`,
-          to: "hhernandez@ttlawcourts.org",
-          subject: `Error sending reset email`,
-          html: `Error sending reset email:${error}`,
-        });
-      } catch (notificationError) {
-        console.error("Error sending notification email", notificationError);
-      }
-
       res.status(500).json({
         outcome: "error",
         error: "Error sending email",
