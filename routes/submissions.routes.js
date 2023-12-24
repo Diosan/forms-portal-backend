@@ -13,7 +13,7 @@
     // Retrieve all submissions
     router.get("/", verifyToken, findAll);
     // Retrieve one user
-    router.get("/:id", findOne);
+    router.get("/:id", verifyToken, findOne);
     // Authenticate User
     router.post("/auth/verify", authenticateUser);
     // Create a new submission

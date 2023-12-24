@@ -65,8 +65,10 @@ SubmissionModel.hasOne(ComplainantModel, { foreignKey: 'submissionId' });
 ComplainantModel.belongsTo(SubmissionModel, { foreignKey: 'submissionId', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
 
 // Complainants ++++++++++
-AccusedModel.belongsTo(SubmissionModel, { foreignKey: 'submissionId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+// AccusedModel.belongsTo(SubmissionModel, { foreignKey: 'submissionId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
+AccusedModel.belongsTo(SubmissionModel, { foreignKey: 'submissionId', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
 SubmissionModel.hasMany(AccusedModel, { foreignKey: 'submissionId' });
+
 // Accuseds ++++++++++
 ChargesModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 AccusedModel.hasMany(ChargesModel, { foreignKey: 'accusedId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
@@ -84,6 +86,8 @@ UserModel.hasMany(SignatureModel)
 RelatedMatterModel.belongsTo(AccusedModel, { foreignKey: 'accusedId', onDelete: 'RESTRICT', onUpdate: 'CASCADE'  });
 AccusedModel.hasMany(RelatedMatterModel)
 // Related Matters ++++++++++
+
+
 
 
 
