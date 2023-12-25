@@ -687,7 +687,7 @@ export const create = async (req, res) => {
   //       email: req.body.email
   //   }
 
-  console.log("\n\n\n request body with matterType", req.headers);
+  console.log("\n\n\n request body with matterType", req.body);
   console.log("\n\n\n");
 
   // let user = await UserModel.findOne({
