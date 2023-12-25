@@ -378,7 +378,7 @@ export const findAll = (req, res) => {
   console.log(req.user.id);
 
   SubmissionModel.findAndCountAll({
-    where: { userId: req.user.id },
+    where: { userId: req.user.id,  },
     order: [["id", "DESC"]],
     limit: 10,
   })
@@ -687,7 +687,7 @@ export const create = async (req, res) => {
   //       email: req.body.email
   //   }
 
-  console.log("\n\n\n request body with matterType", req.body);
+  console.log("\n\n\n request body with matterType", req.headers);
   console.log("\n\n\n");
 
   // let user = await UserModel.findOne({
@@ -698,12 +698,12 @@ export const create = async (req, res) => {
   console.log("User: ", user);
 
   let new_submission = {
-    description: req.body.title,
-    userId: req.body.userId,
+    description: req?.body?.title || "-",
+    userId: req?.body?.userId,
     status: "pending",
-    type: req.body.type,
-    matterType: req.body.matterType,
-    adultOnly: req.body.adultOnly,
+    type: req?.body?.type || "-",
+    matterType: req?.body?.matterType || "-",
+    adultOnly: req?.body?.adultOnly || "-",
   };
 
   try {
@@ -1232,17 +1232,6 @@ export const requestSignature = async (req, res) => {
       });
     } catch (error) {
       console.log(`Error Sending Reset Email: ${error}`);
-      try {
-        await transporter.sendMail({
-          from: `SWIF <${SWF_EMAIL}>`,
-          to: "swif_admin@link868.com",
-          subject: `Error sending reset email`,
-          html: `Error sending reset email:${error}`,
-        });
-      } catch (notificationError) {
-        console.error("Error sending notification email", notificationError);
-      }
-
       res.status(500).json({
         outcome: "error",
         error: "Error sending email",
