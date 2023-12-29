@@ -540,13 +540,13 @@ export const saveComplainant = async (req, res) => {
   let transporter = nodemailer.createTransport(mailConfig);
 
   const submission = SubmissionModel.findByPk(req.body.submissionId);
-  console.log(req.body);
+  console.log('\n\n\n Save complainant request body: ', req.body);
   // return
 
   let new_complainant = {
     court: req.body.court,
     courtDistrict: req.body.courtDistrict,
-    agency: "TTPS",
+    agency: req.body.agency,
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
