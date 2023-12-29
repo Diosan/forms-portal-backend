@@ -1,6 +1,6 @@
 {
     "schema": {
-        "title": "Add the Accused",
+        "title": "Add an Accused",
         "description": "",
         "type": "object",
         "required": [
