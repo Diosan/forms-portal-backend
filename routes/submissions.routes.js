@@ -71,7 +71,7 @@
 
     router.get('/verifiers/:id', verifiers);
 
-    router.get('/admin/:id', adminSubmissions);
+    router.get('/admin/:id', verifyToken, adminSubmissions);
 
     app.use('/api/submissions', router);
   };

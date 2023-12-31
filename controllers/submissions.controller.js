@@ -398,26 +398,41 @@ export const findAll = (req, res) => {
     });
 };
 
-export const adminSubmissions = (req, res) => {
-  SubmissionModel.findAndCountAll()
-    .then((data) => {
-      console.log(
-        "Submission. Fetched: ",
-        data.rows[data.rows.length - 1].dataValues.id
-      );
+// Assuming you have a middleware that validates and sets the user info in req.user
+export const adminSubmissions = async (req, res) => {
+  // Extract user info from request
+  const userId = req.user?.id; // Modify as per your JWT or session structure
+  console.log("userid: ",userId);
+  try {
+    // Fetch user from the database
+    const user = await UserModel.findOne({ where: { id: userId } });
+    console.log(user);
+    // Check if user is found and is a superadmin
+    if (user && user.role === 'superadmin') {
+      // Fetch submissions if user is a superadmin
+      const data = await SubmissionModel.findAndCountAll();
+      console.log("Submission. Fetched: ", data.rows[data.rows.length - 1].dataValues.id);
       res.status(201).json({
         outcome: "success",
         submissions: data,
       });
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(201).json({
+    } else {
+      // If user is not superadmin, return an unauthorized error
+      res.status(403).json({
         outcome: "error",
-        error: error,
+        error: "Unauthorized access: User is not a superadmin",
       });
+    }
+  } catch (error) {
+    // Log and return any errors
+    console.error(error);
+    res.status(500).json({
+      outcome: "error",
+      error: error.message,
     });
+  }
 };
+
 
 //
 
