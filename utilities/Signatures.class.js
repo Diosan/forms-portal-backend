@@ -23,7 +23,7 @@ export class Signatures {
             where: {"email": email}
         });
 
-        console.log('User found by email: ', user);
+        // console.log('User found by email: ', user);
 
         // console.log('\n\n\n Current submission record: ', submission.dataValues);
 
@@ -40,9 +40,9 @@ export class Signatures {
             content_id: submission.dataValues.id
         });
 
-        console.log('\n\n\n Signature: ', signature.dataValues);
+        // console.log('\n\n\n Signature: ', signature.dataValues);
 
-        console.log('\n\n\n User: ', user.dataValues);
+        // console.log('\n\n\n User: ', user.dataValues);
 
         return {
             signature: signature.dataValues,

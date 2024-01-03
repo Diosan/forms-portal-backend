@@ -216,7 +216,7 @@ export const complainantSign = async (req, res) => {
 };
 
 export const signSubmission = async (req, res) => {
-  console.log("\n\n Request body: ", req.body);
+  // console.log("\n\n Request body: ", req.body);
   //verify the otp
   const totp = new SignOTPGenerator();
   try {
@@ -225,6 +225,7 @@ export const signSubmission = async (req, res) => {
     // console.log('\n\n\n verification result: ', verified);
     if (verified) {
       // sign the complaint - required (submission_id, complainant_email)
+      console.log("+++++++++++++++OTP VERIFIED +++++++++++++++++++")
       // URL - '/api/submissions/complainant_sign'
       let email = req.body.email;
       let submission_id = req.body.submission_id;
