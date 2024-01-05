@@ -3,7 +3,13 @@ import axios from 'axios';
 import FormData from 'form-data';
 
 export class EFiling {
-    constructor(apiEndpoint = 'https://eservices.ttlawcourts.org/filing/dev/api/swfapi.php', apiKey = 'BzcKvpNHMICpWnS8IoVGdfZ3dJCb5B') {
+
+    // constructor(apiEndpoint = 'https://eservices.ttlawcourts.org/filing/dev/api/swfapi.php', apiKey = 'BzcKvpNHMICpWnS8IoVGdfZ3dJCb5B') {
+    //     this.apiEndpoint = apiEndpoint;
+    //     this.apiKey = apiKey;
+    // }
+
+    constructor(apiEndpoint = process.env.ESERVICES_API_URL, apiKey = 'BzcKvpNHMICpWnS8IoVGdfZ3dJCb5B') {
         this.apiEndpoint = apiEndpoint;
         this.apiKey = apiKey;
     }
