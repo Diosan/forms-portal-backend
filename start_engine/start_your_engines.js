@@ -9,7 +9,14 @@ import {
 import fs from 'fs';
 import csvParser from 'csv-parser';
 import formidable from 'formidable';
+import { fileURLToPath } from 'url';
+
 import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
 
 
 
@@ -261,7 +268,7 @@ function validateEmailDomain(email) {
     // Validate the email format
     // return emailStr.endsWith('@ttps.gov.tt');
     return (
-      emailStr.endsWith("@ttps.gov.tt") || emailStr.endsWith("@ttlawcourts.org")
+      emailStr.endsWith("@ttps.gov.tt")
     );
   } else {
     console.error("Invalid or undefined email provided");

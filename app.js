@@ -476,7 +476,7 @@ var allowedDomains = [
       try {
           // console.log(email);
           const user = await getUserByEmail(email);
-          // console.log(user)
+          console.log(user)
           if (!user && !user.dataValues && !user.dataValues.password && !user.dataValues.email) {
               res.status(404).json({ status: 'error', message: "User not found" });
               return;
@@ -614,7 +614,7 @@ var allowedDomains = [
               isVisible: { list: false, filter: false, show: false, edit: false }, 
             },
             verifierId: {
-              isVisible: { list: true, filter: true, show: true, edit: true }, 
+              isVisible: { list: false, filter: false, show: false, edit: false }, 
             },
             username: {
               isVisible: { list: true, filter: true, show: true, edit: false }, 
@@ -630,27 +630,27 @@ var allowedDomains = [
           },
         }
     },
-      {
-        resource: SubmissionModel,
-        options: {
-          properties: {
-            createdAt: {
-              isVisible: { list: true, filter: true, show: true, edit: false }, 
-            },
-            username: {
-              isVisible: { list: true, filter: true, show: true, edit: false }, 
-            },
-            email: {
-              isVisible: { list: true, filter: true, show: true, edit: false }, 
-            },
-          },
-          actions: {
-            new: { isAccessible: true },
-            edit: { isAccessible: true },
-            delete: { isAccessible: true },
-          },
-        }
-    }
+    //   {
+    //     resource: SubmissionModel,
+    //     options: {
+    //       properties: {
+    //         createdAt: {
+    //           isVisible: { list: true, filter: true, show: true, edit: false }, 
+    //         },
+    //         username: {
+    //           isVisible: { list: true, filter: true, show: true, edit: false }, 
+    //         },
+    //         email: {
+    //           isVisible: { list: true, filter: true, show: true, edit: false }, 
+    //         },
+    //       },
+    //       actions: {
+    //         new: { isAccessible: true },
+    //         edit: { isAccessible: true },
+    //         delete: { isAccessible: true },
+    //       },
+    //     }
+    // }
     ],
       rootPath: '/admin',
       assets: {
