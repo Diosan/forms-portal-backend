@@ -1257,4 +1257,8 @@ export const requestSignature = async (req, res) => {
   sendEmail();
 };
 
+export const requestConsent = async (req, res) => {
+
+};
+
 export const signIndictable = async (req, res) => {};

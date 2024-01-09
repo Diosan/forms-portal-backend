@@ -1,6 +1,6 @@
   import {findAll, findOne, authenticateUser, create, update, del, resetPassword,
     updateMessage, forgotPasswordRequest, handlePasswordForgotPage, resetPasswordFromEmail,
-    saveComplainant, signSubmission, updateTitle, updateComplainant, saveAccused, accuseds, requestSignature, createIndictable, signIndictable, complainantSign, sendOTP, submissionSignature, verifyOTP, sendSignRequest, sendVerifyOTP, verifierSign, submissionVerification, chargeCodes, verifiers, adminSubmissions
+    saveComplainant, signSubmission, updateTitle, updateComplainant, saveAccused, accuseds, requestSignature, createIndictable, signIndictable, complainantSign, sendOTP, submissionSignature, verifyOTP, sendSignRequest, sendVerifyOTP, verifierSign, submissionVerification, chargeCodes, verifiers, adminSubmissions, requestConsent
   } from "../controllers/submissions.controller.js";
   import express from "express";
   import verifyToken from '../middlewares/authMiddleware.js';
@@ -46,6 +46,8 @@
     router.get('/accuseds/:id', accuseds);
 
     router.post('/request_signature', requestSignature);
+
+    router.post('/request_consent', requestConsent);
 
     router.post('/sign_indictable/:id',  signIndictable);
 
