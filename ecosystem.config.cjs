@@ -28,14 +28,15 @@ module.exports = {
         host : "10.0.1.97",
         // key: "/home/judadm/.ssh/hill.pub",
         repo : "git@bitbucket.org:dion_santana/forms-portal-backend.git",
-        ref  : "origin/master",
+        ref  : "origin/golive-1",
         path : "/var/www/html/forms-portal-backend",
         // "pre-deploy": "git reset --hard",
-        'pre-deploy': 'cd /var/www/html/forms-portal-backend && git pull origin master',
+        'pre-deploy': 'cd /var/www/html/forms-portal-backend && git fetch -a && git merge origin/golive-1',
         // "post-deploy" : "npm install && sudo nginx -s reload && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
         // "post-deploy": "cd /var/www/html/jsswf-server/current && pm2 startOrRestart ecosystem.config.js --env production && pm2 save",
         // "post-deploy": "git reset --hard && git pull origin master && cd /var/www/html/jsswf-server/current && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
-        "post-deploy": "pm2 startOrRestart ecosystem.config.js  --env production && pm2 save"
+        // "post-deploy": "pm2 startOrRestart ecosystem.config.js  --env production && pm2 save"
+        "post-deploy": "pm2 restart 0 && pm2 save"
       },
       staging: { 
         user : "root",
