@@ -565,8 +565,8 @@
             "title": "Date of Birth"
           },
           "aproximateAge": {
-            "type": "string",
-            "title": "Aproximate Age"
+            "type": "integer",
+            "title": "Approximate Age (in years)"
           },
           "identificaionType": {
             "type": "string",
