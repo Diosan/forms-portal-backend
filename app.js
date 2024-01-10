@@ -42,7 +42,7 @@ import {Logger} from "./utilities/logger.js";
 
 
 // Internal libraries next
-import { db, UserModel, SubmissionModel, AdminUserModel } from "./models/index.js";
+import { db, UserModel, SubmissionModel, AdminUserModel, PermissionModel } from "./models/index.js";
 import { dbConfig } from './config/db.config.js';
 import { TOTPGenerator } from './utilities/TOTPGenerator.class.js';
 import { mailConfig } from './config/mail.config.js';
@@ -337,6 +337,46 @@ var allowedDomains = [
   //________________________________________________
   //ADMINBRO MIDDLEWARE
   //------------------------------------------------
+
+
+  // const customListAction = async (request, response, context) => {
+  //   const { records, meta } = await context.resource.find(request, context);
+  
+  //   // Modify the query here as needed.
+  //   // This is a simplification. The actual implementation depends on how your filter is structured.
+  
+  //   return {
+  //     records: records.map(record => record.toJSON(context.currentAdmin)),
+  //     meta,
+  //   };
+  // };
+  
+  // // Replace 'ILIKE' with 'LIKE' in the filter query
+  // const modifyFilter = (filter) => {
+  //   const modifiedFilter = { ...filter };
+  //   Object.keys(modifiedFilter).forEach(key => {
+  //     if (typeof modifiedFilter[key] === 'string') {
+  //       modifiedFilter[key] = modifiedFilter[key].replace('ILIKE', 'LIKE');
+  //     }
+  //   });
+  //   return modifiedFilter;
+  // };
+  
+  // // Define the custom action in your resource options
+  // const options = {
+  //   actions: {
+  //     list: {
+  //       handler: customListAction,
+  //       before: async (request) => {
+  //         request.payload = modifyFilter(request.payload);
+  //         return request;
+  //       },
+  //     },
+  //   },
+  // };
+
+  
+
   var message = `A verification code has just been sent to your registered email address. 
                    Please enter this code in the box below to confirm your login.`;
   var error = ""
@@ -565,7 +605,14 @@ var allowedDomains = [
       dashboard: {
         component: AdminBro.bundle(dashboardComponentPath)
       },
-      resources: [ {
+      resources: [ 
+        
+        // {
+        //   resource: PermissionModel,
+        // },
+        
+        
+        {
           resource: AdminUserModel,
           options: {
             properties: {
@@ -577,10 +624,10 @@ var allowedDomains = [
                 isVisible: { list: false, filter: false, show: false, edit: false }, 
               },
               username: {
-                isVisible: { list: true, filter: true, show: true, edit: false }, 
+                isVisible: { list: true, filter: true, show: true, edit: true }, 
               },
               email: {
-                isVisible: { list: true, filter: true, show: true, edit: false }, 
+                isVisible: { list: true, filter: true, show: true, edit: true }, 
               },
             },
             actions: {
@@ -592,36 +639,90 @@ var allowedDomains = [
       },
       {
         resource: UserModel,
-        options: {
+        options: 
+        {
           properties: {
             createdAt: {
               isVisible: { list: false, filter: false, show: false, edit: false }, 
             },
-            UpdatedAt:
+            updatedAt:
           {
               isVisible: { list: false, filter: false, show: false, edit: false }, 
+            },
+            agencyMemberUniqueId:{
+              isVisible: { list: true, filter: true, show: true, edit: true }, 
+              position:1,
+              label:'Regimental Number'
             },
             resetToken:
           {
               isVisible: { list: false, filter: false, show: false, edit: false }, 
             },
+            hashValue:
+            {
+                isVisible: { list: false, filter: false, show: false, edit: false }, 
+              },
             notifications:
           {
               isVisible: { list: false, filter: false, show: false, edit: false }, 
             },
             agencyName:
           {
-              isVisible: { list: false, filter: false, show: false, edit: false }, 
+              isVisible: { list: false, filter: false, show: false, edit: true }, 
+              defaultValue: 'TTPS',
             },
             verifierId: {
               isVisible: { list: false, filter: false, show: false, edit: false }, 
             },
+            firstName: {
+              isVisible: { list: true, filter: true, show: true, edit: true }, 
+              position:3
+            },
+            lastName: {
+              isVisible: { list: true, filter: true, show: true, edit: true }, 
+              position:4
+            },
+            middleName: {
+              isVisible: { list: true, filter: true, show: true, edit: true }, 
+              position:5
+            },
             username: {
-              isVisible: { list: true, filter: true, show: true, edit: false }, 
+              isVisible: { list: true, filter: true, show: true, edit: true }, 
             },
             email: {
-              isVisible: { list: true, filter: true, show: true, edit: false }, 
+              isVisible: { list: true, filter: true, show: true, edit: true },
+              position:2
             },
+            active: {
+              isVisible: { list: true, filter: true, show: true, edit: true }, 
+              position:7
+            },
+            status: {
+              isVisible: { list: false, filter: false, show: false, edit: false }, 
+            },
+            phone: {
+              isVisible: { list: false, filter: false, show: false, edit: false }, 
+            },
+            address: {
+              isVisible: { list: false, filter: false, show: false, edit: false }, 
+            },
+            password: {
+              isVisible: { list: false, filter: false, show: false, edit: true }, 
+            },
+            role:{
+              isVisible: { list: true, filter: true, show: true, edit: true }, 
+              position:6,
+              type: 'select',
+              availableValues: [
+                { value: 'user', label: 'user' },
+                { value: 'other', label: 'other' },
+              ],
+              defaultValue: 'user',
+
+            }
+          },
+          localizedPaths: {
+            'properties.agencyMemberUniqueId': 'Regimental Number'
           },
           actions: {
             new: { isAccessible: true },
@@ -654,12 +755,12 @@ var allowedDomains = [
     ],
       rootPath: '/admin',
       assets: {
-        styles: ['/admin/public/admin-bro.css'], 
+        styles: ['/public/admin-bro.css'], 
       },
       locale,
       branding: {
         companyName: AGENCY_NAME,
-        logo: '/admin/public/logo.png', 
+        logo: '/public/logo.png', 
         softwareBrothers: false, 
       },
       pages: {
@@ -671,6 +772,7 @@ var allowedDomains = [
       }
       // 
     })
+    
     // const router = AdminBroExpress.buildRouter(adminBro)
     const router = AdminBroExpress.buildAuthenticatedRouter(adminBro, {
       authenticate: async (email, password) => {

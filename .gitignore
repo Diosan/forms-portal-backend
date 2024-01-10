@@ -39,7 +39,8 @@ document/*
 .deploys
 current
 source/
-public/errors
+public/errors/
+public/errors/*
 ./public/errors/*
 *.pem
 ./test
