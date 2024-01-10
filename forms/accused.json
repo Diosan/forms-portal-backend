@@ -619,7 +619,7 @@
               ]
           },
           "relatedMatters": {
-              "type": "boolean",
+              "type": "string",
               "title": "Any Related Matters ?"
           },
           "tntNational": {
@@ -652,7 +652,7 @@
             "ui:widget": "textarea"
         },
         "relatedMatters": {
-          "ui:widget": "select"
+          "ui:widget": "textarea"
         },
         "alias": {
           "ui:widget": "textarea"
