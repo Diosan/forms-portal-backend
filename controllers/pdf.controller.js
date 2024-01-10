@@ -29,8 +29,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // const externalApiUrl = process.env.EFILING_APP_URL || "https://eservices.ttlawcourts.org/filing/dev/api/swfapi.php"
-const externalApiUrl =
-  "https://eservices.ttlawcourts.org/filing/api/swfapi.php";
+// const externalApiUrl = "https://eservices.ttlawcourts.org/filing/api/swfapi.php";
+
+const externalApiUrl = process.env.ESERVICES_API_URL;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
