@@ -1344,7 +1344,7 @@ export const requestConsent = async (req, res) => {
             <img src="${pathToImage}" alt="SWF Logo" class="logo"/>
 
             <p class="swf-text">Good Day, <b></b></p>
-            <p class="swf-text">Your consent has been requested on a submission in SWiF</p>
+            <p class="swf-text">Your consent has been requested on a submission in SWIF</p>
 
             <p class="swf-text">To provide your consent, please click on the following link: <a href="${
               process.env.APP_DOMAIN + "/consent/sign/" + req.body.submission_id
@@ -1353,7 +1353,7 @@ export const requestConsent = async (req, res) => {
             <p class="small-text swf-time">This consent request was generated at ${currentTime}</p>
 
             <p class="security-tip swf-grey-red "><b>Security Tip</b><br/>
-            SWF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
+            SWIF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
             We will never ask you to validate or restore your account access through email or pop-up windows.</p>
             
         </div>
@@ -1363,9 +1363,9 @@ export const requestConsent = async (req, res) => {
   async function sendEmail() {
     try {
       await transporter.sendMail({
-        from: `SWF <${SWF_EMAIL}>`,
+        from: `SWIF <${SWF_EMAIL}>`,
         to: dpp_email,
-        subject: "SWF - Request for Consent",
+        subject: "SWIF - Request for Consent",
         html: resetEmailString,
       });
       res.status(201).json({
