@@ -276,6 +276,56 @@ export const signSubmission = async (req, res) => {
   }
 };
 
+
+export const consentSubmission = async (req, res) => {
+
+  const totp = new SignOTPGenerator();
+  try {
+    
+    let verified = await totp.verifyOTP(req.body.email, req.body.otp);
+    
+    if (verified) {
+
+      let email = req.body.email;
+      let submission_id = req.body.submission_id;
+
+      let signatures = new Signatures();
+      let consent = await signatures.consenterSubmissionSign(
+        email,
+        submission_id
+      );
+      console.log("\n\n\n Signature from Signature Class: ", consent);
+
+      // let updatedSubmission = await updateSubmission(req.body.submission_id, {
+      //   status: "consented",
+      // });
+      res.status(201).json({ 
+        outcome: "success",
+        consent: consent 
+      });
+
+    } else {
+      return res.status(201).json({ 
+        outcome: "failure"
+      });
+    }
+
+  } catch (error) {
+
+    console.log(
+      `Error Signing Submission [ ${req.body.submission_id} ]`,
+      error
+    );
+
+    res.status(201).json({
+      outcome: "error",
+      error: "error",
+    });
+
+  }
+};
+
+
 // export const complainantSign = async (req, res) => {
 //   let signatures = new Signatures;
 //   console.log('\n\n\n Request body: ', req.body);
@@ -343,6 +393,32 @@ export const submissionSignature = async (req, res) => {
 
   res.status(201).json({
     signature: signature,
+    user: user,
+  });
+
+  // res.status(201).json({});
+};
+
+
+export const submissionConsent = async (req, res) => {
+  console.log("\n\n\n Request body: ", req.body);
+
+  let consent = await SignatureModel.findOne({
+    where: {
+      content_id: req.body.submission_id,
+      type: 'consent'
+    },
+    raw: true,
+  });
+
+  console.log("\n\n\n consent: ", consent);
+
+  let user = await UserModel.findByPk(consent.userId, { raw: true });
+
+  console.log("\n\n\n user: ", user);
+
+  res.status(201).json({
+    consent: consent,
     user: user,
   });
 
