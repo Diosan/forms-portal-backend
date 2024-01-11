@@ -411,7 +411,7 @@ export const adminSubmissions = async (req, res) => {
     // Check if user is found and is a superadmin
     if (user && user.role === 'superadmin') {
       // Fetch submissions if user is a superadmin
-      const data = await SubmissionModel.findAndCountAll();
+      const data = await SubmissionModel.findAndCountAll({order: [["id", "DESC"]],});
       console.log("Submission. Fetched: ", data.rows[data.rows.length - 1].dataValues.id);
       res.status(201).json({
         outcome: "success",
