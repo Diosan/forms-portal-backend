@@ -1025,6 +1025,6 @@ app.use(errorHandler);
   // });
 //------------------------
   //START THE ADMIN SERVER
-  app.listen(ADMIN_PORT, () => console.log('AdminBro is under localhost:8080/admin'))
+  // app.listen(ADMIN_PORT, () => console.log('AdminBro is under localhost:8080/admin'))
 //----------------------------------------------------------------
 //----------------------------------------------------------------
