@@ -268,7 +268,7 @@ function validateEmailDomain(email) {
     // Validate the email format
     // return emailStr.endsWith('@ttps.gov.tt');
     return (
-      emailStr.endsWith("@ttps.gov.tt")
+      emailStr.endsWith("@ttps.gov.tt") || emailStr.endsWith("@dpp.gov.tt")
     );
   } else {
     console.error("Invalid or undefined email provided");
