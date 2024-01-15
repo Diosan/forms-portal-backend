@@ -43,7 +43,7 @@ export const handlePasswordReset = async (req, res) => {
         }
         console.log(passwordResetEntry.dataValues ||  "nothing")
         // Hash the new password
-        const hashedPassword = bcrypt.hashSync(password, 8);
+        const hashedPassword = bcrypt.hashSync(password, 10);
 
         // Update the user's password
         await UserModel.update({ password: hashedPassword }, {

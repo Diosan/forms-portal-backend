@@ -1,13 +1,9 @@
-import {
-  db,
-  UserModel,
-  AccessLogModel,
-  PermissionModel,
-} from "../models/index.js";
 import dotenv from "dotenv";
 dotenv.config();
 // const AccessLog = db.accesslogs;
 import formidable from "formidable";
+import { db, UserModel } from "../models/index.js";
+
 // const User = db.users;
 // const Permission = db.permissions;
 // const Op = db.Sequelize.Op;
@@ -21,9 +17,18 @@ import { v4 as uuidv4 } from "uuid";
 import { promisify } from "util";
 import { redisClient } from "../redis/redisConfig.js";
 import { TOTPGenerator } from "../utilities/TOTPGenerator.class.js";
-import { logAuthenticationEvent } from "../utilities/logger.js"
+import { logAuthenticationEvent } from "../utilities/logger.js";
 import { allowedDomains } from "../config/domains.config.js";
+import { dbConfig } from "../config/db.config.js";
 
+import { Sequelize } from "sequelize";
+import createAgencyUserModel from "../models/users.model.js";
+const createAgencyDbConnection = (agency) => {
+  return new Sequelize(`swif_${agency}`, dbConfig.USER, dbConfig.PASSWORD, {
+    host: dbConfig.HOST,
+    dialect: dbConfig.dialect,
+  });
+};
 
 const saltRounds = parseInt(process.env.SALT_ROUNDS) || 10;
 
@@ -106,32 +111,57 @@ const saveUser = async (userData) => {
   }
 };
 
-const getUserByEmail = async (email) => {
+const getUserByEmail = async (email, agency) => {
   try {
+    console.log("email::::::::::", email);
+    const agencyDbConnection = createAgencyDbConnection(agency);
+    const AgencyUserModel = createAgencyUserModel(agencyDbConnection);
     // Use Sequelize's findOne method to retrieve the user by email
-    const user = await UserModel.findOne({
+    const agencyUser = await AgencyUserModel.findOne({
+      where: {
+        email: email,
+      },
+      using: agencyDbConnection,
+    });
+    if (!agencyUser) {
+      return null;
+    }
+    console.log(">>>>>>>>AGENCY USER: ", agencyUser);
+    const swifUser = await UserModel.findOne({
       where: {
         email: email,
       },
     });
+    console.log(">>>>>>>>SWIF USER: ", swifUser);
+    if (!swifUser) {
+      return null;
+    }
+    //you can choose to update the swif user with the most current agency user data
+    const updatedAgencyUserData = {
+      // Define the fields you want to update and their new values
+      firstName: agencyUser.dataValues.firstName || "",
+      lastName: agencyUser.dataValues.lastName || "",
+      agencyMemberUniqueId: agencyUser.dataValues.agencyMemberUniqueId,
+    };
+    console.log("UPDATED DATA:", updatedAgencyUserData);
+    console.log(swifUser.dataValues.id);
 
-    return user; // This will be 'null' if no user is found
+    // Update the user record in the central user table
+    await UserModel.update(updatedAgencyUserData, {
+      where: {
+        id: swifUser.id, // Assuming 'id' is the primary key
+      },
+    });
+    return agencyUser
   } catch (error) {
-    // If there's a database error, log it and optionally throw an error
-    // logger.error('Error fetching user by email:', error);
-    // next(error);
-    throw error; // Rethrowing the error will allow the caller to handle it
+    console.error("Error updating user:", error);
+    return null;
   }
 };
 
 export const doNothing = async (req, res, next) => {
   console.log("+++++++++++++++ AUTHENTICATE +++++++++++++++++++");
 };
-
-
-
-
-
 
 export const login = async (req, res, next) => {
   console.log(req.body);
@@ -142,6 +172,7 @@ export const login = async (req, res, next) => {
   const [agency = ""] = emailDomain.split(".") || [];
   const agencyUpper = agency.toUpperCase(); // This will convert 'agency' to uppercase
 
+  console.log(agency);
 
   // Check if the email domain is in the list of allowed domains
   if (!allowedDomains.includes("@" + emailDomain)) {
@@ -151,12 +182,12 @@ export const login = async (req, res, next) => {
     });
   }
 
-
-
-
+  //1 check if the user account is active in the agency (get updated first name and last name and id)
+  //2 check if the user accoount exists on swif
+  //3 login the user on swif
 
   try {
-    const user = await getUserByEmail(email);
+    const user = await getUserByEmail(email, agency);
     // console.log(user)
     if (!user) {
       // return res.status(401).send('Authentication failed');
@@ -166,7 +197,7 @@ export const login = async (req, res, next) => {
         // error: "Sign in failed. Try again",
         error: `Account does not exist. 
         Please verify with your ${agencyUpper} IT Administrator that 
-        your account has been set up.`
+        your account has been set up.`,
       });
     }
 
@@ -182,17 +213,25 @@ export const login = async (req, res, next) => {
       const name = user?.dataValues?.firstName || "";
       console.log(name);
 
-      const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-        expiresIn: "6h",
-      });
+      const token = jwt.sign(
+        { id: userId, agency: agency },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "6h",
+        }
+      );
       console.log(token);
 
       totp
         .generateOTP(token, email, name)
         .then(() => {
-          console.log("OTP sent to user email.")
-          const loggedUser = { email: email, id: userId}
-          logAuthenticationEvent('OTP sent to user email', loggedUser, 'Username and password correct. Awaiting OTP authentication');
+          console.log("OTP sent to user email.");
+          const loggedUser = { email: email, id: userId };
+          logAuthenticationEvent(
+            "OTP sent to user email",
+            loggedUser,
+            "Username and password correct. Awaiting OTP authentication"
+          );
         })
         .catch((error) =>
           console.error("Error generating or sending OTP:", error)
@@ -204,26 +243,25 @@ export const login = async (req, res, next) => {
         email: req.body.email,
         token: token, // Include the token in the response
       });
-      
 
       // .send('OTP sent to email');
     } else {
-      logAuthenticationEvent('Password does not match', email, 'Incorrect Passord');
+      logAuthenticationEvent(
+        "Password does not match",
+        email,
+        "Incorrect Passord"
+      );
 
       console.log("Password does not match");
       // console.log(token)
       const customError = new Error("Incorrect Passord");
       customError.status = 200; // HTTP status code
       customError.outcome = "error";
-      customError.publicMessage = "Incorrect username or password",
-      customError.email
-      
+      (customError.publicMessage = "Incorrect username or password"),
+        customError.email;
+
       customError.customResponse = true; // Indicate that this error should return a custom JSON response
       next(customError);
-
-
-
-
 
       // return res.status(201).json({
       //   outcome: 'error',
@@ -236,11 +274,10 @@ export const login = async (req, res, next) => {
     console.log(error);
     const customError = new Error("Sign in failed");
     customError.status = 201; // HTTP status code
-      customError.outcome = "error";
-      customError.publicMessage = "Sign in failed. Try again";
-      customError.customResponse = true; // Indicate that this error should return a custom JSON response
-      next(customError);
-
+    customError.outcome = "error";
+    customError.publicMessage = "Sign in failed. Try again";
+    customError.customResponse = true; // Indicate that this error should return a custom JSON response
+    next(customError);
   }
 };
 
@@ -251,12 +288,10 @@ export const verifyOtp = async (req, res, next) => {
   if (!otp || !authHeader || !authHeader.startsWith("Bearer ")) {
     const customError = new Error("No token provided");
     customError.status = 401; // HTTP status code
-      customError.outcome = "error";
-      customError.publicMessage = "No token provided";
-      customError.customResponse = true; // Indicate that this error should return a custom JSON response
-      next(customError);
-      
-      
+    customError.outcome = "error";
+    customError.publicMessage = "No token provided";
+    customError.customResponse = true; // Indicate that this error should return a custom JSON response
+    next(customError);
   }
 
   const token = authHeader.split(" ")[1];
@@ -267,7 +302,7 @@ export const verifyOtp = async (req, res, next) => {
     console.log(">>>> Decoded - ", decoded);
     // Assuming the user's ID is stored in the token
     const userId = decoded.id;
-    console.log(">>>> USER ID - ", userId);
+    console.log(">>>> USER ID decoded - ", userId);
 
     const totp = new TOTPGenerator();
     let verified = await totp.verifyOTP(token, otp);
@@ -289,9 +324,6 @@ export const verifyOtp = async (req, res, next) => {
       customError.publicMessage = "OTP verification failed";
       customError.customResponse = true; // Indicate that this error should return a custom JSON response
       next(customError);
-
-
-
     }
   } catch (error) {
     // Handle errors (e.g., token invalid or expired)
@@ -302,7 +334,6 @@ export const verifyOtp = async (req, res, next) => {
     customError.publicMessage = "Invalid token";
     customError.customResponse = true; // Indicate that this error should return a custom JSON response
     next(customError);
-
   }
 };
 
@@ -319,11 +350,23 @@ export const resendOtp = async (req, res, next) => {
 
     const decoded = jwt.verify(oldToken, process.env.JWT_SECRET);
     // Assuming the user's ID is stored in the token
-    const userId = decoded?.id || "";
-    console.log(">>>> USER ID - ", userId);
+    console.log(decoded);
+
+    if (!decoded || !decoded.id || !decoded.agency) {
+      console.log("got an error");
+      return res
+        .status(404)
+        .json({ outcome: "error", message: "User not found" });
+    }
+    const userId = decoded.id;
+    const agency = decoded.agency;
+
+    console.log(">>>> USER ID decoded - ", userId);
     // Fetch user by ID
-    const user = await UserModel.findByPk(userId);
-    // console.log(user)
+    const agencyDbConnection = createAgencyDbConnection(agency);
+    const AgencyUserModel = createAgencyUserModel(agencyDbConnection);
+    const user = await AgencyUserModel.findByPk(userId);
+    console.log("user....", user);
 
     if (!user) {
       return res
@@ -354,6 +397,7 @@ export const resendOtp = async (req, res, next) => {
       token: newToken, // refresh user token
     });
   } catch (error) {
+    console.log(error);
     const customError = new Error("Resend OTP error");
     customError.status = 201; // HTTP status code
     customError.outcome = "error";
@@ -390,53 +434,47 @@ export const register = async (req, res, next) => {
     customError.publicMessage = "Registration error";
     customError.customResponse = true; // Indicate that this error should return a custom JSON response
     next(customError);
-    
-
-
-
   }
 };
 
 export const refreshToken = async (req, res, next) => {
-  
-    const refreshTokenId = ctx.cookies.get(config.security.refreshToken.name, {
-      signed: true,
-    });
+  const refreshTokenId = ctx.cookies.get(config.security.refreshToken.name, {
+    signed: true,
+  });
 
-    const dbToken = await getExistingRefreshTokenById(refreshTokenId);
+  const dbToken = await getExistingRefreshTokenById(refreshTokenId);
 
-    if (!dbToken.id || dbToken.error) {
-      ctx.throw(400, `The refresh token is not valid.`);
-      return;
+  if (!dbToken.id || dbToken.error) {
+    ctx.throw(400, `The refresh token is not valid.`);
+    return;
+  }
+
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  if (dbToken.validityTimestamp <= currentTimestamp) {
+    await deleteRefreshToken(refreshTokenId);
+
+    ctx.throw(400, `The refresh token is expired.`);
+    return;
+  }
+
+  const user = await getOne(dbToken.userId);
+
+  if (!user || user.error) {
+    ctx.throw(401, user.error || "Invalid credentials.");
+    return;
+  }
+
+  const token = jwt.sign(
+    { username: user.username },
+    config.security.jwt.secretkey,
+    {
+      expiresIn: config.security.jwt.expiration,
     }
+  );
 
-    const currentTimestamp = Math.floor(Date.now() / 1000);
-    if (dbToken.validityTimestamp <= currentTimestamp) {
-      await deleteRefreshToken(refreshTokenId);
-
-      ctx.throw(400, `The refresh token is expired.`);
-      return;
-    }
-
-    const user = await getOne(dbToken.userId);
-
-    if (!user || user.error) {
-      ctx.throw(401, user.error || "Invalid credentials.");
-      return;
-    }
-
-    const token = jwt.sign(
-      { username: user.username },
-      config.security.jwt.secretkey,
-      {
-        expiresIn: config.security.jwt.expiration,
-      }
-    );
-
-    ctx.body = {
-      token: token,
-      tokenExpiry: config.security.jwt.expiration,
-      username: user.username,
-    };
-  
+  ctx.body = {
+    token: token,
+    tokenExpiry: config.security.jwt.expiration,
+    username: user.username,
+  };
 };

@@ -20,6 +20,15 @@ import { redisClient, } from '../redis/redisConfig.js';
 import { mailConfig } from '../config/mail.config.js';
 import { generatePasswordResetToken } from './password.controller.js';
 import { allowedDomains } from "../config/domains.config.js";
+import {Sequelize, } from "sequelize";
+
+import createUserModel from "../models/users.model.js";
+const createAgencyDbConnection = (agency) => {
+  return new Sequelize(`swif_${agency}`, dbConfig.USER, dbConfig.PASSWORD, {
+    host: dbConfig.HOST,
+    dialect: dbConfig.dialect,
+  });
+};
 
 
 
@@ -504,9 +513,177 @@ export const resetPassword = async (req, res) => {
   });
 };
 
+export const checkUserInAgencyTable = async (username, agency) => {
+  try {
+    const agencyDbConnection = createAgencyDbConnection(agency);
+    const AgencyUserModel = createUserModel(agencyDbConnection);
+    const agencyUser = await AgencyUserModel.findOne({
+      where: { username },
+    });
+    console.log("Agency::::::: ",agencyUser)
+    return agencyUser; // Return the agency user record or null if not found
+  } catch (error) {
+    console.error('Error checking user in agency table:', error);
+    throw error; // You might want to handle this error in your calling function
+  }
+}
 
 
 //handle Request to reset password from email
+export const forgotPasswordRequest = async (req, res) => {
+  console.log(req.body)
+  const { username } = req.body;
+  // Extract the domain from the email
+  const emailDomain = username.split("@").pop();
+  const [agency = ""] = emailDomain.split(".") || [];
+  // Check if the email domain is in the list of allowed domains
+  if (!allowedDomains.includes("@" + emailDomain)) {
+    return res.status(401).json({
+      outcome: "error",
+      error: "Cannot reset password. Only agency email addresses are allowed.",
+    });
+  }
+
+  try {
+    // Check if the user exists in the central user table
+    const centralUser = await UserModel.findOne({
+      where: { username },
+    });
+
+    // If the user doesn't exist in the central user table, check the agency user table
+    if (!centralUser) {
+      // Assuming you have a function to check the user in the agency user table, replace 'checkUserInAgencyTable' with the actual function
+      const agencyUser = await checkUserInAgencyTable(username, agency);
+
+      // If the user exists in the agency user table, copy the record to the central user table
+      if (agencyUser) {
+        const newCentralUser = await UserModel.create(agencyUser.get({ plain: true }));
+        // You can now use 'newCentralUser' in the rest of the code
+      } else {
+        // If the user doesn't exist in either table, return an error response
+        return res.status(404).json({
+          outcome: 'error',
+          error: 'User does not exist.',
+        });
+      }
+    }
+
+    
+
+
+  console.log("------------------------------------")
+  const genToken = await generatePasswordResetToken(username)
+  console.log("token: ", genToken)
+  console.log("------------------------------------")
+    // Send an email to the user containing a link to the password reset page
+    const resetUrl = `${APP_DOMAIN}/password/reset/${genToken.token}`;
+    const resetEmailString = `<!DOCTYPE html>
+      <html>
+      <head>
+          <title>Password Reset</title>
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  line-height: 1.6;
+                  font-size:16px;
+              }
+              .container {
+                  width: 80%;
+                  margin: auto;
+                  overflow: hidden;
+              }
+              .logo {
+                  width: 100px;
+                  height: 75px;
+              }
+              .code {
+                  font-size: 30px;
+                  color: #333;
+                  letter-spacing:5px;
+                  font-weight: bold;
+              }
+              .footer {
+                  font-size: 12px;
+                  color: #999;
+              }
+              .security-tip {
+                  color: #ff0000;
+              }
+
+              .small-text {
+                font-size: 10px;
+            }
+
+            .swf-text{
+              font-size: 16px;
+            }
+
+            .swf-grey-bg{
+              background-color:#eee;
+              padding:20px;
+              color:#222;
+            }
+
+            .swf-grey-red{
+              background-color:#f8e6e0;
+              padding:20px;
+              color:#222;
+              margin-top:10px; 
+            }
+            .swf-time{
+              margin-top:10px; margin-bottom:30px
+            }
+
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <img src="${SWF_LOGO}" alt="SWIF Logo" class="logo"/>
+
+              <p class="swf-text">Hi <b>${genToken.userFirstName}</b>,</p>
+              <p class="swf-text">It looks like youre trying to change your password.</p>
+
+              <p class="swf-time"><a href="${resetUrl}">Click this link to begin the password reset process:  ${resetUrl}</a></p>
+
+              <div class="swf-grey-bg">
+                <p>Do not share this link with a third party or other employee.</p>              
+              </div>
+              
+              <p class="footer">Please do not reply to this e-mail as it is sent from a notification only address and cannot accept incoming emails.</p>
+
+              <p class="security-tip swf-grey-red "><b>Security Tip</b><br/>
+              SWIF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
+              We will never ask you to validate or restore your account access through email or pop-up windows.</p>
+          </div>
+      </body>`
+
+    await transporter.sendMail({
+      from: `SWIF <${SWF_EMAIL}>`,
+      to: username,
+      subject: 'SWIF - Password Reset Instructions',
+      html: resetEmailString,
+    });
+
+    // Return a success response to the user
+    res.json({
+      outcome: 'success',
+      message: "An email with instructions for resetting your password has been sent to your email address.'",
+    });
+  
+
+  } catch (error) {
+    // Handle any errors here
+    console.error('Error updating user with reset token:', error);
+    res.json({
+      outcome: 'fail',
+      message: "error",
+    });
+  }
+  //................................................................
+
+}
+
+/*
 export const forgotPasswordRequest = async (req, res) => {
   console.log(req.body)
   const { username } = req.body;
@@ -520,17 +697,6 @@ export const forgotPasswordRequest = async (req, res) => {
       error: "Cannot reset password. Only agency email addresses are allowed.",
     });
   }
-
-
-
-
-
-
-
-
-
-
-
 
 
   console.log("------------------------------------")
@@ -644,6 +810,7 @@ export const forgotPasswordRequest = async (req, res) => {
     });
   }
 }
+*/
 
 
 
