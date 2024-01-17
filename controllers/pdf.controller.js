@@ -1585,9 +1585,9 @@ export const makePDFsendToEfiling = async (req, res) => {
   const printSummary = ""
   const appendixA = ""
 
-  if(!submissionType === "indictment") {
+  if(!submissionType == "indictment") {
 
-    const appendixA = `
+    appendixA = `
     
         <div class="" style="margin:30px 0 0 0; font-size:15px; font-weight:bold; padding:30px 10px 10px 10px; text-align:center; border-top:1px solid #000" >
             Appendix - A
@@ -1597,7 +1597,7 @@ export const makePDFsendToEfiling = async (req, res) => {
             Summary of Evidence
         </div>`;
 
-        const printSummary = `
+        printSummary = `
         <div
         id="acnhor-sign"
         style="
