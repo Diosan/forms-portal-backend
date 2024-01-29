@@ -274,12 +274,20 @@ export const verifyOtp = async (req, res, next) => {
 
     if (verified) {
       // OTP is correct, create a new token or perform desired actions
+
+      let currentUser = await UserModel.findByPk(
+        userId,
+        {raw: true}
+      );
+      let userAgency = currentUser.agencyName;
+
       return res.status(200).json({
         outcome: "success",
-        token: jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+        token: jwt.sign({ id: userId, agency: userAgency }, process.env.JWT_SECRET, {
           expiresIn: 129600,
         }),
       });
+      
     } else {
       // OTP is incorrect
       console.log("OTP verification failed");
