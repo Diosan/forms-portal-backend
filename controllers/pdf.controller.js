@@ -1042,15 +1042,34 @@ export const makePDFsendToEfiling = async (req, res) => {
       }
     }
 
-    let courtoffice;
-    if (description.includes("North")) {
-      courtoffice = "pos";
-    } else if (description.includes("South")) {
-      courtoffice = "sfo";
-    } else if (description.includes("Tobago")) {
-      courtoffice = "tgo";
+    let court;
+    if (description.includes("Child")) {
+      court = 'children';
     } else {
-      courtoffice = "pos";
+      court = 'hcrim';
+    }
+
+    let courtoffice;
+    if (description.includes("Child")) {
+        if (description.includes("North")) {
+          courtoffice = "ccn";
+        } else if (description.includes("South")) {
+          courtoffice = "ccs";
+        } else if (description.includes("Tobago")) {
+          courtoffice = "cct";
+        } else {
+          courtoffice = "ccn";
+        }
+    } else {
+        if (description.includes("North")) {
+          courtoffice = "pos";
+        } else if (description.includes("South")) {
+          courtoffice = "sfo";
+        } else if (description.includes("Tobago")) {
+          courtoffice = "tgo";
+        } else {
+          courtoffice = "pos";
+        }
     }
 
     const efilingRecord = {
@@ -1058,7 +1077,8 @@ export const makePDFsendToEfiling = async (req, res) => {
       email: submissionWithDetails.user.email,
       userid: submissionWithDetails.user.id,
       username: "",
-      court: "hcrim", //this has to be updated
+      // court: "hcrim", //this has to be updated
+      court: court,
       courtoffice: courtoffice,
       // court: "hcrim", //this has to be updated
       // courtoffice: courtoffice,
