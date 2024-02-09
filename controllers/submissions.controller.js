@@ -27,12 +27,14 @@ import moment from "moment";
 import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { TOTPGenerator } from "../utilities/TOTPGenerator.class.js";
+import { passPhrases } from "../utilities/passPhrases.class.js";
 import SignOTPGenerator from "../utilities/SignOTPGenerator.class.js";
 import { Signatures } from "../utilities/Signatures.class.js";
 import { mailConfig } from "../config/mail.config.js";
 import axios from "axios";
 import { SubmissionMailer } from "../utilities/SubmissionMailer.class.js";
 import { makePDFsendToEfiling } from "./pdf.controller.js";
+import usersModel from "../models/users.model.js";
 
 const APP_DOMAIN = process.env.APP_DOMAIN;
 const SWF_LOGO = process.env.SWF_LOGO;
@@ -276,6 +278,98 @@ export const signSubmission = async (req, res) => {
   }
 };
 
+export const phraseSignSubmission = async (req, res) => {
+  console.log("\n\n\n phraseSignSubmission Request body: ", req.body);
+  
+  const pass_phrases = new passPhrases();
+  try {
+    let transporter = nodemailer.createTransport(mailConfig);
+    let verified = await pass_phrases.verifyPassphrase(req.body.email, req.body.pass_phrase);
+    if (verified) {
+      console.log("+++++++++++++++OTP VERIFIED +++++++++++++++++++");
+      let email = req.body.email;
+      let submission_id = req.body.submission_id;
+      let signature = await signComplainant(
+        req.body.email,
+        req.body.submission_id
+      );
+      let updatedSubmission = await updateSubmission(req.body.submission_id, {
+        status: "signed",
+      });
+      res.status(201).json({ outcome: "success" });
+      let signAndSend = await makePDFsendToEfiling(req);
+      if (signAndSend) {
+        console.log("Completed Sending to E-Filing");
+        //send Email to SWIF ADMIN
+        let signatureRequest = req.body;
+        console.log("\n\n\n Request Body: ", req.body);
+      } 
+    } else {
+      return res.status(201).json({ outcome: "failure" });
+    }
+  } catch (error) {
+    console.log(
+      `Error Signing Submission [ ${req.body.submission_id} ]`,
+      error
+    );
+    res.status(201).json({
+      outcome: "error",
+      error: "error",
+    });
+  }
+
+};
+
+
+export const consentSubmission = async (req, res) => {
+
+  const totp = new SignOTPGenerator();
+  try {
+    
+    let verified = await totp.verifyOTP(req.body.email, req.body.otp);
+    
+    if (verified) {
+
+      let email = req.body.email;
+      let submission_id = req.body.submission_id;
+
+      let signatures = new Signatures();
+      let consent = await signatures.consenterSubmissionSign(
+        email,
+        submission_id
+      );
+      console.log("\n\n\n Signature from Signature Class: ", consent);
+
+      // let updatedSubmission = await updateSubmission(req.body.submission_id, {
+      //   status: "consented",
+      // });
+      res.status(201).json({ 
+        outcome: "success",
+        consent: consent 
+      });
+
+    } else {
+      return res.status(201).json({ 
+        outcome: "failure"
+      });
+    }
+
+  } catch (error) {
+
+    console.log(
+      `Error Signing Submission [ ${req.body.submission_id} ]`,
+      error
+    );
+
+    res.status(201).json({
+      outcome: "error",
+      error: "error",
+    });
+
+  }
+};
+
+
 // export const complainantSign = async (req, res) => {
 //   let signatures = new Signatures;
 //   console.log('\n\n\n Request body: ', req.body);
@@ -343,6 +437,32 @@ export const submissionSignature = async (req, res) => {
 
   res.status(201).json({
     signature: signature,
+    user: user,
+  });
+
+  // res.status(201).json({});
+};
+
+
+export const submissionConsent = async (req, res) => {
+  console.log("\n\n\n Request body: ", req.body);
+
+  let consent = await SignatureModel.findOne({
+    where: {
+      content_id: req.body.submission_id,
+      type: 'consent'
+    },
+    raw: true,
+  });
+
+  console.log("\n\n\n consent: ", consent);
+
+  let user = await UserModel.findByPk(consent.userId, { raw: true });
+
+  console.log("\n\n\n user: ", user);
+
+  res.status(201).json({
+    consent: consent,
     user: user,
   });
 

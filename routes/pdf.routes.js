@@ -1,7 +1,9 @@
 
 import express from "express";
 
-import {generatePdf, incomingPDF, convertHtmlPdf, convertWithPuppeteer} from "../controllers/pdf.controller.js";
+// import {generatePdf, incomingPDF, convertHtmlPdf, convertWithPuppeteer} from "../controllers/pdf.controller.js";
+import {generatePdf, incomingPDF, convertHtmlPdf} from "../controllers/pdf.controller.js";
+
 
 export default function(app) {
   
@@ -17,7 +19,7 @@ export default function(app) {
   router.post("/convert", convertHtmlPdf);
 
   // Convert Puppeteer
-  router.post("/puppeteer", convertWithPuppeteer);
+  // router.post("/puppeteer", convertWithPuppeteer);
 
   app.use('/api/pdf', router);
 };

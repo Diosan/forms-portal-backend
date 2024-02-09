@@ -17,7 +17,8 @@ import { v4 as uuidv4 } from "uuid";
 import { promisify } from "util";
 import { redisClient } from "../redis/redisConfig.js";
 import { TOTPGenerator } from "../utilities/TOTPGenerator.class.js";
-import { logAuthenticationEvent } from "../utilities/logger.js";
+import { passPhrases } from "../utilities/passPhrases.class.js";
+import { logAuthenticationEvent } from "../utilities/logger.js"
 import { allowedDomains } from "../config/domains.config.js";
 import { dbConfig } from "../config/db.config.js";
 
@@ -205,6 +206,12 @@ export const login = async (req, res, next) => {
     if (passwordMatch) {
       console.log("Match");
 
+      let mode = await redisClient.get('operation_mode');
+
+      mode = mode ? mode : 'OTP';
+
+      console.log('\n\n\n\n SWiF is in ' + mode + ' verification mode \n\n\n\n');
+
       const totp = new TOTPGenerator();
       // console.log(totp);
       //add user id to the session object
@@ -237,12 +244,28 @@ export const login = async (req, res, next) => {
           console.error("Error generating or sending OTP:", error)
         );
 
-      return res.status(200).json({
-        outcome: "success",
-        message: "Successfully logged in: OTP send to " + req.body.email,
-        email: req.body.email,
-        token: token, // Include the token in the response
-      });
+      if(mode == 'Key') {
+
+        return res.status(200).json({
+          outcome: "success",
+          message: "Successfully logged in: Use emergency pass phrase sent to " + req.body.email,
+          email: req.body.email,
+          token: token,
+          mode: mode
+        });
+    
+      } else {
+
+        return res.status(200).json({
+          outcome: "success",
+          message: "Successfully logged in: OTP send to " + req.body.email,
+          email: req.body.email,
+          token: token,
+          mode: mode
+        });
+
+      }
+      
 
       // .send('OTP sent to email');
     } else {
@@ -305,16 +328,31 @@ export const verifyOtp = async (req, res, next) => {
     console.log(">>>> USER ID decoded - ", userId);
 
     const totp = new TOTPGenerator();
+    const pass_phrases = new passPhrases();
     let verified = await totp.verifyOTP(token, otp);
 
     if (verified) {
       // OTP is correct, create a new token or perform desired actions
+
+      let currentUser = await UserModel.findByPk(
+        userId,
+        {raw: true}
+      );
+
+      if(!currentUser.passPhrase) {
+        console.log('\n\n\n currentUser.email : ' + currentUser.email + ' \n\n\n');
+        await pass_phrases.generatePassphrase(currentUser.email);
+      }
+
+      let userAgency = currentUser.agencyName;
+
       return res.status(200).json({
         outcome: "success",
-        token: jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+        token: jwt.sign({ id: userId, agency: userAgency }, process.env.JWT_SECRET, {
           expiresIn: 129600,
         }),
       });
+      
     } else {
       // OTP is incorrect
       console.log("OTP verification failed");
@@ -324,6 +362,85 @@ export const verifyOtp = async (req, res, next) => {
       customError.publicMessage = "OTP verification failed";
       customError.customResponse = true; // Indicate that this error should return a custom JSON response
       next(customError);
+
+
+
+    }
+  } catch (error) {
+    // Handle errors (e.g., token invalid or expired)
+    console.error("Error verifying OTP:", error);
+    const customError = new Error("Invalid Token used");
+    customError.status = 401; // HTTP status code
+    customError.outcome = "error";
+    customError.publicMessage = "Invalid token";
+    customError.customResponse = true; // Indicate that this error should return a custom JSON response
+    next(customError);
+
+  }
+};
+
+export const verifyPassPhrase = async (req, res, next) => {
+  const authHeader = req?.headers?.authorization || "";
+  const { pass_phrase } = req.body;
+
+  if (!pass_phrase || !authHeader || !authHeader.startsWith("Bearer ")) {
+    const customError = new Error("No passphrase provided");
+    customError.status = 401; // HTTP status code
+      customError.outcome = "error";
+      customError.publicMessage = "No passphrase provided";
+      customError.customResponse = true; // Indicate that this error should return a custom JSON response
+      next(customError);
+      
+      
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  // Verify and decode the JWT token
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(">>>> Decoded - ", decoded);
+    // Assuming the user's ID is stored in the token
+    const userId = decoded.id;
+    console.log(">>>> USER ID - ", userId);
+
+    const pass_phrases = new passPhrases();
+    let verified = await pass_phrases.verifyPassphrase(userId, pass_phrase);
+
+    if (verified) {
+      // Pass phrase is correct, create a new token or perform desired actions
+
+      let currentUser = await UserModel.findByPk(
+        userId,
+        {raw: true}
+      );
+
+      if(!currentUser.passPhrase) {
+        console.log('\n\n\n currentUser.email : ' + currentUser.email + ' \n\n\n');
+        await pass_phrases.generatePassphrase(currentUser.email);
+      }
+
+      let userAgency = currentUser.agencyName;
+
+      return res.status(200).json({
+        outcome: "success",
+        token: jwt.sign({ id: userId, agency: userAgency }, process.env.JWT_SECRET, {
+          expiresIn: 129600,
+        }),
+      });
+      
+    } else {
+      // Pass phrase is incorrect
+      console.log("OTP verification failed");
+      const customError = new Error("OTP verification failed");
+      customError.status = 400; // HTTP status code
+      customError.outcome = "error";
+      customError.publicMessage = "OTP verification failed";
+      customError.customResponse = true; // Indicate that this error should return a custom JSON response
+      next(customError);
+
+
+
     }
   } catch (error) {
     // Handle errors (e.g., token invalid or expired)

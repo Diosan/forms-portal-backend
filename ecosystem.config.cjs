@@ -36,7 +36,7 @@ module.exports = {
         // "post-deploy": "cd /var/www/html/jsswf-server/current && pm2 startOrRestart ecosystem.config.js --env production && pm2 save",
         // "post-deploy": "git reset --hard && git pull origin master && cd /var/www/html/jsswf-server/current && pm2 startOrRestart ecosystem.config.js --env production && pm2 save"
         // "post-deploy": "pm2 startOrRestart ecosystem.config.js  --env production && pm2 save"
-        "post-deploy": "pm2 restart 0 && pm2 save"
+        "post-deploy": "/home/judadm/.nvm/versions/node/v18.19.0/bin/pm2 restart 0 && /home/judadm/.nvm/versions/node/v18.19.0/bin/pm2 save"
       },
       staging: { 
         user : "root",

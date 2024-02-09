@@ -22,6 +22,11 @@ export default (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false
       },
+      passPhrase: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: ''
+      },
       username: {
         type: DataTypes.STRING,
         unique: true,

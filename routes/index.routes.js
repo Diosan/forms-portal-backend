@@ -16,6 +16,7 @@ import accusedRoutes from "./accuseds.routes.js";
 // import rolesRoutes from './roles.routes.js';
 import pdfRoutes from "./pdf.routes.js";
 import efilingRoutes from "./efiling.routes.js";
+import configurationRoutes from "./configuration.routes.js";
 
 export const setupRoutes =  (app) => {
   accessLogsRoutes(app);
@@ -34,4 +35,5 @@ export const setupRoutes =  (app) => {
   submissionsRoutes(app);
   accusedRoutes(app);
   userRoutes(app);
+  configurationRoutes(app);
 };
