@@ -185,8 +185,8 @@ export class passPhrases {
         console.log('\n\n\n User for passPhrase verification: ', user);
         console.log('\n\n\n passPhrase SHA hash: ',  createHash('sha3-256').update(pass_phrase).digest('hex'));
 
-        return true; 
-        user.passPhrase == createHash('sha3-256').update(pass_phrase).digest('hex');
+        return user.passPhrase == createHash('sha3-256').update(pass_phrase).digest('hex');
+        // return false;
     }
 
 }

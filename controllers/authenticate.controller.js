@@ -363,8 +363,6 @@ export const verifyOtp = async (req, res, next) => {
       customError.customResponse = true; // Indicate that this error should return a custom JSON response
       next(customError);
 
-
-
     }
   } catch (error) {
     // Handle errors (e.g., token invalid or expired)
@@ -404,8 +402,10 @@ export const verifyPassPhrase = async (req, res, next) => {
     const userId = decoded.id;
     console.log(">>>> USER ID - ", userId);
 
+    let user = await UserModel.findByPk(userId, { raw: true })
+
     const pass_phrases = new passPhrases();
-    let verified = await pass_phrases.verifyPassphrase(userId, pass_phrase);
+    let verified = await pass_phrases.verifyPassphrase(user.email, pass_phrase);
 
     if (verified) {
       // Pass phrase is correct, create a new token or perform desired actions
