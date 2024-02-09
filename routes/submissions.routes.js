@@ -1,6 +1,6 @@
   import {findAll, findOne, authenticateUser, create, update, del, resetPassword,
     updateMessage, forgotPasswordRequest, handlePasswordForgotPage, resetPasswordFromEmail,
-    saveComplainant, signSubmission, updateTitle, updateComplainant, saveAccused, accuseds, 
+    saveComplainant, signSubmission, phraseSignSubmission, updateTitle, updateComplainant, saveAccused, accuseds, 
     requestSignature, createIndictable, signIndictable, complainantSign, sendOTP, 
     submissionSignature, verifyOTP, sendSignRequest, sendVerifyOTP, verifierSign, 
     submissionVerification, chargeCodes, verifiers, adminSubmissions, requestConsent,
@@ -58,6 +58,8 @@
     router.post('/complainant_sign', complainantSign);
 
     router.post('/sign_submission', signSubmission);
+
+    router.post('/phrasesign_submission', phraseSignSubmission);
 
     router.post('/consent_submission', consentSubmission);
 
