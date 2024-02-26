@@ -686,6 +686,7 @@ export const saveComplainant = async (req, res) => {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
+    phone: req.body.phone,
     regNum: req.body.regNum,
     rank: req.body.rank,
     unit: req.body.unit,
@@ -1261,6 +1262,10 @@ export const requestSignature = async (req, res) => {
     return trinidadTime; // Returns time in Trinidad and Tobago time zone
   }
 
+  let submission = await SubmissionModel.findByPk(req.body.submission_id, {raw: true});
+
+  let sign_path = (submission.type.slice(0, 7) == 'private') ? '/private/sign/' : '/sign/';
+
   const currentTime = getCurrentTimeInTrinidad();
   const pathToImage = "https://www.ttlawcourts.org/images/swf-logo.png";
 
@@ -1332,7 +1337,7 @@ export const requestSignature = async (req, res) => {
             <p class="swf-text">Your signature has been requested on a submission in SWiF</p>
 
             <p class="swf-text">Click <a href="${
-              process.env.APP_DOMAIN + "/sign/" + req.body.submission_id
+              process.env.APP_DOMAIN + sign_path + req.body.submission_id
             }">here</a> to sign submission</p>  
         
 
