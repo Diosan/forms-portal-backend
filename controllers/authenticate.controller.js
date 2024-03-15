@@ -115,7 +115,9 @@ const saveUser = async (userData) => {
 const getUserByEmail = async (email, agency) => {
   try {
     console.log("email::::::::::", email);
-    const agencyDbConnection = createAgencyDbConnection(agency);
+    const thisUserAgency = agency.toLowerCase();
+
+    const agencyDbConnection = createAgencyDbConnection(thisUserAgency);
     const AgencyUserModel = createAgencyUserModel(agencyDbConnection);
     // Use Sequelize's findOne method to retrieve the user by email
     const agencyUser = await AgencyUserModel.findOne({
@@ -168,9 +170,7 @@ export const login = async (req, res, next) => {
   console.log(req.body);
   const { email, password } = req.body;
 
-  console.log("INCOMING PASSWORD ++++++++++++++++++++++++++++++++++++++")
-  console.log(password)
-  console.log("++++++++++++++++++++++++++++++++++++++")
+ 
 
   // Extract the domain from the email
   const emailDomain = email.split("@").pop();
@@ -192,7 +192,8 @@ export const login = async (req, res, next) => {
   //3 login the user on swif
 
   try {
-    const user = await getUserByEmail(email, agency);
+    const thisUserAgency = agency.toLowerCase();
+    const user = await getUserByEmail(email, thisUserAgency);
     // console.log(user)
     if (!user) {
       // return res.status(401).send('Authentication failed');
@@ -205,6 +206,10 @@ export const login = async (req, res, next) => {
         your account has been set up.`,
       });
     }
+
+    console.log("INCOMING PASSWORD ++++++++++++++++++++++++++++++++++++++")
+    console.log(password)
+    console.log("++++++++++++++++++++++++++++++++++++++")
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (passwordMatch) {
@@ -225,7 +230,7 @@ export const login = async (req, res, next) => {
       console.log(name);
 
       const token = jwt.sign(
-        { id: userId, agency: agency },
+        { id: userId, agency: thisUserAgency },
         process.env.JWT_SECRET,
         {
           expiresIn: "6h",
