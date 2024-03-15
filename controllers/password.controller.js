@@ -62,9 +62,10 @@ export const handlePasswordReset = async (req, res) => {
 
         console.log('\n\n\n Current User : ' + ' \n\n\n');
         console.log(currentUser);
+        const thisUserAgency = currentUser.agencyName.toLowerCase();
 
 
-        const agencyDbConnection = createAgencyDbConnection(currentUser.agencyName);
+        const agencyDbConnection = createAgencyDbConnection(thisUserAgency);
         const AgencyUserModel = createAgencyUserModel(agencyDbConnection);
 
 
