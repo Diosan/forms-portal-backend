@@ -168,6 +168,10 @@ export const login = async (req, res, next) => {
   console.log(req.body);
   const { email, password } = req.body;
 
+  console.log("INCOMING PASSWORD ++++++++++++++++++++++++++++++++++++++")
+  console.log(password)
+  console.log("++++++++++++++++++++++++++++++++++++++")
+
   // Extract the domain from the email
   const emailDomain = email.split("@").pop();
   const [agency = ""] = emailDomain.split(".") || [];

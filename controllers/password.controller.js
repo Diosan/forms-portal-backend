@@ -15,6 +15,15 @@ import { redisClient, } from '../redis/redisConfig.js';
 import { mailConfig } from '../config/mail.config.js';
 import crypto from 'crypto';
 import { allowedDomains } from "../config/domains.config.js";
+import { Sequelize } from "sequelize";
+
+import createAgencyUserModel from "../models/users.model.js";
+const createAgencyDbConnection = (agency) => {
+  return new Sequelize(`swif_${agency}`, dbConfig.USER, dbConfig.PASSWORD, {
+    host: dbConfig.HOST,
+    dialect: dbConfig.dialect,
+  });
+};
 
 
 const saltRounds = 10; 
@@ -33,6 +42,9 @@ export const handlePasswordReset = async (req, res) => {
     const { token, password } = req.body; // Assuming token and new password are in the request body
     console.log(req.body)
     try {
+
+        
+        
         // Find the token in the database
         const passwordResetEntry = await PasswordResetModel.findOne({ where: { token } });
 
@@ -42,12 +54,35 @@ export const handlePasswordReset = async (req, res) => {
           // return res.json({ message: 'Invalid or expired token' }); -----------------
         }
         console.log(passwordResetEntry.dataValues ||  "nothing")
+
+        let currentUser = await UserModel.findByPk(
+          passwordResetEntry.dataValues.userId,
+          {raw: true}
+        );
+
+        console.log('\n\n\n Current User : ' + ' \n\n\n');
+        console.log(currentUser);
+
+
+        const agencyDbConnection = createAgencyDbConnection(currentUser.agencyName);
+        const AgencyUserModel = createAgencyUserModel(agencyDbConnection);
+
+
         // Hash the new password
         const hashedPassword = bcrypt.hashSync(password, 10);
+        console.log("Hashed Password ++++++++++++++++++++++++++++++++++++++")
+        console.log(hashedPassword)
+        console.log("++++++++++++++++++++++++++++++++++++++")
 
         // Update the user's password
         await UserModel.update({ password: hashedPassword }, {
             where: { id: passwordResetEntry.userId } 
+        });
+
+        // Update the AGENCY USER password
+        await AgencyUserModel.update({ password: hashedPassword }, {
+          where: { id: passwordResetEntry.userId },
+          using: agencyDbConnection,
         });
 
         const theUser = await UserModel.findOne({ 
