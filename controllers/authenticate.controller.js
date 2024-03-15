@@ -339,6 +339,9 @@ export const verifyOtp = async (req, res, next) => {
         {raw: true}
       );
 
+      console.log('\n\n\n Current User : ' + currentUser + ' \n\n\n');
+
+
       if(!currentUser.passPhrase) {
         console.log('\n\n\n currentUser.email : ' + currentUser.email + ' \n\n\n');
         await pass_phrases.generatePassphrase(currentUser.email);
