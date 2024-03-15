@@ -1,0 +1,56 @@
+{
+    "schema": {
+        "title": "Add an Accused",
+        "description": "",
+        "type": "object",
+        "required": [
+          "firstName",
+          "lastName"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "middleName": {
+            "type": "string",
+            "title": "Middle Name"
+          },
+          "lastName": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "phone": {
+            "type": "string",
+            "title": "Phone Number"
+          },
+          "bailStatus": {
+            "type": "string",
+            "title": "Bail Status",
+            "enum": [
+              "On bail",
+              "Surety"
+            ],
+            "enumNames": [
+              "On bail",
+              "Surety"
+            ]
+          },
+          "alias": {
+            "type": "string",
+            "title": "Alias"
+          }
+
+        }
+    },
+    "UI": {
+        "alias": {
+          "ui:widget": "textarea"
+        }
+    }
+    
+}

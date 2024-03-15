@@ -32,6 +32,10 @@ export default (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: false
             },
+            phone: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
             agency: {
                 type: DataTypes.STRING,
                 allowNull: false

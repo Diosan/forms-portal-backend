@@ -1,0 +1,32 @@
+{
+    "schema": {
+        "type": "object",
+        "required": [
+            "count",
+            "particulars"
+        ],
+        "properties": {
+            "count": {
+                "type": "number",
+                "title": "Count",
+                "default": 1
+            },
+            "dateOfOffence": {
+                "type": "string",
+                "title": "On what day did the incident take place?"
+            },
+            "particulars": {
+                "type": "string",
+                "title": "Provide details about the incident"
+            }
+        }
+    },
+    "UI": {
+        "particulars": {
+            "ui:widget": "textarea"
+        },
+        "dateOfOffence": {
+            "ui:widget": "textarea"
+        }
+    }
+}

@@ -127,6 +127,14 @@ export default sequelize => {
     email:{
       type: DataTypes.STRING, 
       allowNull: true
+    },
+    phone:{
+      type: DataTypes.STRING, 
+      allowNull: true
+    },
+    bailStatus:{
+      type: DataTypes.STRING, 
+      allowNull: true
     }
     
 });

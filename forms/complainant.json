@@ -1,7 +1,7 @@
 {
     "schema": {
-        "title": "Complainant",
-        "description": "The person submitting this complaint",
+        "title": "Complainant Information",
+        "description": "",
         "type": "object",
         "required": [
           "firstName",
