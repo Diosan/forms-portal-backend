@@ -50,8 +50,8 @@ export const handlePasswordReset = async (req, res) => {
 
         // Check if the token exists and is not expired
         if (!passwordResetEntry || new Date() > passwordResetEntry.expiration) {
-          console.log(passwordResetEntry.dataValues ||  "Invalid or expired token")
-          // return res.json({ message: 'Invalid or expired token' }); -----------------
+          console.log(passwordResetEntry.dataValues ||  "Invalid / expired token")
+          // return res.json({ message: 'Invalid or expired token' }); ----------------- 
         }
         console.log(passwordResetEntry.dataValues ||  "nothing")
 
