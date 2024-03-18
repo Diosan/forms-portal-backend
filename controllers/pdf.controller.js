@@ -806,22 +806,26 @@ export const makePDFsendToEfiling = async (req, res) => {
     class="avoid-break-inside m-0 mb-3 text-left fw-bold"
     style="font-size: 20px; font-weight: bold"
     >Signed</div>
+    <br><br>
 
     ${
       submissionType !== "indictment" ? (
         isOath ? `
           <div style="margin: 10px 0px 20px; padding: 0px">
           <p style="font-size:11pt; line-height: 14pt; margin: 0px">
-          I <strong>${signFirstName} ${signLastName}</strong>, ${complainantRank}, solemnly swear that I have signed this complaint on oath and by that I declare that –<br><br>
-          (i) I make this [application/complaint] conscientiously, wilfully and honestly having reasonable grounds for believing that the named accused person or persons has or have committed the offence alleged as stated in the complaint and that the particulars are true to the best of my knowledge;<br><br>
-          (ii) I acknowledge this declaration to be an oath that is binding;<br><br>
-          (iii) I acknowledge that the wilful false affirmation of this declaration is an offence.
+          I <strong>${signFirstName} ${signLastName}</strong>, ${complainantRank}, hereby swear by affixing my signature to this
+          declaration, that I make this complaint conscientiously having reasonable grounds for believing that the
+          named accused person has committed the offence alleged and stated in the complaint and that the
+          particulars are true to the best of my knowledge.
           </p></div>
         ` : `
         <div style="margin: 10px 0px 20px; padding: 0px">
-        <p style="font-size: 11pt; line-height: 14pt; margin: 0px 20px 10px;">
-        I <strong>${signFirstName} ${signLastName}</strong>, ${complainantRank}, do solemnly, sincerely, and truly affirm, that I have signed this complaint on oath and by that I declare that –<br><br>(i)          I make this complaint conscientiously, wilfully and honestly having reasonable grounds for believing that the named accused person or persons has or have committed the offence alleged as stated in the complaint and that the particulars are true to the best of my knowledge;<br><br>(ii)        I acknowledge this declaration to be an oath that is binding;<br><br>(iii)       I acknowledge that the wilful false swearing of this oath is an offence</p>
-        </div>
+          <p style="font-size:11pt; line-height: 14pt; margin: 0px">
+          I <strong>${signFirstName} ${signLastName}</strong>, ${complainantRank}, hereby swear by affixing my signature to this
+          declaration, that I make this complaint conscientiously having reasonable grounds for believing that the
+          named accused person has committed the offence alleged and stated in the complaint and that the
+          particulars are true to the best of my knowledge.
+          </p></div>
         `
       ) : ''
     }
