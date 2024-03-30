@@ -4,7 +4,7 @@
     requestSignature, createIndictable, signIndictable, complainantSign, sendOTP, 
     submissionSignature, verifyOTP, sendSignRequest, sendVerifyOTP, verifierSign, 
     submissionVerification, chargeCodes, verifiers, adminSubmissions, requestConsent,
-    consentSubmission, submissionConsent
+    consentSubmission, submissionConsent, previous
   } from "../controllers/submissions.controller.js";
   import express from "express";
   import verifyToken from '../middlewares/authMiddleware.js';
@@ -48,6 +48,8 @@
     router.post('/update_complainant', updateComplainant);
    
     router.get('/accuseds/:id', accuseds);
+
+    router.get('/previous/:id', previous);
 
     router.post('/request_signature', requestSignature);
 
