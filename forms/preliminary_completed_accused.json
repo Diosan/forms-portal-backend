@@ -10,7 +10,7 @@
         "properties": {
           "previousCase": {
             "type": "string",
-            "title": "Previous Case#"
+            "title": "Originating Case No(s)"
           },
           "firstName": {
             "type": "string",
@@ -37,11 +37,11 @@
             "title": "Bail Status",
             "enum": [
               "On bail",
-              "Surety"
+              "Remanded"
             ],
             "enumNames": [
               "On bail",
-              "Surety"
+              "Remanded"
             ]
           },
           "alias": {
