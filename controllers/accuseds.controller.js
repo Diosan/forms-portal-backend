@@ -103,7 +103,7 @@ export const saveRelatedMatter = async (req, res) => {
 
     res.status(201).json({
         outcome: 'success',
-        pending: new_related
+        related: new_related
     });
 
 };

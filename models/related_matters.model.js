@@ -16,7 +16,11 @@ const createRelatedMatterModel = (sequelize) => {
         dateOfOffence:{
             type: DataTypes.DATEONLY, 
             allowNull: true
-        }
+        },
+        accusedId: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
     });
 
     // Accused.associate = function (models) {

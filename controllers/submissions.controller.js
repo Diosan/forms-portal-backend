@@ -9,6 +9,7 @@ import {
   SignatureModel,
   ChargeCodeModel,
   VerifierModel,
+  RelatedMatterModel,
 } from "../models/index.js";
 import { PasswordResetModel } from "../models/index.js";
 
@@ -35,6 +36,8 @@ import axios from "axios";
 import { SubmissionMailer } from "../utilities/SubmissionMailer.class.js";
 import { makePDFsendToEfiling } from "./pdf.controller.js";
 import usersModel from "../models/users.model.js";
+import accesslogsModel from "../models/accesslogs.model.js";
+import accusedsModel from "../models/accuseds.model.js";
 
 const APP_DOMAIN = process.env.APP_DOMAIN;
 const SWF_LOGO = process.env.SWF_LOGO;
@@ -742,6 +745,46 @@ export const accuseds = async (req, res) => {
     accuseds: returned_accuseds,
   });
 };
+
+export const previous = async (req, res) => {
+  const id = req.params.id;
+  let cases = '';
+  const accuseds = await AccusedModel.findAll({
+    where: {submissionId: id},
+    raw: true
+  });
+
+  let result = await accuseds.forEach(async (accused) => {
+
+    let relateds = await RelatedMatterModel.findAll({
+      where: {accusedId: accused.id},
+      raw: true
+    });
+
+    relateds.forEach((related) => {
+      if(cases.length == 0) {
+        cases = cases + related.offence;
+      } else {
+        cases = cases + ', ' + related.offence;
+      }
+    });
+
+    console.log('\n\n\n --------- PREVIOUS CASES --------- \n\n');
+
+    console.log(cases);
+  
+    console.log('\n\n -------- END PREVIOUS CASES -------- \n\n\n');
+
+    res.status(200).json({
+      outcome: "success",
+      // accused: returned_accuseds
+      cases: cases
+    });
+
+  });
+
+
+}
 
 export const updateTitle = async (req, res) => {
   console.log(req.body);
