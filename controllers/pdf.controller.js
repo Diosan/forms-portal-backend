@@ -281,7 +281,7 @@ export const makePDFsendToEfiling = async (req, res) => {
     const signLastName = result?.complainant?.lastName ?? "";
 
     let signedName = ""
-    if(submissionType !== "indictment"){
+    if (!["indictment", "indictment_preliminary_completed"].includes(submissionType)) {
       signedName =
       (result?.complainant?.firstName ?? "") +
       " " +
@@ -809,8 +809,8 @@ export const makePDFsendToEfiling = async (req, res) => {
     <br><br>
 
     ${
-      submissionType !== "indictment" ? (
-        isOath ? `
+      !["indictment", "indictment_preliminary_completed"].includes(submissionType) ? (
+        isOath ?  `
           <div style="margin: 10px 0px 20px; padding: 0px">
           <p style="font-size:11pt; line-height: 14pt; margin: 0px">
           I <strong>${signFirstName} ${signLastName}</strong>, ${complainantRank}, hereby swear by affixing my signature to this
@@ -905,7 +905,7 @@ export const makePDFsendToEfiling = async (req, res) => {
   let printSummary = ""
   let appendixA = ""
 
-  if(submissionType !== "indictment") {
+  if (!["indictment", "indictment_preliminary_completed"].includes(submissionType)) {
 
     appendixA = `
     
