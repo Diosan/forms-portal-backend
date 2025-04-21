@@ -52,7 +52,7 @@ export class Signatures {
         // return '1q2w3e4r5t6y7u8i9o0p';
     }
 
-    consenterSubmissionSign = async (email, submission_id) => {
+    consenterSubmissionSign = async (email, submission_id, note) => {
 
         console.log(email)
         let submission = await SubmissionModel.findByPk(submission_id);
@@ -76,7 +76,8 @@ export class Signatures {
             record: record,
             hash: createHash('sha3-256').update(record).digest('hex'),
             userId: user.id,
-            content_id: submission.dataValues.id
+            content_id: submission.dataValues.id,
+            note: note
         });
 
         // console.log('\n\n\n Signature: ', signature.dataValues);

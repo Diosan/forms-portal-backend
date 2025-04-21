@@ -37,8 +37,8 @@ const saltRounds = 10;
 const JWT_SECRET = process.env.JWT_SECRET;
 // const APP_DOMAIN = process.env.APP_DOMAIN;
 // const SWF_LOGO = process.env.SWF_LOGO;
-const SWF_EMAIL = process.env.SWF_EMAIL;
-// const SWF_EMAIL="swif-noreply@ttlawcourts.org"
+// const SWF_EMAIL = process.env.SWF_EMAIL;
+const SWF_EMAIL="swif-noreply@ttlawcourts.org"
 const APP_DOMAIN="https://swif.ttlawcourts.org"
 const SWF_LOGO="https://www.ttlawcourts.org/images/swf-logo.png"
 
@@ -515,12 +515,16 @@ export const resetPassword = async (req, res) => {
 };
 
 export const checkUserInAgencyTable = async (username, agency) => {
+  console.log('\n\n\n======= Agency being searched in is ' + agency + ' ====================\n\n\n' );
   try {
     const agencyDbConnection = createAgencyDbConnection(agency);
+    console.log('\n\n\n ========= Agency DB connection established ==================\n\n\n\n');
     const AgencyUserModel = createUserModel(agencyDbConnection);
+    console.log('\n\n\n ========= Agency user model established ==================\n\n\n\n');
     const agencyUser = await AgencyUserModel.findOne({
       where: { username },
     });
+    console.log('\n\n\n ========= agencyUser:  ==================\n\n\n\n', agencyUser);
     console.log("Agency::::::: ",agencyUser)
     return agencyUser; // Return the agency user record or null if not found
   } catch (error) {
@@ -553,15 +557,25 @@ export const forgotPasswordRequest = async (req, res) => {
 
     // If the user doesn't exist in the central user table, check the agency user table
     if (!centralUser) {
-      // Assuming you have a function to check the user in the agency user table, replace 'checkUserInAgencyTable' with the actual function
-      // const agencyUser = await checkUserInAgencyTable(username, agency);
+
+
       const agencyUser = originalDomains.includes("@" + emailDomain) ? await checkUserInAgencyTable(username, agency) : await checkUserInAgencyTable(username, 'ttps');
+
+      console.log('\n\n\n =============================================================================================\n\n\n');
+      console.log('Returned agencyUser: ', agencyUser);
+      console.log('\n\n\n =============================================================================================\n\n\n');
+
+
+      // Assuming you have a function to check the user in the agency user table, replace 'checkUserInAgencyTable' with the actual function
+      //const agencyUser = await checkUserInAgencyTable(username, agency);
 
       // If the user exists in the agency user table, copy the record to the central user table
       if (agencyUser) {
+        console.log('\n\n\n============================ User detected in agency user table so attempting to copy to central user table =========================================\n\n\n');
         const newCentralUser = await UserModel.create(agencyUser.get({ plain: true }));
         // You can now use 'newCentralUser' in the rest of the code
       } else {
+        console.log('\n\n\n============================ User NOT detected in agency user table ========================================\n\n\n');
         // If the user doesn't exist in either table, return an error response
         return res.status(404).json({
           outcome: 'error',
@@ -682,38 +696,6 @@ export const forgotPasswordRequest = async (req, res) => {
     });
   }
   //................................................................
-
-}
-
-export const smtptest = async (req, res) => {
-
-  console.log('\n\n\n ======= TESTING SMTP SETTINGS ============ \n\n\n ');
-
-  const test_transporter = nodemailer.createTransport(mailConfig);
-
-  // const test_transporter = nodemailer.createTransport({
-  //   host: "mail.link868.com",
-  //   port: 465,
-  //   secure: true, // true for port 465, false for other ports
-  //   auth: {
-  //     user: "omm@link868.com",
-  //     pass: "Ip.DF_d-Bh5}",
-  //   },
-  // });
-
-  const info = await test_transporter.sendMail({
-    from: `SWIF <omm@link868.com>`,
-    to: 'off_harry@link868.com',
-    subject: 'SWiF SMTP settings Test',
-    text: 'SWiF SMTP settings Test'
-  });
-
-  console.log("Message sent: %s", info.messageId);
-
-  res.json({
-    outcome: 'success',
-    message: 'An email was successfully sent with the SMTP settings'
-  });
 
 }
 

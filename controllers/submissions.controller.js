@@ -326,6 +326,8 @@ export const phraseSignSubmission = async (req, res) => {
 
 export const consentSubmission = async (req, res) => {
 
+  console.log('\n\n\n Attempting to consent submission \n\n\n');
+
   const totp = new SignOTPGenerator();
   try {
     
@@ -335,11 +337,13 @@ export const consentSubmission = async (req, res) => {
 
       let email = req.body.email;
       let submission_id = req.body.submission_id;
+      let note = req.body.note
 
       let signatures = new Signatures();
       let consent = await signatures.consenterSubmissionSign(
         email,
-        submission_id
+        submission_id,
+        note
       );
       console.log("\n\n\n Signature from Signature Class: ", consent);
 
@@ -520,6 +524,41 @@ export const findAll = (req, res) => {
         error: error,
       });
     });
+};
+
+export const consented = async(req, res) => {
+
+  // console.log(req.user.id);
+
+  console.log('============================ Fetching Consented Complaints ====================================');
+
+  let consented_submissions = await SubmissionModel.findAndCountAll({
+    where: { type: 'complaint_with_consent'  },
+    order: [["id", "DESC"]],
+    limit: 5,
+    raw: true
+  })
+    .then((data) => {
+      // console.log('Submissions Fetched: ', data?.rows[data?.rows.length - 1].dataValues.id);
+      res.status(201).json({
+        outcome: "success",
+        submissions: data,
+      });
+    })
+    .catch((error) => {
+      console.log('============================== Error Fetching Consented Complaints ======================================');
+      console.log(error);
+      res.status(201).json({
+        outcome: "error",
+        error: error,
+      });
+    });
+
+  // res.status(201).json({
+  //   outcome: "success",
+  //   submissions: [],
+  // });
+
 };
 
 // Assuming you have a middleware that validates and sets the user info in req.user
@@ -1399,6 +1438,93 @@ export const requestSignature = async (req, res) => {
     </body>
     </html>`;
 
+  const consentEmailString = `
+  <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Verification Code</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                font-size:14px;
+            }
+            .container {
+                width: 80%;
+                margin: auto;
+                overflow: hidden;
+            }
+            .logo {
+                width: 100px;
+                height: 75px;
+            }
+            .code {
+                font-size: 30px;
+                color: #333;
+                letter-spacing:5px;
+                font-weight: bold;
+            }
+            .footer {
+                font-size: 12px;
+                color: #999;
+            }
+            .security-tip {
+                color: #ff0000;
+            }
+
+            .small-text {
+              font-size: 10px;
+          }
+
+          .swf-text{
+            font-size: 14px;
+          }
+
+          .swf-grey-bg{
+            background-color:#eee;
+            padding:20px;
+            color:#222;
+          }
+
+          .swf-grey-red{
+            background-color:#f8e6e0;
+            padding:20px;
+            color:#222;
+            margin-top:10px; 
+          }
+          .swf-time{
+            margin-top:10px; margin-bottom:30px
+          }
+
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <img src="${pathToImage}" alt="SWF Logo" class="logo"/>
+
+            <p class="swf-text">Hi, <b></b></p>
+            <p class="swf-text">Consent was given for [${submission.description}]. Your signature is now required to complete this submission.</p>
+
+            <p class="swf-text">Click <a href="${
+              process.env.APP_DOMAIN + sign_path + req.body.submission_id
+            }">here</a> to sign submission</p>  
+        
+
+            <p class="small-text swf-time">This signature request was generated at ${currentTime}</p>
+
+            <div class="swf-grey-bg">
+            <p>Do not share this verification code with a third party or other employee. We will NEVER ask you for this code.</p>
+
+            </div>
+
+            <p class="security-tip swf-grey-red "><b>Security Tip</b><br/>
+            SWF will never send you unsolicited emails asking for confidential information, such as your Password, Verification Code, or User ID. 
+            We will never ask you to validate or restore your account access through email or pop-up windows.</p>
+            
+        </div>
+    </body>
+    </html>`;
+
   let signatureRequest = req.body;
   console.log("\n\n\n Request Body: ", req.body);
   let transporter = nodemailer.createTransport(mailConfig);
@@ -1408,8 +1534,8 @@ export const requestSignature = async (req, res) => {
       await transporter.sendMail({
         from: `SWF <${SWF_EMAIL}>`,
         to: req.body.complainant_email,
-        subject: "SWF - Submission",
-        html: resetEmailString,
+        subject: submission.type === 'complaint_with_consent' ? 'Signature Required for Submission [' + submission.description + ']' : 'SWF - Submission',
+        html: submission.type === 'complaint_with_consent' ? consentEmailString : resetEmailString,
       });
       res.status(201).json({
         outcome: "success",

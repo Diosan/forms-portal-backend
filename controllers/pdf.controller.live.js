@@ -130,32 +130,6 @@ async function getSubmissionWithDetails(submissionId) {
   }
 }
 
-async function getConsent(submissionId) {
-  try {
-    // Fetch consent signature from DB
-    console.log('============================== Fetching consent signature from DB =============================');
-    let consent = await SignatureModel.findOne({
-      where: {
-        content_id: submissionId,
-        type: 'consent'
-      },
-      include: [
-        {
-          model: UserModel,
-          required: true
-        }],
-      raw: true,
-      nest: true
-    });
-    return consent
-  } catch(error) {
-    // Handle or throw the error based on your error handling policy
-    console.error("Error fetching submission consent:", error);
-    throw error;
-
-  }
-}
-
 // Create 'documents' directory if it doesn't exist
 const documentsPath = path.join(__dirname, "..", "documents");
 if (!fs.existsSync(documentsPath)) {
@@ -305,39 +279,6 @@ export const makePDFsendToEfiling = async (req, res) => {
     const signature = result?.user?.signatures?.[0]?.hash ?? "";
     const signFirstName = result?.complainant?.firstName ?? "";
     const signLastName = result?.complainant?.lastName ?? "";
-
-    var consentReturned = false;
-    var sConsent = null;
-
-    // If this is a consented submission go get the consent details
-    if(submissionType == 'complaint_with_consent') {
-      console.log('============================== Get the consent details =============================');
-      sConsent = await getConsent(
-        req.body.submission_id
-      );
-      consentReturned = !(sConsent === null);
-    }
-
-    const consent = consentReturned ? sConsent : {};
-
-    console.log('\n\n\n=============================== Fetched consent =============================');
-    console.log('Fetched consent: ', consent);
-
-
-
-    console.log('============================== Setting consent details constants =============================');
-
-    const consentDate = consentReturned ? consent?.createdAt?.toISOString().split("T")[0] : '' ;
-    console.log('consentDate: ' + consentDate);
-    const consentTime = consentReturned ? formatTime(consent?.createdAt) : '';
-    console.log('consentTime: ' + consentTime);  
-    const consentHash = consentReturned ? consent?.hash : '';
-    console.log('consentHash: ' + consentHash);
-    const consentSignedName = consentReturned ? consent?.user?.firstName + ' ' + consent?.user?.lastName : '';
-    console.log('consentSignedName: ' + consentSignedName);
-    const consentNote = consentReturned ? consent?.note : '';
-
-
 
     let signedName = ""
     if (!["indictment", "indictment_preliminary_completed"].includes(submissionType)) {
@@ -842,104 +783,6 @@ export const makePDFsendToEfiling = async (req, res) => {
     const htmlFooter = `
         </body></html>
     `
-    const consentHTML = `
-    <style>
-        .page-break {
-            break-after: page; /* Force page break after this element */
-        }
-        .avoid-break-inside {
-            break-inside: avoid; /* Avoid page breaks inside this element */
-        }
-    </style>
-    <div
-    class="avoid-break-inside"
-    id="acnhor-sign"
-    style="
-    border: 10px solid rgb(238, 238, 238);
-    background-color: rgb(249, 249, 249);
-    padding: 20px;
-    margin: 25px 0px 0px;
-    ">
-      <div
-      class="avoid-break-inside m-0 mb-3 text-left fw-bold"
-      style="font-size: 20px; font-weight: bold"
-      >Consented</div>
-      <br><br>
-
-      <div style="margin: 10px 0px 20px; padding: 0px">
-      <p style="font-size:11pt; line-height: 14pt; margin: 0px">
-        ${consentNote}
-      </p></div>
-
-      ${
-      submissionType === 'complaint_with_consent'? `
-        <div>
-          <div class="signature-container">
-            <div
-                class="signature-format"
-                style="background-color: rgb(236, 247, 255); padding:5px 5px; max-width:300px; border: 1px solid rgb(0,0,0); margin-bottom: 20px;"
-              >
-                <div style="display: flex; font-family:Calibri, Arial, Helvetica, sans-serif" >
-                  <div class="col-6 col" style="width:150px;">
-              <div class="logo-placeholder d-flex swf-sign">
-                  <span class="swf-e-signed"
-                            style="font-size: .8rem;
-                            font-weight: 700;
-                            color: #555;"
-                        >e-signed on</span>
-                        <span class="swf-swif" 
-                            style="font-size: 1rem;
-                            font-weight: 700;
-                            margin-left: 4px;
-                            color: #c13127;"
-                        >SWiF</span>
-              </div>
-                  </div>
-                  <div class="col-6 col"  class="col-6 col" style="width:145px;">
-                    <div
-                        class="text-placeholder text-right"
-                        style="font-size: 8pt; text-align: right"
-                    >
-                    ${consentTime}
-                    </div>
-                    <div
-                        class="text-placeholder text-right"
-                        style="font-size: 8pt; text-align: right"
-                    >
-                    ${consentDate}
-                    </div>
-                  </div>
-                </div>
-                <div class="col-12 col">
-                    <div class="name-placeholder fw-bold text-left"
-                    style="line-height: 13pt;
-                    font-size: 12pt;
-                    font-family:Calibri, Arial, Helvetica, sans-serif;
-                    font-weight:bold;
-                    margin: 5px 0;"
-                    >
-                    ${consentSignedName}
-                    </div>
-                </div>
-                <div class="col-12 col">
-                    <div
-                    style="
-                        text-align:left; font-size: 8pt; overflow-wrap: break-word;
-                        word-break: break-all;
-                        line-height: 10pt"
-                    >
-                    ${consentHash}
-                    </div>
-                </div>
-            </div>
-          </div>
-        </div>
-        <div id="anchorSign"></div>
-      ` 
-      : `` 
-      }
-
-    </div>`;
 
     const signatureHTML = `
     <style>
@@ -986,10 +829,6 @@ export const makePDFsendToEfiling = async (req, res) => {
         `
       ) : ''
     }
-
-
-
-    
 
 
 
@@ -1148,10 +987,8 @@ export const makePDFsendToEfiling = async (req, res) => {
         const htmlWithSignature = `
         <div>
             <div>${htmlHead}</div> 
-            <div>${html}</div>
-            ${submissionType === 'complaint_with_consent'? '<div class="page-break"></div>' : ''} 
-            <div>${submissionType === 'complaint_with_consent'? consentHTML : ''}</div>
-            <div>${signatureHTML}</div>            
+            <div>${html}</div> 
+            <div>${signatureHTML}</div>
             ${appendixA !== "" ? `
                 <div class="page-break"></div>
                 <div>

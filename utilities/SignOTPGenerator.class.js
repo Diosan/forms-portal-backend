@@ -9,6 +9,7 @@ dotenv.config()
 
 const SWF_EMAIL = process.env.SWF_EMAIL
 export default class SignOTPGenerator {
+
   constructor() {
     this.redisClient = redisClient;
     this.transporter = nodemailer.createTransport(mailConfig);
@@ -16,7 +17,8 @@ export default class SignOTPGenerator {
 
 
   async generateOTP(submission_id, email, name) {
-    console.log(email)
+
+    console.log('passed email parameter: ', email);
     // Generate a secure random number with no 3 consecutive digits
     let otp = '';
     for (let i = 0; i < 6; i++) {
@@ -33,6 +35,7 @@ export default class SignOTPGenerator {
 
     // Send OTP via email
     await this.sendOTPViaEmail(submission_id, email, name, otp);
+
   }
 
   async storeOTPInRedis(email, otp) {

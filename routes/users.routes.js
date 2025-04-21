@@ -1,5 +1,5 @@
     import {findAll, findOne, authenticateUser, create, update, del, resetPassword,
-      updateMessage, forgotPasswordRequest, handlePasswordForgotPage, resetPasswordFromEmail
+      updateMessage, forgotPasswordRequest, handlePasswordForgotPage, resetPasswordFromEmail, smtptest
 
     } from "../controllers/users.controller.js";
     import express from "express";
@@ -34,8 +34,9 @@
     router.post("/password/resetPasswordFromEmail", resetPasswordFromEmail);
     // Delete a user
     router.delete("/:id", del);
-  
-  
-   
+
+    router.get("/password/smtptest", smtptest);
+     
     app.use('/api/users', router);
+
   };

@@ -210,8 +210,16 @@ export const login = async (req, res, next) => {
     console.log("INCOMING PASSWORD ++++++++++++++++++++++++++++++++++++++")
     console.log(password)
     console.log("++++++++++++++++++++++++++++++++++++++")
+    console.log("INCOMING PASSWORD HASH ++++++++++++++++++++++++++++++++++++++")
+    console.log(await bcrypt.hash(password, saltRounds))
+    console.log("EXISTING PASSWORD HASH ++++++++++++++++++++++++++++++++++++++")
+    console.log(user.password)
+    console.log("++++++++++++++++++++++++++++++++++++++")
 
     const passwordMatch = await bcrypt.compare(password, user.password);
+
+
+
     if (passwordMatch) {
       console.log("Match");
 

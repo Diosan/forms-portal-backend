@@ -4,7 +4,7 @@
     requestSignature, createIndictable, signIndictable, complainantSign, sendOTP, 
     submissionSignature, verifyOTP, sendSignRequest, sendVerifyOTP, verifierSign, 
     submissionVerification, chargeCodes, verifiers, adminSubmissions, requestConsent,
-    consentSubmission, submissionConsent, previous
+    consentSubmission, submissionConsent, previous, consented,
   } from "../controllers/submissions.controller.js";
   import express from "express";
   import verifyToken from '../middlewares/authMiddleware.js';
@@ -86,6 +86,8 @@
     router.get('/verifiers/:id', verifiers);
 
     router.get('/admin/:id', verifyToken, adminSubmissions);
+
+    router.get("/consented/:id", verifyToken, consented);
 
     app.use('/api/submissions', router);
   };
