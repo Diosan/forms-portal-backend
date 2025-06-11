@@ -93,7 +93,7 @@ export class SubmissionMailer {
               <div class="container">
                   <img src="${pathToImage}" alt="SWF Logo" class="logo"/>
     
-                  <p class="swf-text">Hi, <b>${name}</b></p>
+                  <p class="swf-text">Good Day <b>${name}</b>,</p>
                   <p class="swf-text">Your signature has been requested for verification on a submission in SWF</p>
 
                   <p class="swf-text">Click <a href="${process.env.APP_DOMAIN + '/sign/' + submission_id}">here</a> to verify submission</p>  

@@ -918,7 +918,7 @@ export const makePDFsendToEfiling = async (req, res) => {
                     font-weight:bold;
                     margin: 5px 0;"
                     >
-                    ${consentSignedName}
+                    Director of Public Prosecutions
                     </div>
                 </div>
                 <div class="col-12 col">

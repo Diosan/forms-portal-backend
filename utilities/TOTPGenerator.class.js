@@ -157,7 +157,7 @@ export class TOTPGenerator {
           <div class="container">
               <img src="${pathToImage}" alt="SWIF Logo" class="logo"/>
 
-              <p class="swf-text">Hi, <b>${name}</b>!</p>
+              <p class="swf-text">Good Day <b>${name}</b>,</p>
               <p class="swf-text">It looks like you’re signing in to SWIF.</p>
               <p class="swf-text">Your verification code is:</p>
 

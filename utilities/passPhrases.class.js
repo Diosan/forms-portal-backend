@@ -125,7 +125,7 @@ export class passPhrases {
               <div class="container">
                   <img src="${pathToImage}" alt="SWIF Logo" class="logo"/>
     
-                  <p class="swf-text">Hi, <b>${name}</b></p>
+                  <p class="swf-text">Good Day <b>${name}</b>,</p>
                   <p class="swf-text">We've provided a <strong>PERMANENT EMERGENCY PASSPHRASE</strong> for your SWiF account. </p>
 
                   <p class="swf-text">Your passphrase is:</p>

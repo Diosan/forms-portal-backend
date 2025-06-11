@@ -1502,7 +1502,7 @@ export const requestSignature = async (req, res) => {
         <div class="container">
             <img src="${pathToImage}" alt="SWF Logo" class="logo"/>
 
-            <p class="swf-text">Hi, <b></b></p>
+            <p class="swf-text">Good Day, <b></b></p>
             <p class="swf-text">Consent was given for [${submission.description}]. Your signature is now required to complete this submission.</p>
 
             <p class="swf-text">Click <a href="${
