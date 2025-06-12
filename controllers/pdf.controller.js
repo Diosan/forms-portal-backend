@@ -33,6 +33,8 @@ dotenv.config();
 
 const externalApiUrl = process.env.ESERVICES_API_URL;
 
+const DPP_Name = process.env.DPP_NAME;
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // const submissionWithDetails = await SubmissionModel.findOne({
@@ -918,6 +920,7 @@ export const makePDFsendToEfiling = async (req, res) => {
                     font-weight:bold;
                     margin: 5px 0;"
                     >
+                    ${DPP_Name} <br>
                     Director of Public Prosecutions
                     </div>
                 </div>
