@@ -34,7 +34,7 @@ import { Signatures } from "../utilities/Signatures.class.js";
 import { mailConfig } from "../config/mail.config.js";
 import axios from "axios";
 import { SubmissionMailer } from "../utilities/SubmissionMailer.class.js";
-import { makePDFsendToEfiling } from "./pdf.controller.js";
+import { makePDFsendToEfiling, makeConsentPDFsendToEfiling } from "./pdf.controller.js";
 import usersModel from "../models/users.model.js";
 import accesslogsModel from "../models/accesslogs.model.js";
 import accusedsModel from "../models/accuseds.model.js";
@@ -220,6 +220,9 @@ export const complainantSign = async (req, res) => {
   }
 };
 
+
+
+
 export const signSubmission = async (req, res) => {
   // console.log("\n\n Request body: ", req.body);
   //verify the otp
@@ -280,6 +283,71 @@ export const signSubmission = async (req, res) => {
     });
   }
 };
+
+
+
+export const signConsent = async (req, res) => {
+  // console.log("\n\n Request body: ", req.body);
+  //verify the otp
+  const totp = new SignOTPGenerator();
+  try {
+    let transporter = nodemailer.createTransport(mailConfig);
+    let verified = await totp.verifyOTP(req.body.email, req.body.otp);
+    // console.log('\n\n\n verification result: ', verified);
+    if (verified) {
+      // sign the complaint - required (submission_id, complainant_email)
+      console.log("+++++++++++++++OTP VERIFIED +++++++++++++++++++")
+      // URL - '/api/submissions/complainant_sign'
+      let email = req.body.email;
+      let submission_id = req.body.submission_id;
+      let signature = await signComplainant(
+        req.body.email,
+        req.body.submission_id
+      );
+      // update the submission with FLAG = signed  - required (submission_id, status="signed")
+      //API_URL + '/api/submissions/update'
+      let updatedSubmission = await updateSubmission(req.body.submission_id, {
+        status: "signed",
+      });
+      res.status(201).json({ outcome: "success" });
+      //return an update to the user if all is well
+      //Print the document and send to E-Filing
+      let signAndSend = await makeConsentPDFsendToEfiling(req);
+      if (signAndSend) {
+        console.log("Completed Sending to E-Filing");
+        //send Email to SWIF ADMIN
+        let signatureRequest = req.body;
+        console.log("\n\n\n Request Body: ", req.body);
+
+        // await transporter.sendMail({
+        //   from: `SWIF <${SWF_EMAIL}>`,
+        //   to: "swif_admin@link868.com",
+        //   subject: `SWIF Submission successfuly made. Id: [ ${req.body.submission_id} ]`,
+        //   html: `Submission ID: [ <a href='https://www.swif.ttlawcourts.org/sign/${req.body.submission_id}'>${req.body.submission_id}</a> ]`,
+        // });
+      }
+    } else {
+      return res.status(201).json({ outcome: "failure" });
+    }
+  } catch (error) {
+    console.log(
+      `Error Signing Submission [ ${req.body.submission_id} ]`,
+      error
+    );
+    // await transporter.sendMail({
+    //   from: `SWIF <${SWF_EMAIL}>`,
+    //   to: "swif_admin@link868.com",
+    //   subject: `Error making submission - ID: [ ${req.body.submission_id} ]`,
+    //   html: `Submission ID: [ <a href='https://www.swif.ttlawcourts.org/sign/${req.body.submission_id}'>${req.body.submission_id}</a> ]`,
+    // });
+    res.status(201).json({
+      outcome: "error",
+      error: "error",
+    });
+  }
+};
+
+
 
 export const phraseSignSubmission = async (req, res) => {
   console.log("\n\n\n phraseSignSubmission Request body: ", req.body);
