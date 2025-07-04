@@ -533,12 +533,14 @@ export const submissionConsent = async (req, res) => {
   console.log("\n\n\n consent: ", consent);
 
   let user = await UserModel.findByPk(consent.userId, { raw: true });
+  let submission = await SubmissionModel.findByPk(req.body.submission_id, { raw: true });
 
   console.log("\n\n\n user: ", user);
 
   res.status(201).json({
     consent: consent,
     user: user,
+    submission: submission
   });
 
   // res.status(201).json({});

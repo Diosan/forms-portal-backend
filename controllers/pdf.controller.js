@@ -920,7 +920,16 @@ export const makePDFsendToEfiling = async (req, res) => {
                     font-weight:bold;
                     margin: 5px 0;"
                     >
-                    ${DPP_Name} <br>
+                    ${DPP_Name}
+                    
+                    </div>
+                    <div class="name-placeholder text-left"
+                    style="line-height: 13pt;
+                    font-size: 12pt;
+                    font-family:Calibri, Arial, Helvetica, sans-serif;
+                    font-weight: normal;
+                    margin: 5px 0;"
+                    >
                     Director of Public Prosecutions
                     </div>
                 </div>
@@ -1896,7 +1905,15 @@ export const makeConsentPDFsendToEfiling = async (req, res) => {
                     font-weight:bold;
                     margin: 5px 0;"
                     >
-                    ${DPP_Name} <br>
+                    ${DPP_Name} 
+                    </div>
+                    <div class="name-placeholder text-left"
+                    style="line-height: 13pt;
+                    font-size: 12pt;
+                    font-family:Calibri, Arial, Helvetica, sans-serif;
+                    font-weight: normal;
+                    margin: 5px 0;"
+                    >
                     Director of Public Prosecutions
                     </div>
                 </div>
