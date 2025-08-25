@@ -1,0 +1,17 @@
+{
+    "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+            "additionalNotes": {
+                "type": "string",
+                "title": "Additional Notes"
+            }
+        }
+    },
+    "UI": {
+       "additionalNotes": {
+            "ui:widget": "textarea"
+        }
+    }
+}

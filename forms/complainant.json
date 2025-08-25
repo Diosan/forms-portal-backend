@@ -1,0 +1,42 @@
+{
+    "schema": {
+        "title": "Complainant Information",
+        "description": "",
+        "type": "object",
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "agency"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "lastName": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "agency": {
+            "type": "string",
+            "title": "Agency"
+          },
+          "agency_id": {
+            "type": "string",
+            "title": "Agency ID (Regimental Number)"
+          }
+        }
+    },
+    "UI": {
+        "email": {
+            "ui:options": {
+                "inputType": "email"
+            }
+        }
+    }
+}

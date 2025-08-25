@@ -1,0 +1,23 @@
+.adminjs_Header {
+    /* background-color: #4caf50;  */
+  }
+
+  .admin-bro_Text{
+    /* display:none; */
+  }
+  
+  .adminjs_NavLink {
+    /* color: white;  */
+  }
+
+  .dashboard-welcome{padding:40px;}
+  .dashboard-btn{ padding:15px 20px; 
+    display:inline-block; border:1px solid #336699; font-size:20px; color:#336699;
+    line-height:20px; text-decoration: none; font-weight:bold; margin:30px 0 0 0;
+    }
+
+  /* section:nth-child(3) > div:nth-child(2) {
+    display:none
+} */
+/* .sc-dhKdcB.clpQIy{display:none}
+.sc-dhKdcB.eJpKws{display:none} */

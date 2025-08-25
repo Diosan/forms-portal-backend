@@ -1,0 +1,40 @@
+{
+    "schema": {
+        "type": "object",
+        "required": [
+            "count",
+            "particulars",
+            "statementOfOffence"
+        ],
+        "properties": {
+            "count": {
+                "type": "number",
+                "title": "Count",
+                "default": 1
+            },
+            "dateOfOffence": {
+                "type": "string",
+                "title": "Date/Period Of Offence"
+            },
+            "statementOfOffence": {
+                "type": "string",
+                "title": "Statement Of Offence"
+            },
+            "particulars": {
+                "type": "string",
+                "title": "Particulars"
+            }
+        }
+    },
+    "UI": {
+        "particulars": {
+            "ui:widget": "textarea"
+        },
+        "dateOfOffence": {
+            "ui:widget": "textarea"
+        },
+        "statementOfOffence": {
+            "ui:widget": "textarea"
+        }
+    }
+}

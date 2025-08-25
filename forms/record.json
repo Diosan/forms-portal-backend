@@ -1,0 +1,37 @@
+{
+    "schema": {
+        "type": "object",
+        "required": [
+            "name",
+            "count",
+            "particulars"
+        ],
+        "properties": {
+            "name": {
+                "type": "string",
+                "title": "Charge Name"
+            },
+            "count": {
+                "type": "number",
+                "title": "Count",
+                "default": 1
+            },
+            "dateOfOffence": {
+                "type": "string",
+                "title": "Date Of Offence"
+            },
+            "particulars": {
+                "type": "string",
+                "title": "Particulars"
+            }
+        }
+    },
+    "UI": {
+        "particulars": {
+            "ui:widget": "textarea"
+        },
+        "dateOfOffence": {
+            "ui:widget": "date"
+        }
+    }
+}
