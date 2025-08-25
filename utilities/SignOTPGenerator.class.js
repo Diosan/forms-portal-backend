@@ -32,6 +32,7 @@ export default class SignOTPGenerator {
     await this.storeOTPInRedis(email, otp);
 
     // Send OTP via email
+    console.log('Attempting to send OTP ' + otp + ' email to ' + email + ' ' + name + ' for submission_id ' + submission_id);
     await this.sendOTPViaEmail(submission_id, email, name, otp);
   }
 
@@ -150,12 +151,28 @@ export default class SignOTPGenerator {
     //   html: htmlEmailString
     // });
 
-    await this.transporter.sendMail({
+    console.log('Attempting test email using transporter');
+
+    // const test_result = await this.transporter.sendMail({
+    //   from: '"SWiF" <omm@link868.com>',
+    //   to: "off_harry@link868.com",
+    //   subject: "Hello Transcend ✔",
+    //   text: "Hello Transcend?", // plain‑text body
+    //   html: "<b>Hello Transcend?</b>", // HTML body
+    // });
+
+    // console.log('Test email sending result: ', test_result);
+
+    console.log('Attempting to send OTP email using transporter');
+    
+    let email_result = await this.transporter.sendMail({
       from: `SWIF <${SWF_EMAIL}>`,
       to: email,
       subject: `SWIF - Your One-Time Password (${otp})`,
       html: htmlEmailString,
     });
+
+    console.log('OTP email sending result: ', email_result);
 
   }
 
