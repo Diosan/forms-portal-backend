@@ -70,6 +70,8 @@ export class Signatures {
 
         // console.log('\n\n\n Current submission record string: ' + record);
 
+        console.log("\n\n\n Consent Note in Signature class: " + note + "\n\n\n");
+
         let signature = await SignatureModel.create({
             type: 'consent',
             email: email,

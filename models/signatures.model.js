@@ -32,6 +32,10 @@ export default sequelize => {
         content_id: {
             type: DataTypes.INTEGER,
             allowNull: true
+        },
+        note: {
+            type: DataTypes.TEXT,
+            allowNull: true
         }
 
 
