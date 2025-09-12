@@ -408,6 +408,7 @@ export const consentSubmission = async (req, res) => {
       let note = req.body.note
 
       let signatures = new Signatures();
+      console.log("\n\n\n Consent Note sent to controller: " + note + "\n\n\n");
       let consent = await signatures.consenterSubmissionSign(
         email,
         submission_id,
