@@ -622,6 +622,18 @@
               "type": "string",
               "title": "Any Related Matters ?"
           },
+          "bailStatus": {
+            "type": "string",
+            "title": "Bail Status",
+            "enum": [
+              "Bail granted by Justice of Peace",
+              "In custody"
+            ],
+            "enumNames": [
+              "Bail granted by Justice of Peace",
+              "In custody"
+            ]
+          }, 
           "tntNational": {
               "type": "boolean",
               "title": "National of Trinidad and Tobago",
@@ -639,7 +651,7 @@
           "otherResident": {
               "type": "boolean",
               "title": "Resident of other country"
-          },
+          },         
           "alias": {
             "type": "string",
             "title": "Alias"
