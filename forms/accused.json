@@ -6,7 +6,8 @@
         "required": [
           "firstName",
           "lastName",
-          "adulthood"
+          "adulthood",
+          "bailStatus"
         ],
         "properties": {
           "firstName": {
