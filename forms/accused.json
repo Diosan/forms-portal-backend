@@ -629,7 +629,7 @@
             "enum": [
               "Bail granted by Justice of Peace",
               "In custody",
-              "Is not applicable"
+              "Not applicable"
             ],
             "enumNames": [
               "Bail granted by Justice of Peace",
