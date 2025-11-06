@@ -35,12 +35,12 @@ const createAgencyDbConnection = (agency) => {
 
 const saltRounds = 10; 
 const JWT_SECRET = process.env.JWT_SECRET;
-// const APP_DOMAIN = process.env.APP_DOMAIN;
-// const SWF_LOGO = process.env.SWF_LOGO;
+const APP_DOMAIN = process.env.APP_DOMAIN;
+const SWF_LOGO = process.env.SWF_LOGO;
 const SWF_EMAIL = process.env.SWF_EMAIL;
 // const SWF_EMAIL="swif-noreply@ttlawcourts.org"
-const APP_DOMAIN="https://swif.ttlawcourts.org"
-const SWF_LOGO="https://www.ttlawcourts.org/images/swf-logo.png"
+//const APP_DOMAIN="https://swif.ttlawcourts.org"
+//const SWF_LOGO="https://www.ttlawcourts.org/images/swf-logo.png"
 
 const transporter = nodemailer.createTransport(mailConfig);
 
@@ -864,7 +864,7 @@ export const handlePasswordForgotPage = async (req, res) => {
   // Redirect the user the password reset page
   // res.render('reset-password', { token });
   console.log('Redirecting the user back to the reset token page');
-  res.redirect(`https://swif.ttlawcourts.org/user/password/new?token=${token}`);
+  res.redirect(`${APP_DOMAIN}/user/password/new?token=${token}`);
 }
 
 // handle forgot password
