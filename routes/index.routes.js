@@ -12,6 +12,7 @@ import errorLogsRoutes from "./errorlogs.routes.js";
 import errortypesRoutes from "./errortypes.routes.js";
 // import permissionsRoutes from './permissions.routes.js';
 import submissionsRoutes from "./submissions.routes.js";
+import privateRoutes from "./private.routes.js";
 import accusedRoutes from "./accuseds.routes.js";
 // import rolesRoutes from './roles.routes.js';
 import pdfRoutes from "./pdf.routes.js";
@@ -33,6 +34,7 @@ export const setupRoutes =  (app) => {
   // permissionsRoutes(app);
   // rolesRoutes(app);
   submissionsRoutes(app);
+  privateRoutes(app);
   accusedRoutes(app);
   userRoutes(app);
   configurationRoutes(app);
