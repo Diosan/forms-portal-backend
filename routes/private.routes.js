@@ -5,7 +5,7 @@
     submissionSignature, verifyOTP, sendSignRequest, sendVerifyOTP, verifierSign, 
     submissionVerification, chargeCodes, verifiers, adminSubmissions, requestConsent,
     consentSubmission, submissionConsent, previous
-  } from "../controllers/private-complaints.controller.js";
+  } from "../controllers/private.controller.js";
   import express from "express";
   import verifyToken from '../middlewares/authMiddleware.js';
 
@@ -87,5 +87,5 @@
 
     router.get('/admin/:id', verifyToken, adminSubmissions);
 
-    app.use('/api/private-complaints', router);
+    app.use('/api/private', router);
   };
